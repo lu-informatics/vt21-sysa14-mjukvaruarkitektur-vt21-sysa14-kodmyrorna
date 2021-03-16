@@ -28,5 +28,10 @@ public class Facade implements FacadeLocal {
     
     
     /*******WORKSAT STUFF*******/
-
+    //Will be able to do this stuff once the Project and Person classes have basic setters and getters.
+    //create
+    //remove
+    //findbyssn
+    //findbyprojectcode
+    //findbyid
 }
