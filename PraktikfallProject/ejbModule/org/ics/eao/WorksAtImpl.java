@@ -3,15 +3,15 @@ package org.ics.eao;
 import javax.ejb.Stateless;
 
 /**
- * Session Bean implementation class WorksAtEAOImpl
+ * Session Bean implementation class WorksAtImpl
  */
 @Stateless
-public class WorksAtEAOImpl implements WorksAtEAOLocal {
+public class WorksAtImpl implements WorksAtLocal {
 
     /**
      * Default constructor. 
      */
-    public WorksAtEAOImpl() {
+    public WorksAtImpl() {
         // TODO Auto-generated constructor stub
     }
 
