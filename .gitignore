@@ -12,7 +12,9 @@ node_modules/
 *.class
  
 # Package Files #
+*.jar
 *.war
+*.ear
 *.db
 rebel.xml
 
