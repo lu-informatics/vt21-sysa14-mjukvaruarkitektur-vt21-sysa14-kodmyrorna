@@ -7,4 +7,10 @@
   <module>
     <ejb>EJBProject.jar</ejb>
   </module>
+  <module>
+    <web>
+      <web-uri>EJBWebProject.war</web-uri>
+      <context-root>EJBWebProject</context-root>
+    </web>
+  </module>
 </application>
