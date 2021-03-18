@@ -4,4 +4,7 @@
   <module>
     <ejb>PraktikfallProject.jar</ejb>
   </module>
+  <module>
+    <ejb>EJBProject.jar</ejb>
+  </module>
 </application>
