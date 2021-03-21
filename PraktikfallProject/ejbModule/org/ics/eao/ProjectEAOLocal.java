@@ -13,5 +13,6 @@ public interface ProjectEAOLocal {
 	public Project updateProject(Project project);
 	public void deleteProject(int projectCode);
 	 public List<Project> findAllProjects();
+	 public List<Project> findAllProjects();
 
 }
