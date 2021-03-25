@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.ics.ejb.Person;
 import org.ics.ejb.Project;
 
 
@@ -55,4 +56,10 @@ public void deleteProject(String projectCode) {
     	List<Project> results = query.getResultList();
     	return results;
     } 
+ public List<Project> findByName(String name){
+	 TypedQuery<Project> query = em.createNamedQuery("Project.findByName", Project.class);
+	 query.setParameter("name", name);
+	 List<Project> results = query.getResultList();
+	 return results;
+ }
 }
