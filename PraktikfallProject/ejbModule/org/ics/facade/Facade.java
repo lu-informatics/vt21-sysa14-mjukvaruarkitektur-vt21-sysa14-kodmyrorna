@@ -19,6 +19,8 @@ public class Facade implements FacadeLocal {
 	private WorksAtEAOLocal worksAtEAO;
 	@EJB
 	private PersonEAOLocal personEAO;
+	@EJB 
+	private ProjectEAOLocal projectEAO;
     /**
      * Default constructor. 
      */
@@ -52,6 +54,30 @@ public class Facade implements FacadeLocal {
     }
     
     /*******PROJECT STUFF*******/
+    
+    public Project createProject(Project project) {
+    	return projectEAO.createProject(project);
+    }
+    
+    public Project findProject(String projectCode) {
+    	return projectEAO.findProject(projectCode);
+    }
+    
+    public Project updateProject(Project project) {
+    	return projectEAO.updateProject(project);
+    }
+    
+    public void deleteProject(String projectCode) {
+    	personEAO.deletePerson(projectCode);
+    }
+   
+    public List<Project> findAllProjects() {
+    	return projectEAO.findAllProjects();
+    }
+       
+    public List<Project> findProjectByName(String name) {
+    	return projectEAO.findProjectByName(name);
+    }
     
     
     /*******WORKSAT STUFF*******/

@@ -16,9 +16,11 @@ import javax.persistence.ManyToMany;
 
 @Entity
 @NamedQueries({
-	@NamedQuery(name="Project.findAll", query = "SELECT p FROM Project p")
+	@NamedQuery(name="Project.findAll", query = "SELECT p FROM Project p"),
+	@NamedQuery(name="Project.findByName", query = "SELECT p FROM Project WHERE name LIKE :name")
+	
 	})
-// to do other query
+
 
 public class Project implements Serializable{
 	private String name;
