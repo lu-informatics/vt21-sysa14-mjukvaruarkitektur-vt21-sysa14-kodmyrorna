@@ -9,10 +9,8 @@ import org.ics.ejb.Project;
 @Local
 public interface ProjectEAOLocal {
 	public Project createProject(Project project);
-	public Project findProject(int projectCode);
+	public Project findProject(String projectCode);
 	public Project updateProject(Project project);
-	public void deleteProject(int projectCode);
+	public void deleteProject(String projectCode);
 	public List<Project> findAllProjects();
-	
-
 }
