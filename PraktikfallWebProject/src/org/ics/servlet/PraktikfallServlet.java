@@ -37,6 +37,7 @@ public class PraktikfallServlet extends HttpServlet {
 		out.println("</head></body>");
 		out.println("<h2>Hello from Filiph</h2>");
 		out.println("<h1>Group 7</h1>");
+		out.println("<h2>Hello from Thea</h2>");
 		out.println("</body></html>");
 		
 		
