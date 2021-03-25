@@ -1,5 +1,6 @@
 package org.ics.facade;
 
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -30,6 +31,11 @@ public class Facade implements FacadeLocal {
     /*******WORKSAT STUFF*******/
     //Will be able to do this stuff once the Project and Person classes have basic setters and getters.
     //create
+    public WorksAt createWorksAt(String ssn, String projectCode) throws MyCustomException{
+    	WorksAt newWorksAt = null;
+    	
+    	return newWorksAt;
+    }
     //remove
     //findbyssn
     //findbyprojectcode
