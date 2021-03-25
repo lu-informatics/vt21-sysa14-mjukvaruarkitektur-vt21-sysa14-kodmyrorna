@@ -17,39 +17,42 @@ import javax.persistence.ManyToMany;
 @Entity
 @NamedQueries({
 	@NamedQuery(name="Project.findAll", query = "SELECT p FROM Project p"),
-	@NamedQuery(name="Project.findByName", query = "SELECT p FROM Project WHERE name LIKE :name")
-	
-	})
+	@NamedQuery(name="Project.findByName", query = "SELECT p FROM Project p WHERE name LIKE :name")
+})
 
 
 public class Project implements Serializable{
-	private String name;
 	private String projectCode;
+	private String name;
 	private Set <Person> persons;
 	
 	public Project() {}
-	public Project(String name, String projectCode){
-		this.name = name;
+	public Project(String projectCode, String name){
 		this.projectCode = projectCode;
+		this.name = name;
 	}
 	
 	@Id
 	@Column(name= "projectCode")
-		public String getProjectCode(){
+	public String getProjectCode(){
 		return projectCode; 
+	}
+	public void setProjectCode(String projectCode) {
+		this.projectCode = projectCode;
 	}
 	
 	@Column(name= "name")
-		public String getProjectName(){
+	public String getName(){
 		return name; 
 	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	
-	//
-	@ManyToMany(mappedBy="persons")
+	@ManyToMany(mappedBy="projects")
 	public Set<Person> getPersons() {
 		return persons;
 	}
-	
 	public void setPersons(Set<Person> persons){
 		this.persons = persons;
 	}

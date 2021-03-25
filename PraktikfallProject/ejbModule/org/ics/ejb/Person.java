@@ -48,7 +48,7 @@ public class Person implements Serializable{
 	}
 	
 	@ManyToMany
-	@JoinTable(name="WorksAt", joinColumns=@JoinColumn(name="ssn", referencedColumnName="ssn"),inverseJoinColumns=@JoinColumn(name="projectCode", referencedColumnName="projectCode"))
+	@JoinTable(name="WorksAt", joinColumns=@JoinColumn(name="waSsn", referencedColumnName="ssn"),inverseJoinColumns=@JoinColumn(name="waProjectCode", referencedColumnName="projectCode"))
 	public Set<Project> getProjects() {
 		return projects;
 	}

@@ -25,8 +25,9 @@ public class WorksAtEAOImpl implements WorksAtEAOLocal {
     	return worksAt;
     }
     
-    public void removeWorksAt(WorksAt worksAt) {
-    	em.remove(worksAt);
+    public void removeWorksAt(WorksAtId id) {
+    	WorksAt worksAt = this.findById(id);
+    	if (worksAt != null) { em.remove(worksAt); }
     }
     
     public List<WorksAt> findBySsn(String ssn){

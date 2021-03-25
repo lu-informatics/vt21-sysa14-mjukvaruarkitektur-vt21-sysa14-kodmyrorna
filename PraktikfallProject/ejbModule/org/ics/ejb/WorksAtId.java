@@ -17,7 +17,7 @@ public class WorksAtId implements Serializable {
 		this.projectCode = projectCode;
 	}
 	
-	@Column(name="ssn", nullable = false)
+	@Column(name="waSsn", nullable = false)
 	@NotNull
 	public String getSsn() {
 		return ssn;
@@ -26,7 +26,7 @@ public class WorksAtId implements Serializable {
 		this.ssn = ssn;
 	}
 	
-	@Column(name="projectCode", nullable = false)
+	@Column(name="waProjectCode", nullable = false)
 	@NotNull
 	public String getProjectCode() {
 		return projectCode;
@@ -60,10 +60,6 @@ public class WorksAtId implements Serializable {
 		return super.hashCode(); 
 	}
 	
-	@Override
-	public String toString() {
-		return "ID for instance of WorksAt\nPerson: " + this.ssn + "\nProject: " + this.projectCode;
-	}
-	
+
 	
 }
