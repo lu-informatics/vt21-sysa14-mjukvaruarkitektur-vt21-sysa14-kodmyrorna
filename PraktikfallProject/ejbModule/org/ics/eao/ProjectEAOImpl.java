@@ -33,7 +33,7 @@ public Project createProject(Project project) {
   return project;
 }
 
-public Project findProject(int projectCode) {
+public Project findProject(String projectCode) {
   Project project= em.find(Project.class, projectCode);
   return project;
 }
@@ -43,7 +43,7 @@ public Project updateProject(Project project) {
   return project;
 }
 
-public void deleteProject(int projectCode) {
+public void deleteProject(String projectCode) {
   Project project = this.findProject(projectCode);
   if(project != null){
     em.remove(project);
@@ -54,6 +54,5 @@ public void deleteProject(int projectCode) {
     	TypedQuery<Project> query = em.createNamedQuery("Project.findAll", Project.class);
     	List<Project> results = query.getResultList();
     	return results;
-    }
-    
+    } 
 }
