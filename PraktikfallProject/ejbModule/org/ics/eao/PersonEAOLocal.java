@@ -13,5 +13,5 @@ public interface PersonEAOLocal {
 	public Person updatePerson(Person person);
 	public void deletePerson(String ssn);
 	public List<Person> findAllPersons();
-
+	public List<Person> findByName(String name);
 }
