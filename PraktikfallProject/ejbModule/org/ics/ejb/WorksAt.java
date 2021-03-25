@@ -17,6 +17,12 @@ public class WorksAt {
 	private Person person;
 	private Project project;
 	
+	public WorksAt(Person person, Project project) {
+		id = new WorksAtId(person.getSsn(), project.getProjectCode());
+		this.person = person;
+		this.project = project;
+	}
+	
 	@EmbeddedId
 	public WorksAtId getId() {
 		return id;
@@ -41,5 +47,10 @@ public class WorksAt {
 	}
 	public void setProject(Project project) {
 		this.project = project;
+	}
+	
+	@Override
+	public String toString() {
+		return this.id.toString();
 	}
 }

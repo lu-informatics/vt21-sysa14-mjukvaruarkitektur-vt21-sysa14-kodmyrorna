@@ -82,12 +82,18 @@ public class Facade implements FacadeLocal {
     
     /*******WORKSAT STUFF*******/
     public WorksAt createWorksAt(WorksAt worksAt) {
+    	return worksAtEAO.createWorksAt(worksAt);
     }    
-    public WorksAt removeWorksAt(WorksAt worksAt) {
-    	
+    public void deleteWorksAt(WorksAt worksAt) {
+    	worksAtEAO.removeWorksAt(worksAt);
     }
-    public List<WorksAt> findWorksAtBy
-    //findbyssn
-    //findbyprojectcode
-    //findbyid
+    public List<WorksAt> findWorksAtBySsn(String ssn){
+    	return worksAtEAO.findBySsn(ssn);
+    }
+    public List<WorksAt> findWorksAtByProjectCode(String projectCode){
+    	return worksAtEAO.findByProjectCode(projectCode);
+    }
+    public WorksAt findWorksAtById(WorksAtId id) {
+    	return worksAtEAO.findById(id);
+    }
 }

@@ -60,5 +60,10 @@ public class WorksAtId implements Serializable {
 		return super.hashCode(); 
 	}
 	
+	@Override
+	public String toString() {
+		return "ID for instance of WorksAt\nPerson: " + this.ssn + "\nProject: " + this.projectCode;
+	}
+	
 	
 }
