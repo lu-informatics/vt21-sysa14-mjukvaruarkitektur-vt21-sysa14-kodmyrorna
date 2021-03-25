@@ -43,22 +43,24 @@ public class Facade implements FacadeLocal {
     	return personEAO.findAllPersons();
     }
     
-    public Person findPerson(String ssn) {
+    public Person findPersonBySsn(String ssn) {
     	return personEAO.findPerson(ssn);
+    }
+    
+    public List<Person> findPersonByName(String name) {
+    	return personEAO.findByName(name);
     }
     
     /*******PROJECT STUFF*******/
     
     
     /*******WORKSAT STUFF*******/
-    //Will be able to do this stuff once the Project and Person classes have basic setters and getters.
-    //create
-    public WorksAt createWorksAt(String ssn, String projectCode) throws MyCustomException{
-    	WorksAt newWorksAt = null;
+    public WorksAt createWorksAt(WorksAt worksAt) {
+    }    
+    public WorksAt removeWorksAt(WorksAt worksAt) {
     	
-    	return newWorksAt;
     }
-    //remove
+    public List<WorksAt> findWorksAtBy
     //findbyssn
     //findbyprojectcode
     //findbyid
