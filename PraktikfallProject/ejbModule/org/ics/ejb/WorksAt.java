@@ -9,14 +9,15 @@ import javax.persistence.NamedQuery;
 
 @Entity
 @NamedQueries({
-	@NamedQuery(name="WorksAt.findBySsn", query = "SELECT w FROM WorksAt WHERE ssn LIKE :ssn"),
-	@NamedQuery(name="WorksAt.findByProjectCode", query="SELECT w FROM WorksAt WHERE projectCode LIKE :projectCode")
+	@NamedQuery(name="WorksAt.findBySsn", query = "SELECT w FROM WorksAt w WHERE waSsn LIKE :ssn"),
+	@NamedQuery(name="WorksAt.findByProjectCode", query="SELECT w FROM WorksAt w WHERE waProjectCode LIKE :projectCode")
 })
 public class WorksAt {
 	private WorksAtId id;
 	private Person person;
 	private Project project;
 	
+	public WorksAt() {}
 	public WorksAt(Person person, Project project) {
 		id = new WorksAtId(person.getSsn(), project.getProjectCode());
 		this.person = person;
@@ -32,7 +33,7 @@ public class WorksAt {
 	}
 	
 	@ManyToOne
-	@JoinColumn(name="ssn", referencedColumnName="ssn", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name="waSsn", referencedColumnName="ssn", nullable = false, insertable = false, updatable = false)
 	public Person getPerson() {
 		return person;
 	}
@@ -41,16 +42,12 @@ public class WorksAt {
 	}
 	
 	@ManyToOne
-	@JoinColumn(name="projectCode", referencedColumnName="projectCode", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name="waProjectCode", referencedColumnName="projectCode", nullable = false, insertable = false, updatable = false)
 	public Project getProject() {
 		return project;
 	}
 	public void setProject(Project project) {
 		this.project = project;
 	}
-	
-	@Override
-	public String toString() {
-		return this.id.toString();
-	}
+
 }

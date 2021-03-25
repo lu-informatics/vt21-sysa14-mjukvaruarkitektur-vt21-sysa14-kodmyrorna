@@ -7,7 +7,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import org.ics.eao.*;
-import org.ics.exceptions.*;
 import org.ics.ejb.*;
 
 /**
@@ -59,7 +58,7 @@ public class Facade implements FacadeLocal {
     	return projectEAO.createProject(project);
     }
     
-    public Project findProject(String projectCode) {
+    public Project findProjectByProjectCode(String projectCode) {
     	return projectEAO.findProject(projectCode);
     }
     
@@ -68,7 +67,7 @@ public class Facade implements FacadeLocal {
     }
     
     public void deleteProject(String projectCode) {
-    	personEAO.deletePerson(projectCode);
+    	projectEAO.deleteProject(projectCode);
     }
    
     public List<Project> findAllProjects() {
@@ -84,8 +83,8 @@ public class Facade implements FacadeLocal {
     public WorksAt createWorksAt(WorksAt worksAt) {
     	return worksAtEAO.createWorksAt(worksAt);
     }    
-    public void deleteWorksAt(WorksAt worksAt) {
-    	worksAtEAO.removeWorksAt(worksAt);
+    public void deleteWorksAt(WorksAtId id) {
+    	worksAtEAO.removeWorksAt(id);
     }
     public List<WorksAt> findWorksAtBySsn(String ssn){
     	return worksAtEAO.findBySsn(ssn);
