@@ -1,6 +1,8 @@
 package org.ics.facade;
 
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -15,6 +17,8 @@ import org.ics.ejb.*;
 public class Facade implements FacadeLocal {
 	@EJB
 	private WorksAtEAOLocal worksAtEAO;
+	@EJB
+	private PersonEAOLocal personEAO;
     /**
      * Default constructor. 
      */
@@ -23,7 +27,25 @@ public class Facade implements FacadeLocal {
     }
     
     /*******PERSON STUFF*******/
+    public Person createPerson(Person person) {
+    	return personEAO.createPerson(person);
+    }
     
+    public void deletePerson(String ssn) {
+    	personEAO.deletePerson(ssn);
+    }
+    
+    public Person updatePerson(Person person) {
+    	return personEAO.updatePerson(person);
+    }
+    
+    public List<Person> findAllPersons() {
+    	return personEAO.findAllPersons();
+    }
+    
+    public Person findPerson(String ssn) {
+    	return personEAO.findPerson(ssn);
+    }
     
     /*******PROJECT STUFF*******/
     
