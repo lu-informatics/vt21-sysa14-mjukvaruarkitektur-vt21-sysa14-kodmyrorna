@@ -76,7 +76,7 @@ public class Facade implements FacadeLocal {
        
     public List<Project> findProjectByName(String name) {
     	return projectEAO.findProjectByName(name);
-    }
+    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
     
     
     /*******WORKSAT STUFF*******/

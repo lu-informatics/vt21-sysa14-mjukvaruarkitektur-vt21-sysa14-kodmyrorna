@@ -55,11 +55,11 @@ public class PraktikfallServlet extends HttpServlet {
 		out.println("<p>Successfully created " + facade.findPersonBySsn("0101010000").getName() +"</p>");
 		
 		Person p1 = new Person("0202020000", "Kebab");
-		facade.createPerson(p1);
+		//facade.createPerson(p1);
 		out.println("<p>Successfully created " + facade.findPersonBySsn("0202020000").getName() +"</p>");
 		
 		Person p2 = new Person("0303030000", "Magnus");
-		facade.createPerson(p2);
+		//facade.createPerson(p2);
 		out.println("<p>Successfully created " + facade.findPersonBySsn("0303030000").getName() +"</p>");
 		
 		out.println("<h3>Deleting yoda...</h3>");	
@@ -67,7 +67,7 @@ public class PraktikfallServlet extends HttpServlet {
 		
 		out.println("<h3>Changing name of Person Magnus to Mr.Magnus</h3>");
 		p2 = new Person("0303030000", "Mr.Magnus");
-		facade.updatePerson(p2);
+		//facade.updatePerson(p2);
 		out.println("<p>Successfully changed name from Magnus to " + facade.findPersonBySsn("0303030000").getName() +"</p><br><br>");
 		
 		/****Create, update, delete Project****/
@@ -78,11 +78,11 @@ public class PraktikfallServlet extends HttpServlet {
 		out.println("<p>Successfully created " + facade.findProjectByProjectCode("8008135").getName() + "</p>");
 		
 		Project pr1 = new Project("ABC123", "Kindergarten");
-		facade.createProject(pr1);
+		//facade.createProject(pr1);
 		out.println("<p>Successfully created " + facade.findProjectByProjectCode("ABC123").getName() + "</p>");
 		
 		Project pr2 = new Project("SYST6", "Examensarbete");
-		facade.createProject(pr2);
+		//facade.createProject(pr2);
 		out.println("<p>Successfully created " + facade.findProjectByProjectCode("SYST6").getName() + "</p>");
 		
 		out.println("<h3>Deleting Mature content...</h3>");	
@@ -90,7 +90,7 @@ public class PraktikfallServlet extends HttpServlet {
 		
 		out.println("<h3>Changing name of Project ABC123 to First grade stuff</h3>");
 		pr1 = new Project("ABC123", "First grade stuff");
-		facade.updateProject(pr1);
+		//facade.updateProject(pr1);
 		out.println("<p>Successfully changed name from Kindergarten to " + facade.findProjectByProjectCode("ABC123").getName() + "</p><br><br>");
 		
 		/****Create and delete WorksAt****/
@@ -99,9 +99,9 @@ public class PraktikfallServlet extends HttpServlet {
 		WorksAt wa1 = new WorksAt(p1, pr1);
 		facade.createWorksAt(wa1);
 		WorksAt wa2 = new WorksAt(p1, pr2);
-		facade.createWorksAt(wa2);
+		//facade.createWorksAt(wa2);
 		WorksAt wa3 = new WorksAt(p2, pr1);
-		facade.createWorksAt(wa3);
+		//facade.createWorksAt(wa3);
 		
 		out.println("<h3>Deleting worksat for Kebab and Kindergarten...</h3><br><br>");
 		facade.deleteWorksAt(wa1.getId());
@@ -109,21 +109,21 @@ public class PraktikfallServlet extends HttpServlet {
 		/*****Filling the database with some random shit*****/
 		out.println("<h3>Creating more stuff...</h3>");
 		Person p3 = new Person("9701010000", "97:a");
-		facade.createPerson(p3);
+		//facade.createPerson(p3);
 		Person p4 = new Person("0001010000", "P12:a");
-		facade.createPerson(p4);
+		//facade.createPerson(p4);
 		Person p5 = new Person("2103251305", "Mr.Magnus");
-		facade.createPerson(p5);
+		//facade.createPerson(p5);
 		Project pr3 = new Project("MCKLMR", "Thrift shop");
-		facade.createProject(pr3);
+		//facade.createProject(pr3);
 		Project pr4 = new Project("RNDM12", "Examensarbete");
-		facade.createProject(pr4);
+		//facade.createProject(pr4);
 		WorksAt wa4 = new WorksAt(p1, pr3);
-		facade.createWorksAt(wa4);
+		//facade.createWorksAt(wa4);
 		WorksAt wa5 = new WorksAt(p1, pr4);
-		facade.createWorksAt(wa5);
+		//facade.createWorksAt(wa5);
 		WorksAt wa6 = new WorksAt(p3, pr1);
-		facade.createWorksAt(wa6);
+		//facade.createWorksAt(wa6);
 		
 		/*****Queries:*****/
 		out.println("<h1>Queries</h1>");
