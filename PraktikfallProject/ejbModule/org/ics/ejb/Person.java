@@ -1,6 +1,7 @@
 package org.ics.ejb;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -28,6 +29,7 @@ public class Person implements Serializable{
 	public Person(String ssn, String name) {
 		this.ssn = ssn;
 		this.name = name;
+		this.projects = new HashSet<Project>();
 	}
 
 	@Id
@@ -48,11 +50,17 @@ public class Person implements Serializable{
 	}
 	
 	@ManyToMany
-	@JoinTable(name="WorksAt", joinColumns=@JoinColumn(name="waSsn", referencedColumnName="ssn"),inverseJoinColumns=@JoinColumn(name="waProjectCode", referencedColumnName="projectCode"))
 	public Set<Project> getProjects() {
 		return projects;
 	}
 	public void setProjects(Set<Project> projects) {
 		this.projects = projects;
+	}
+	
+	public void addProject(Project project) {
+		this.projects.add(project);
+	}
+	public void removeProject(Project project) {
+		this.projects.remove(project);
 	}
 }

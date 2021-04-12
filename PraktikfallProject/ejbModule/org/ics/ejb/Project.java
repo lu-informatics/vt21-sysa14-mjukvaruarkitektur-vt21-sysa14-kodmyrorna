@@ -1,6 +1,7 @@
 package org.ics.ejb;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -30,6 +31,7 @@ public class Project implements Serializable{
 	public Project(String projectCode, String name){
 		this.projectCode = projectCode;
 		this.name = name;
+		this.persons = new HashSet<Person>();
 	}
 	
 	@Id
@@ -56,5 +58,11 @@ public class Project implements Serializable{
 	public void setPersons(Set<Person> persons){
 		this.persons = persons;
 	}
-
+	
+	public void addPerson(Person person) {
+		this.persons.add(person);
+	}
+	public void removePerson(Person person) {
+		this.persons.remove(person);
+	}
 }

@@ -1,6 +1,8 @@
 package org.ics.eao;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -46,6 +48,15 @@ public class ProjectEAOImpl implements ProjectEAOLocal {
 			em.remove(project); 
 		}
 	}
+
+	public void addPerson(Project project, Person person) {
+		project.addPerson(person);
+		em.merge(project);
+	}
+	public void removePerson(Project project, Person person) {
+		project.removePerson(person);
+		em.merge(project);
+	}
 	
 	public List<Project> findAllProjects(){
     	TypedQuery<Project> query = em.createNamedQuery("Project.findAll", Project.class);
@@ -59,5 +70,9 @@ public class ProjectEAOImpl implements ProjectEAOLocal {
 		 List<Project> results = query.getResultList();
 		 return results;
 	 }
-
+	 
+	 public Set<Person> getPersons(Project project){
+		 return project.getPersons();
+	 }
+	 
 }
