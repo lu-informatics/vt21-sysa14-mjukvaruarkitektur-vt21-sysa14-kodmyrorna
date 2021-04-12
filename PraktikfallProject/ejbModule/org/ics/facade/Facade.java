@@ -2,6 +2,7 @@ package org.ics.facade;
 
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -14,8 +15,7 @@ import org.ics.ejb.*;
  */
 @Stateless
 public class Facade implements FacadeLocal {
-	@EJB
-	private WorksAtEAOLocal worksAtEAO;
+
 	@EJB
 	private PersonEAOLocal personEAO;
 	@EJB 
@@ -78,21 +78,22 @@ public class Facade implements FacadeLocal {
     	return projectEAO.findProjectByName(name);
     }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
     
+
+    /*******PERSONPROJECT RELATION STUFF*******/
+    public void addPersonProject(Project project, Person person) {
+    	projectEAO.addPerson(project, person);
+    	personEAO.addProject(project, person);
+    }
     
-    /*******WORKSAT STUFF*******/
-    public WorksAt createWorksAt(WorksAt worksAt) {
-    	return worksAtEAO.createWorksAt(worksAt);
-    }    
-    public void deleteWorksAt(WorksAtId id) {
-    	worksAtEAO.removeWorksAt(id);
+    public void removePersonProject(Project project, Person person) {
+    	projectEAO.removePerson(project, person);
+    	personEAO.removeProject(project, person);
     }
-    public List<WorksAt> findWorksAtBySsn(String ssn){
-    	return worksAtEAO.findBySsn(ssn);
+    
+    public Set<Project> findProjectsByPerson(Person person) {
+    	return personEAO.getProjects(person);
     }
-    public List<WorksAt> findWorksAtByProjectCode(String projectCode){
-    	return worksAtEAO.findByProjectCode(projectCode);
-    }
-    public WorksAt findWorksAtById(WorksAtId id) {
-    	return worksAtEAO.findById(id);
+    public Set<Person> findPersonsByProject(Project project){
+    	return projectEAO.getPersons(project);
     }
 }

@@ -1,15 +1,11 @@
 package org.ics.facade;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Local;
 
-import org.ics.ejb.Person;
-
-import org.ics.ejb.WorksAt;
-import org.ics.ejb.WorksAtId;
-
-import org.ics.ejb.Project;
+import org.ics.ejb.*;
 
 
 @Local
@@ -27,11 +23,8 @@ public interface FacadeLocal {
     public void deleteProject(String projectCode);
     public List<Project> findAllProjects();
     public List<Project> findProjectByName(String name);
-	public WorksAt createWorksAt(WorksAt worksAt);
-	public void deleteWorksAt(WorksAtId id);
-    public List<WorksAt> findWorksAtBySsn(String ssn);
-    public List<WorksAt> findWorksAtByProjectCode(String projectCode);
-    public WorksAt findWorksAtById(WorksAtId id);
-
-
+    public void addPersonProject(Project project, Person person);
+    public void removePersonProject(Project project, Person person);
+    public Set<Project> findProjectsByPerson(Person person);
+    public Set<Person> findPersonsByProject(Project project);
 }
