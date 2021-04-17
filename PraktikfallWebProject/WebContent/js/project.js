@@ -2,10 +2,15 @@ var projectArray = new Array();
 $(document).ready(function(){
 	getWeather();
 	populateTable();
-	//Listen to keypresses
+	//filter search
 	document.getElementById("searchProject").addEventListener("keydown", function(e){
 		clearTable();
-		var search = $("#searchProject").val().toUpperCase() + String.fromCharCode(e.which).toUpperCase();
+		var search = "";
+		if(e.keyCode === 8){ //If the user presses backspace
+			search = $("#searchProject").val().toUpperCase().substring(0, (search.length - 1));
+		} else {
+			search = $("#searchProject").val().toUpperCase() + String.fromCharCode(e.which).toUpperCase();
+		}
 		for (var i = 0; i < projectArray.length; i++){
 			var containsSearch = false;
 			for(var j = 0; j < projectArray[i].length; j++){
