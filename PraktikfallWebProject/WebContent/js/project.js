@@ -32,9 +32,66 @@ $(document).ready(function(){
 		var projectCode = $(this).find("td:eq(0)").text();
 		$("#projectCode").val(projectCode);
 	})
+	$("#AddBtn").click(function(){
+		var projectCodeStr = $("#projectCode").val();
+		var nameStr = $("#name").val();
+		console.log("code: " + projectCodeStr + " name: " + nameStr);
+		var obj = {projectCode: projectCodeStr, name: nameStr};
+		var jsonString = JSON.stringify(obj);
+		if (nameStr != null && projectCodeStr != null){
+			//TODO check primary key validity?
+			$.ajax({
+				method: "POST",
+				url: "http://localhost:8080/PraktikfallWebProject/Projects/",
+				data: jsonString,
+				dataType:'json',
+				error: ajaxAddProjectError,
+				success: ajaxAddProjectSuccess
+			})
+			function ajaxAddProjectSuccess(result, status, xhr){
+				//TODO Ask Filiph: Empty fields at successful add or let entered values remain?
+				$("#projectCode").val("");
+				$("#projectCode").attr("placeholder", "Project added");
+				$("#name").val("");
+				populateTable();
+			}
+			function ajaxAddProjectError(result, status, xhr){
+				console.log("ajaxAddProjectError: " + status);
+				$("#errorlabel").text("Error adding project");
+			}
+		}
+	}) //AddBtn
+	$("#DeleteBtn").click(function(){
+		var projectCodeStr = $("#projectCode").val();
+		var obj = {projectCode: projectCodeStr};
+		var jsonString = JSON.stringify(obj);
+		console.log(obj);
+		if (projectCodeStr != null){
+			$.ajax({
+				method: "DELETE",
+				url: "http://localhost:8080/PraktikfallWebProject/Projects/",
+				data: jsonString,
+				error: ajaxDelProjectError,
+				success: ajaxDelProjectSuccess
+			})
+			function ajaxDelProjectSuccess(result, status, xhr){
+				$("#projectCode").val("");
+				$("#projectCode").attr("placeholder", "project deleted");
+				populateTable();
+			}
+			function ajaxDelProjectError(result, status, xhr){
+				console.log("ajaxDelProjectError: " + status);
+				$("#errorlabel").text("Error deleting project");
+			}
+		}
+	}) //DeleteBtn
+	
 })
 
 function populateTable(){
+	clearTable();
+	//TODO reduce REST calls by not calling on ajax here, but instead populating 
+	//the projectArray in document.ready and using the values there instead.
 	$.ajax({
 		method: "GET",
 		url: "http://localhost:8080/PraktikfallWebProject/Projects/",
@@ -47,13 +104,13 @@ function populateTable(){
 	function ajaxGetAllProjectsSuccess(result, status, xhr){
 		projectArray = new Array();
 		$.each(result, function(index, element){
+			//Populate table:
 			var row = new Array(element.projectCode, element.name);
 			addRow(element.projectCode, element.name);
+			//Store retreived data:
 			projectArray.push(row);
 		})
 	}
-}
-function autoComplete(){
 }
 function addRow(projectCode, name){
 	$("#allProjects tr:last").after("<tr><td>" + projectCode + "</td><td>" + name + "</td></p></tr>");
