@@ -62,6 +62,7 @@
 							<input type="text" name="name" id="name" value=""><br><br>
 							<input type="button" name="submitBtn" value="Add" id="AddBtn">
 							<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
+							<p id="errorlabel">Error displays here</p>
 						</fieldset>
 					</form>
 					<div id="box">

@@ -1,5 +1,6 @@
 package org.ics.servlets;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -8,7 +9,9 @@ import javax.ejb.EJB;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -63,8 +66,15 @@ public class Projects extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		String pathInfo = request.getPathInfo();
+		if (pathInfo == null || pathInfo.equals("/")) {
+			BufferedReader reader = request.getReader();
+			Project project = parseJsonProject(reader);
+			facade.createProject(project);
+			sendAsJson(response, project);
+		} else {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+		}
 	}
 	
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -75,7 +85,15 @@ public class Projects extends HttpServlet {
 	 * @see HttpServlet#doDelete(HttpServletRequest, HttpServletResponse)
 	 */
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		String pathInfo = request.getPathInfo();
+		if(pathInfo == null || pathInfo.equals("/")) {
+			JsonReader jsonReader = Json.createReader(request.getReader());
+			JsonObject jsonRoot = jsonReader.readObject();
+			String projectCode = jsonRoot.getString("projectCode");
+			facade.deleteProject(projectCode);
+		} else {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+		}
 	}
 	
 	public void sendAsJson(HttpServletResponse response, List<Project> projects) throws IOException {
@@ -109,4 +127,13 @@ public class Projects extends HttpServlet {
 		}
 		out.flush();
 	}
+	private Project parseJsonProject(BufferedReader reader) {
+		JsonReader jsonReader = Json.createReader(reader);
+		JsonObject jsonRoot = jsonReader.readObject();
+		Project project = new Project();
+		project.setProjectCode(jsonRoot.getString("projectCode"));
+		project.setName(jsonRoot.getString("name"));
+		return project;
+	}
+
 }
