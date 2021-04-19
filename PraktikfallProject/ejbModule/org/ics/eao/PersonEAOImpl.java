@@ -63,7 +63,7 @@ public class PersonEAOImpl implements PersonEAOLocal {
     	List<Person> results = query.getResultList();
     	return results;
     } 
-	 
+	
 	public List<Person> findByName(String name){
 		 TypedQuery<Person> query = em.createNamedQuery("Person.findByName", Person.class);
 		 query.setParameter("name", name);
@@ -74,13 +74,4 @@ public class PersonEAOImpl implements PersonEAOLocal {
 	public Set<Project> getProjects(Person person){
 		return person.getProjects();
 	}
-//	public List<Project> getProjects(Person person){
-//		List<Project> projectsList = new ArrayList<Project>();
-//		Set<Project> projectsSet = person.getProjects();
-//		if (projectsSet != null) {
-//			projectsList.addAll(projectsSet);
-//		}
-//		return projectsList;
-//	}
-
 }

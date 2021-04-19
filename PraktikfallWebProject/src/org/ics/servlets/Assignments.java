@@ -1,9 +1,13 @@
 package org.ics.servlets;
 
-import java.util.List;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.json.Json;
@@ -17,22 +21,24 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.ics.ejb.*;
+
+import org.ics.ejb.Person;
+import org.ics.ejb.Project;
 import org.ics.facade.FacadeLocal;
 
 /**
- * Servlet implementation class Persons
+ * Servlet implementation class Assignments
  */
-@WebServlet("/Persons/*")
-public class Persons extends HttpServlet {
+@WebServlet("/Assignments/*")
+public class Assignments extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    
+      
 	@EJB
 	private FacadeLocal facade;
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Persons() {
+    public Assignments() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -42,10 +48,8 @@ public class Persons extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if (pathInfo == null || pathInfo.equals("/")) {
-			List<Person> persons = facade.findAllPersons();
-			sendAsJson(response, persons);
-			return;
+		if (pathInfo.equals("/") || pathInfo == null) {
+			sendAsJson(response, facade.findAllAssignments());
 		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
@@ -56,11 +60,16 @@ public class Persons extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if (pathInfo == null || pathInfo.equals("/")) {
+		if(pathInfo == null || pathInfo.equals("/")) {
 			BufferedReader reader = request.getReader();
-			Person person = parseJsonPerson(reader);
-			facade.createPerson(person);
-			sendAsJson(response, person);
+			JsonObject jsonRoot = Json.createReader(reader).readObject();
+			String[] assignment = {jsonRoot.getString("persons_ssn"), jsonRoot.getString("projects_projectCode")};
+			Person person = facade.findPersonBySsn(assignment[0]);
+			Project project = facade.findProjectByProjectCode(assignment[1]);
+			if (person != null && project != null) {
+				facade.addPersonProject(project, person);
+				sendAsJson(response, assignment);
+			} 
 		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
@@ -70,15 +79,7 @@ public class Persons extends HttpServlet {
 	 * @see HttpServlet#doPut(HttpServletRequest, HttpServletResponse)
 	 */
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String pathInfo = request.getPathInfo();
-		if (pathInfo == null || pathInfo.equals("/")) {
-			BufferedReader reader = request.getReader();
-			Person person = parseJsonPerson(reader);
-			facade.updatePerson(person);
-			sendAsJson(response, person);
-		} else {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		}
+		// TODO Auto-generated method stub
 	}
 
 	/**
@@ -87,50 +88,45 @@ public class Persons extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
 		if(pathInfo == null || pathInfo.equals("/")) {
-			JsonReader jsonReader = Json.createReader(request.getReader());
-			JsonObject jsonRoot = jsonReader.readObject();
-			String ssn = jsonRoot.getString("ssn");
-			facade.deletePerson(ssn);
+			BufferedReader reader = request.getReader();
+			JsonObject jsonRoot = Json.createReader(reader).readObject();
+			String[] assignment = {jsonRoot.getString("persons_ssn"), jsonRoot.getString("projects_projectCode")};
+			Person person = facade.findPersonBySsn(assignment[0]);
+			Project project = facade.findProjectByProjectCode(assignment[1]);
+			if (person != null && project != null) {
+				System.out.println("doDelete hearing request to delete " + person.getName() + " from " + project.getName());
+				facade.removePersonProject(project, person);
+			}
 		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
-	
-	public void sendAsJson(HttpServletResponse response, List<Person> persons) throws IOException{
+	public void sendAsJson(HttpServletResponse response, ArrayList<String[]> assignments) throws IOException{
 		PrintWriter out = response.getWriter();
 		response.setContentType("application/json");
-		if (persons != null) {
+		if (assignments != null) {
 			JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-			for (Person p : persons) {
-				JsonObjectBuilder o = Json.createObjectBuilder();
-				o.add("ssn", p.getSsn());
-				o.add("name", p.getName());
-				arrayBuilder.add(o);
-			}
-			JsonArray array = arrayBuilder.build();
-			out.print(array);
+		    for(String[] assignment : assignments) {
+		    	JsonObjectBuilder o = Json.createObjectBuilder();
+		    	o.add("persons_ssn", assignment[0]);
+		    	o.add("projects_projectCode", assignment[1]);
+		    	arrayBuilder.add(o);
+		    }
+		    JsonArray array = arrayBuilder.build();
+		    out.print(array);
 		} else {
-			out.print("[]");
+			out.flush();
 		}
-		out.flush();
 	}
-	public void sendAsJson(HttpServletResponse response, Person person) throws IOException{
+	public void sendAsJson(HttpServletResponse response, String[] assignment) throws IOException{
 		PrintWriter out = response.getWriter();
 		response.setContentType("application/json");
-		if (person != null) {
-			out.print("[{\"ssn\":\"" + person.getSsn() + "\",");
-			out.print("\"name\":\"" + person.getName() + "\"}]");
+		if (assignment != null) {
+			out.print("[{\"persons_ssn\":\"" + assignment[0] + "\",");
+			out.print("\"projects_projectCode\":\"" + assignment[1] + "\"}]");
 		} else {
 			out.print("[]");
 		}
 		out.flush();
-	}
-	private Person parseJsonPerson(BufferedReader reader) {
-		JsonReader jsonReader = Json.createReader(reader);
-		JsonObject jsonRoot = jsonReader.readObject();
-		Person person = new Person();
-		person.setSsn(jsonRoot.getString("ssn"));
-		person.setName(jsonRoot.getString("name"));
-		return person;
 	}
 }

@@ -5,7 +5,7 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta charset="ISO-8859-1">
-		<link rel="stylesheet" type="text/css" href="../css/home.css">
+		<link rel="stylesheet" type="text/css" href="../css/assignment.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 		<script src="../js/assignment.js"></script>
 		<title>Praktikfall  Assignment</title>
@@ -52,6 +52,45 @@
 				</table>
 			</aside>
 			<section id="main">
+				<section id="content">
+					<form>
+						<div id="box">
+							<fieldset id="personalFS">
+								<legend>Assignment</legend>
+								Person<br>
+								<select id="selectPerson">
+									<option>Select person</option>
+								</select><br>
+								Project<br>
+								<select id="selectProject">
+									<option>Select project</option>
+								</select><br>
+								<input type="button" name="submitBtn" value="Add" id="AddBtn">
+							</fieldset>
+						</div>
+						<div id="box">
+							<img src="../images/search.png" alt="search icon" width="15" height="15">
+							<input type="text" name="searchAssignment" id="searchAssignment" value=""><br><br>
+							<table id="allAssignments" border="1">
+								<thead>
+									<tr>
+										<th colspan="2">Person</th>
+										<th colspan="2">Project</th>
+									</tr>
+									<tr>
+										<th>Social Security Number</th>
+										<th>Name</th>
+										<th>Code</th>
+										<th>Name</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table><br>
+							<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
+						</div>
+					</form>
+				</section>
 			</section>
 		</section>
 		<footer>

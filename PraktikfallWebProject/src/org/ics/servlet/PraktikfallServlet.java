@@ -2,6 +2,7 @@ package org.ics.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -73,7 +74,7 @@ public class PraktikfallServlet extends HttpServlet {
 		/****Create, update, delete Project****/
 		out.println("<h1>Project</h1>");
 		out.println("<h3>Creating some projects...</h3>");
-		Project pr = new Project("8008135", "Mature content");
+//		Project pr = new Project("8008135", "Mature content");
 //		facade.createProject(pr);
 		out.println("<p>Successfully created " + facade.findProjectByProjectCode("8008135").getName() + "</p>");
 		
@@ -96,11 +97,26 @@ public class PraktikfallServlet extends HttpServlet {
 		/****Create and delete PersonProject relations****/
 		out.println("<h3>Creating personproject relations...</h3>");
 //		facade.addPersonProject(pr1, p1);
-//		facade.addPersonProject(pr1, p2);
+		facade.addPersonProject(pr1, p2);
 //		facade.addPersonProject(pr2, p1);
-//		facade.addPersonProject(pr2, p2);
+		facade.addPersonProject(pr2, p2);
+		out.println("<h4>" + p2.getName() + " is assigned to...</h4>");
+		ArrayList<String[]> allAssignments = facade.findAllAssignments();
+		for (String[] assignment : allAssignments) {
+			if(assignment[0].equals(p2.getSsn())) {
+				out.println("<p>" + assignment[1] + "</p>");
+			}
+		}
 		out.println("<h3>Removing personproject relation...</h3>");
-//		facade.removePersonProject(pr2, p2);
+		facade.removePersonProject(pr2, p2);
+		//let's see which projects p2 now has: 
+		out.println("<h4>" + p2.getName() + " is now assigned to...</h4>");
+		allAssignments = facade.findAllAssignments();
+		for (String[] assignment : allAssignments) {
+			if(assignment[0].equals(p2.getSsn())) {
+				out.println("<p>" + assignment[1] + "</p>");
+			}
+		}
 		
 		
 		

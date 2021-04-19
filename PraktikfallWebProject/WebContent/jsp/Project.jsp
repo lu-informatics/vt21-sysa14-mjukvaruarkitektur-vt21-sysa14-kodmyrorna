@@ -64,22 +64,22 @@
 							<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
 							<p id="errorlabel">Error displays here</p>
 						</fieldset>
+						<div id="box">
+							<img src="../images/search.png" alt="search icon" width="15" height="15">
+							<input type="text" name="searchProject" id="searchProject" value=""><br><br>
+							<table id="allProjects" border="1">
+								<thead>
+									<tr>
+										<th>Project Code</th>
+										<th>Name</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table><br>
+							<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
+						</div>
 					</form>
-					<div id="box">
-						<img src="../images/search.png" alt="search icon" width="15" height="15">
-						<input type="text" name="searchProject" id="searchProject" value=""><br><br>
-						<table id="allProjects" border="1">
-							<thead>
-								<tr>
-									<th>Project Code</th>
-									<th>Name</th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table><br>
-						<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
-					</div>
 				</section>
 			</section>
 		</section>
