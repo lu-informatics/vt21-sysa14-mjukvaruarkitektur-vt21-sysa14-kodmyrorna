@@ -1,6 +1,8 @@
 package org.ics.facade;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -86,6 +88,7 @@ public class Facade implements FacadeLocal {
     }
     
     public void removePersonProject(Project project, Person person) {
+    	System.out.println("Facade hearing request to delete " + person.getName() + " from " + project.getName());
     	projectEAO.removePerson(project, person);
     	personEAO.removeProject(project, person);
     }
@@ -95,5 +98,15 @@ public class Facade implements FacadeLocal {
     }
     public Set<Person> findPersonsByProject(Project project){
     	return projectEAO.getPersons(project);
+    }
+    public ArrayList<String[]> findAllAssignments(){
+    	ArrayList<String[]> assignments = new ArrayList<String[]>();
+    	for(Person person : personEAO.findAllPersons()) {
+    		for(Project project : person.getProjects()) {
+    			String[] assignment = {person.getSsn(), project.getProjectCode()};
+    			assignments.add(assignment);
+    		}
+    	}
+    	return assignments;
     }
 }

@@ -47,19 +47,9 @@ public class Projects extends HttpServlet {
 			List<Project> projects = facade.findAllProjects();
 			sendAsJson(response, projects);
 			return;
-		}
-		String[] splitPath = pathInfo.split("/");
-		if(splitPath.length != 2) {
+		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return;
 		}
-		String projectCode = splitPath[1];
-		Project p = facade.findProjectByProjectCode(projectCode);
-		if (p != null) {
-			sendAsJson(response, p);
-			return;
-		}
-		response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 	}
 
 	/**
@@ -78,7 +68,15 @@ public class Projects extends HttpServlet {
 	}
 	
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		String pathInfo = request.getPathInfo();
+		if (pathInfo == null || pathInfo.equals("/")) {
+			BufferedReader reader = request.getReader();
+			Project project = parseJsonProject(reader);
+			facade.updateProject(project);
+			sendAsJson(response, project);
+		} else {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+		}
 	}
 
 	/**

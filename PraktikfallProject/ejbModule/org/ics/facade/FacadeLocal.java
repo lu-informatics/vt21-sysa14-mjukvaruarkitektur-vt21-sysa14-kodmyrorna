@@ -1,5 +1,7 @@
 package org.ics.facade;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -27,4 +29,5 @@ public interface FacadeLocal {
     public void removePersonProject(Project project, Person person);
     public Set<Project> findProjectsByPerson(Person person);
     public Set<Person> findPersonsByProject(Project project);
+    public ArrayList<String[]> findAllAssignments();
 }

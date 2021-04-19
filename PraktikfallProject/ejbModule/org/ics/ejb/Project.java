@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -51,7 +52,7 @@ public class Project implements Serializable{
 		this.name = name;
 	}
 	
-	@ManyToMany(mappedBy="projects")
+	@ManyToMany(mappedBy="projects", fetch = FetchType.EAGER)
 	public Set<Person> getPersons() {
 		return persons;
 	}
