@@ -28,6 +28,7 @@ $(document).ready(function(){
 		}
 	})
 	//Highlight rows in tables
+	//TODO don't let user highlight header :C
 	$(document).on("click", "#allPersons tr", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#allPersons tr").removeClass("highlight");
@@ -48,13 +49,12 @@ $(document).ready(function(){
 			$(this).addClass("highlight");
 	})
 	$("#AddBtn").click(function(){
-		//TODO multiple adds of same object should not be possible
 		let ssnStr = $("#ssn").val();
 		let nameStr = $("#name").val();
 		let obj = {ssn: ssnStr, name: nameStr};
 		let jsonString = JSON.stringify(obj);
-		if (nameStr != null && ssnStr != null){
-			//TODO check primary key validity?
+		let ssnArray = getSsnArray();
+		if (nameStr != "" && ssnStr != "" && !(ssnArray.includes(ssnStr))){
 			$.ajax({
 				method: "POST",
 				url: "http://localhost:8080/PraktikfallWebProject/Persons/",
@@ -66,21 +66,32 @@ $(document).ready(function(){
 			function ajaxAddPersonSuccess(result, status, xhr){
 				//TODO Ask Filiph: Empty fields at successful add or let entered values remain?
 				$("#ssn").val("");
-				$("#ssn").attr("placeholder", "Person added");
+				$("#ssn").attr("placeholder", "Person added"); //TODO i don't like this confirmation :C it's not pretty enough
 				$("#name").val("");
 				updateTable("add", ssnStr, nameStr);
 			}
 			function ajaxAddPersonError(result, status, xhr){
-				console.log("ajaxAddPersonError: " + status);
+				//TODO give user error
+				console.log("ajaxAddPersonError xhr: " + xhr);
 				$("#errorlabel").text("Error adding person");
 			}
+		} else if (ssnArray.includes(ssnStr)){
+			//TODO tell user they can't add two persons with same ssn
+			alert("primary key violation");
+		} else if (nameStr === ""){
+			//TODO tell user to enter name
+			alert("name empty");
+		} else if (ssnStr === ""){
+			//TODO tell user to enter ssn
+			alert("ssn empty");
 		}
 	}) //AddBtn
 	$("#DeleteBtn").click(function(){
 		let ssnStr = $("#ssn").val();
-		let obj = {ssn: ssnStr};
-		let jsonString = JSON.stringify(obj);
-		if (ssnStr != null){
+		let ssnArray = getSsnArray();
+		if (ssnStr != null && ssnStr != "" && ssnArray.includes(ssnStr)){
+			let obj = {ssn: ssnStr};
+			let jsonString = JSON.stringify(obj);
 			$.ajax({
 				method: "DELETE",
 				url: "http://localhost:8080/PraktikfallWebProject/Persons/",
@@ -90,23 +101,27 @@ $(document).ready(function(){
 			})
 			function ajaxDelPersonSuccess(result, status, xhr){
 				$("#ssn").val("");
-				$("#ssn").attr("placeholder", "Person deleted");
+				$("#ssn").attr("placeholder", "Person deleted"); //TODO i don't like this confirmation :C it's not pretty enough
 				updateTable("delete", ssnStr);
 				updateProjects("clear");
 			}
 			function ajaxDelPersonError(result, status, xhr){
-				console.log("ajaxDelPersonError: " + status);
+				//TODO give user error
+				console.log("ajaxDelPersonError xhr: " + xhr);
 				$("#errorlabel").text("Error deleting person");
 			}
+		} else {
+			//TODO tell user to select a valid person
+			alert("invalid ssn");
 		}
 	}) //DeleteBtn
-	$("#UpdateBtn").click(function(){
-		//TODO prevent changes to social security number - not possible, primary key!
+	$("#UpdateBtn").click(function(){ 
 		let ssnStr = $("#ssn").val();
 		let nameStr = $("#name").val();
-		let obj = {ssn: ssnStr, name: nameStr};
-		let jsonString = JSON.stringify(obj);
-		if (ssnStr != null && nameStr != null){
+		let ssnArray = getSsnArray();
+		if (nameStr != "" && ssnArray.includes(ssnStr)){
+			let obj = {ssn: ssnStr, name: nameStr};
+			let jsonString = JSON.stringify(obj);
 			$.ajax({
 				method: "PUT",
 				url: "http://localhost:8080/PraktikfallWebProject/Persons/",
@@ -118,13 +133,19 @@ $(document).ready(function(){
 			function ajaxUpdatePersonSuccess(result, status, xhr){
 				$("#name").val("");
 				$("#ssn").val("");
-				$("#ssn").attr("placeholder", "Person updated");
+				$("#ssn").attr("placeholder", "Person updated"); //TODO i don't like this confirmation :C it's not pretty enough
 				updateTable("update", ssnStr, nameStr);
 			}
 			function ajaxUpdatePersonError(result, status, xhr){
-				console.log("ajaxUpdatePersonError: " + status);
-				$("#errorlabel").text("Error updating person");
+				//TODO give user error
+				console.log("ajaxUpdatePersonError xhr: " + xhr);
 			}
+		} else if (!ssnArray.includes(ssnStr)){
+			//TODO tell user they can only update info of existing persons
+			alert("ssn not in database");
+		} else if (nameStr === ""){
+			//TODO tell user to enter a name???
+			alert("name empty");
 		}
 	})//UpdateBtn
 	$("#removeFromProject").click(function(){
@@ -141,7 +162,7 @@ $(document).ready(function(){
 			})
 			function ajaxDeleteAssignmentError(result, status, xhr){
 				//TODO give user error
-				console.log("ajaxDeleteAssignmentError: " + xhr);
+				console.log("ajaxDeleteAssignmentError xhr: " + xhr);
 			}
 			function ajaxDeleteAssignmentSuccess(result, status, xhr){
 				let personName = $("#allPersons tr.highlight").find("td:eq(1)").text();
@@ -167,7 +188,7 @@ $(document).ready(function(){
 			})
 			function ajaxAddAssignmentError(result, status, xhr){
 				//TODO give user error
-				console.log("ajaxAddAssignmentError: " + xhr);
+				console.log("ajaxAddAssignmentError xhr: " + xhr);
 			}
 			function ajaxAddAssignmentSuccess(result, status, xhr){
 				let personName = $("#allPersons tr.highlight").find("td:eq(1)").text();
@@ -176,6 +197,13 @@ $(document).ready(function(){
 		}
 	}) //addToProject button
 })
+function getSsnArray(){
+	let ssnArray = new Array();
+	for(let i = 0; i < personArray.length; i++){
+		ssnArray.push(personArray[i][0]);
+	}
+	return ssnArray;
+}
 function updateTable(operation, ssn, name){
 	$("#allPersons td").parent().remove(); //Clears table
 	let indexOfElement = null;
@@ -238,6 +266,7 @@ function updateProjects(operation, ssn, personName, code, projectName){
 	let personProjects = new Array(); //this persons projects
 	for (let i = 0; i < assignmentsWithNames.length; i++){
 		if (assignmentsWithNames[i][0] === ssn){
+			//TODO this should only add to select if the project is not already added to person
 			personProjects.push([assignmentsWithNames[i][2], assignmentsWithNames[i][3]]);
 			addRow("personProjects", assignmentsWithNames[i][2], assignmentsWithNames[i][3]);
 		}
@@ -294,6 +323,7 @@ async function loadPersons(){
 		success: ajaxGetPersonsSuccess
 	})
 	function ajaxGetPersonsError(result, status, xhr){
+		//TODO give user error
 		console.log("ajaxGetPersonsError xhr: " + xhr);
 	}
 	function ajaxGetPersonsSuccess(result, status, xhr){
@@ -311,8 +341,8 @@ async function loadProjects(){
 		success: ajaxGetProjectsSuccess
 	})
 	function ajaxGetProjectsError(result, status, xhr){
+		//TODO give user error
 		console.log("ajaxGetProjectsError xhr: " + xhr);
-		//TODO change all of these to xhr, better error message
 	}
 	function ajaxGetProjectsSuccess(result, status, xhr){
 		$.each(result, function(index, element){
@@ -329,6 +359,7 @@ async function loadAssignments(){
 		success: ajaxGetAssignmentsSuccess
 	})
 	function ajaxGetAssignmentsError(result, status, xhr){
+		//TODO give user error
 		console.log("ajaxGetAssignmentsError xhr: " + xhr);
 	}
 	function ajaxGetAssignmentsSuccess(result, status, xhr){
