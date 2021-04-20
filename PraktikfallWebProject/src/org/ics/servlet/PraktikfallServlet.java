@@ -1,5 +1,6 @@
 package org.ics.servlet;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -7,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.EJB;
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -40,7 +43,6 @@ public class PraktikfallServlet extends HttpServlet {
 	 */
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
 		PrintWriter out = response.getWriter();
 		out.println("<!DOCTYPE html><html><head>");
 		out.println("<title>Group 7</title>");
@@ -76,7 +78,7 @@ public class PraktikfallServlet extends HttpServlet {
 		out.println("<h3>Creating some projects...</h3>");
 //		Project pr = new Project("8008135", "Mature content");
 //		facade.createProject(pr);
-		out.println("<p>Successfully created " + facade.findProjectByProjectCode("8008135").getName() + "</p>");
+//		out.println("<p>Successfully created " + facade.findProjectByProjectCode("8008135").getName() + "</p>");
 		
 		Project pr1 = new Project("ABC123", "Kindergarten");
 //		facade.createProject(pr1);
@@ -117,7 +119,6 @@ public class PraktikfallServlet extends HttpServlet {
 				out.println("<p>" + assignment[1] + "</p>");
 			}
 		}
-		
 		
 		
 		/*****Filling the database with some random shit*****/
@@ -203,7 +204,6 @@ public class PraktikfallServlet extends HttpServlet {
 		
 		out.println("</body></html>");
 	}
-
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -216,8 +216,6 @@ public class PraktikfallServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		
 	}
-
 }

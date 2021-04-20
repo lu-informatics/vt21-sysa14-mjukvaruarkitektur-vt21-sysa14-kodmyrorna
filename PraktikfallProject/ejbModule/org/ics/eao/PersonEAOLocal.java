@@ -19,4 +19,5 @@ public interface PersonEAOLocal {
 	public List<Person> findAllPersons();
 	public List<Person> findByName(String name);
 	public Set<Project> getProjects(Person person);
+	public void deleteAssignment(Project project, Person person);
 }

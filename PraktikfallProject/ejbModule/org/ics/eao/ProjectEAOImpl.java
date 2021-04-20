@@ -45,6 +45,10 @@ public class ProjectEAOImpl implements ProjectEAOLocal {
 	public void deleteProject(String projectCode) {
 		Project project = this.findProject(projectCode);
 		if(project != null){
+			Set<Person> persons = project.getPersons();
+			for (Person person : persons) {
+				person.removeProject(project);
+			}
 			em.remove(project); 
 		}
 	}
@@ -54,6 +58,7 @@ public class ProjectEAOImpl implements ProjectEAOLocal {
 		em.merge(project);
 	}
 	public void removePerson(Project project, Person person) {
+		System.out.println("ProjectEAO.removePerson() " + person.getName());
 		project.removePerson(person);
 		em.merge(project);
 	}

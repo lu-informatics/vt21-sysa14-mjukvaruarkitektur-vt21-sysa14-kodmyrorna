@@ -1,15 +1,9 @@
-let assignmentArray = new Array(); //TODO Make lists alphabetical/numerical instead of by most recently added
+let assignmentArray = new Array(); 
 let personArray = new Array();
 let projectArray = new Array();
 $(document).ready(function(){
 	getWeather();
-	//Load persons and projects before assignments
-	Promise.allSettled([
-		loadPersons(),
-		loadProjects()
-	]).then(loadAssignments())
-	.catch((message) => console.log(message));
-	//Highlight rows in table
+    loadAll();
 	$(document).on("click", "#allAssignments thead tr", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#allAssignments tr").removeClass("highlight");
@@ -39,6 +33,7 @@ $(document).ready(function(){
 		}
 	})
 	$("#AddBtn").click(function(){
+		//TODO multiple adds of same item should not be possible
 		let ssn = $("#selectPerson").val();
 		let code = $("#selectProject").val();
 		if (ssn != "Select person" && code != "Select project"){
@@ -46,7 +41,7 @@ $(document).ready(function(){
 			let jsonString = JSON.stringify(obj);
 			$.ajax({
 				method: "POST",
-				url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
+				url: "http://localhost:8080/PraktikfallWebProject/Assignments/post",
 				data: jsonString,
 				dataType: "json",
 				error: ajaxAddAssignmentError,
@@ -67,7 +62,6 @@ $(document).ready(function(){
 				updateTable("add", ssn, code, personName, projectName);
 			}
 			function ajaxAddAssignmentError(result, status, xhr){
-				//TODO if the person/project is already added, prevent add
 				console.log("ajaxAddAssignmentError xhr: " + xhr);
 			}
 		}
@@ -87,13 +81,14 @@ $(document).ready(function(){
 			let jsonString = JSON.stringify(obj);
 			$.ajax({
 				method: "DELETE",
-				url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
+				url: "http://localhost:8080/PraktikfallWebProject/Assignments/delete",
 				data: jsonString,
 				error: ajaxDeleteAssignmentError,
 				success: ajaxDeleteAssignmentSuccess
 			})
 			function ajaxDeleteAssignmentSuccess(result, status, xhr){
 				updateTable("delete", selectedPerson, selectedProject);
+				alert("success..?");
 			}
 			function ajaxDeleteAssignmentError(result, status, xhr){
 				console.log("ajaxDeleteAssignmentError xhr: " + xhr);
@@ -142,6 +137,7 @@ function updateTable(operation, personSsn, projectCode, personName, projectName)
 			break;
 	}
 	let assignmentsWithNames = matchAssignmentNames();
+	assignmentsWithNames.sort();
 	for (let i = 0; i < assignmentsWithNames.length; i++){
 		addRow(assignmentsWithNames[i]);
 	}
@@ -159,8 +155,11 @@ function fillSelects(){
 function addRow(row){
 	$("#allAssignments tr:last").after("<tr><td>" + row[0] + "</td><td>" + row[1] + "</td><td>" + row[2] + "</td><td>" + row[3] + "</td></tr>"); 
 }
-function loadPersons(){
-	let loaded = false;
+async function loadAll() {
+    await loadPersons();
+    await loadProjects();
+}
+async function loadPersons(){
 	$.ajax({
 		method: "GET",
 		url: "http://localhost:8080/PraktikfallWebProject/Persons/",
@@ -174,18 +173,9 @@ function loadPersons(){
 		$.each(result, function(index, element){
 			personArray.push([element.ssn, element.name]);
 		})
-		loaded = true;
 	}
-	return new Promise((resolve, reject) => {
-		   if(loaded) {
-		      resolve();
-		   } else {
-		      reject("Failed to load persons");
-		   }
-		});
 }
-function loadProjects(){
-	let loaded = false;
+async function loadProjects(){
 	$.ajax({
 		method: "GET",
 		url: "http://localhost:8080/PraktikfallWebProject/Projects/",
@@ -200,20 +190,13 @@ function loadProjects(){
 		$.each(result, function(index, element){
 			projectArray.push([element.projectCode, element.name]);
 		})
-		loaded = true;
+		loadAssignments();
 	}
-	return new Promise((resolve, reject) => {
-		   if(loaded) {
-		      resolve();
-		   } else {
-		      reject("Failed to load projects");
-		   }
-		});
 }
-function loadAssignments(){
+async function loadAssignments(){
 	$.ajax({
 		method: "GET",
-		url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
+		url: "http://localhost:8080/PraktikfallWebProject/Assignments/get",
 		error: ajaxGetAssignmentsError,
 		success: ajaxGetAssignmentsSuccess
 	})

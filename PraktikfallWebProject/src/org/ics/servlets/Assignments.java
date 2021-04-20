@@ -4,10 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.json.Json;
@@ -15,21 +11,20 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonReader;
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ics.ejb.Person;
-import org.ics.ejb.Project;
-import org.ics.facade.FacadeLocal;
+import org.ics.ejb.*;
+import org.ics.facade.*;
 
 /**
  * Servlet implementation class Assignments
  */
-@WebServlet("/Assignments/*")
+@WebServlet(urlPatterns= {"/Assignments/*"}, asyncSupported=true)
 public class Assignments extends HttpServlet {
 	private static final long serialVersionUID = 1L;
       
@@ -42,13 +37,29 @@ public class Assignments extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
+    /**
+	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String pathInfo = request.getPathInfo();
+		if (pathInfo.equals("/delete")) {
+			System.out.println("Assignments.service let's delete");
+			doDelete(request, response);
+		} else if (pathInfo.equals("/post")) {
+			doPost(request, response);
+		} else if (pathInfo.equals("/get")) {
+			doGet(request, response);
+		} else {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+		}
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if (pathInfo.equals("/") || pathInfo == null) {
+		if (pathInfo.equals("/") || pathInfo == null || pathInfo.equals("/get")) {
 			sendAsJson(response, facade.findAllAssignments());
 		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -60,7 +71,7 @@ public class Assignments extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if(pathInfo == null || pathInfo.equals("/")) {
+		if(pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/post")) {
 			BufferedReader reader = request.getReader();
 			JsonObject jsonRoot = Json.createReader(reader).readObject();
 			String[] assignment = {jsonRoot.getString("persons_ssn"), jsonRoot.getString("projects_projectCode")};
@@ -86,21 +97,16 @@ public class Assignments extends HttpServlet {
 	 * @see HttpServlet#doDelete(HttpServletRequest, HttpServletResponse)
 	 */
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String pathInfo = request.getPathInfo();
-		if(pathInfo == null || pathInfo.equals("/")) {
-			BufferedReader reader = request.getReader();
-			JsonObject jsonRoot = Json.createReader(reader).readObject();
-			String[] assignment = {jsonRoot.getString("persons_ssn"), jsonRoot.getString("projects_projectCode")};
-			Person person = facade.findPersonBySsn(assignment[0]);
-			Project project = facade.findProjectByProjectCode(assignment[1]);
-			if (person != null && project != null) {
-				System.out.println("doDelete hearing request to delete " + person.getName() + " from " + project.getName());
-				facade.removePersonProject(project, person);
-			}
-		} else {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+		BufferedReader reader = request.getReader();
+		JsonObject jsonRoot = Json.createReader(reader).readObject();
+		String[] assignment = {jsonRoot.getString("persons_ssn"), jsonRoot.getString("projects_projectCode")};
+		Person person = facade.findPersonBySsn(assignment[0]);
+		Project project = facade.findProjectByProjectCode(assignment[1]);
+		if (person != null && project != null) {
+			facade.deleteAssignment(project,  person);
 		}
 	}
+	
 	public void sendAsJson(HttpServletResponse response, ArrayList<String[]> assignments) throws IOException{
 		PrintWriter out = response.getWriter();
 		response.setContentType("application/json");

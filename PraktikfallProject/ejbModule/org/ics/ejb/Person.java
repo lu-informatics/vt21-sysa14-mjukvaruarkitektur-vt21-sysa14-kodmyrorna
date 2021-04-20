@@ -62,6 +62,7 @@ public class Person implements Serializable{
 		this.projects.add(project);
 	}
 	public void removeProject(Project project) {
+		System.out.println("Person.removeProject() " + project.getName());
 		this.projects.remove(project);
 	}
 }
