@@ -1,3 +1,4 @@
+//TODO limit nbr of characters for project code and name
 let projectArray = new Array();
 let personArray = new Array();
 let assignmentArray = new Array();
@@ -164,8 +165,12 @@ $(document).ready(function(){
 		}
 	})
 	$("#addNewPerson").click(function(){
-		toggleSelectVisibility("visible");
-	}) //addNewPerson (shows addPerson button and select)
+		if ($(".newPersonMenu").is(":hidden")){
+			toggleSelectVisibility("visible");
+		} else {
+			toggleSelectVisibility("invisible");
+		}
+	}) //addNewPerson toggles visibility of add new person menu
 	$("#addPerson").click(function(){
 		let code = $("#projectCode").val();
 		let ssn = $("#selectNewPerson").val();
@@ -281,8 +286,7 @@ function updatePersons(operation, code, projectName, ssn, personName){
 	let projectPersons = new Array(); //this project's persons
 	for (let i = 0; i < assignmentsWithNames.length; i++){
 		if (assignmentsWithNames[i][2] === code){
-			//TODO this should only add to select if the person is not already added to project
-			projectPersons.push([assignmentsWithNames[i][0], assignmentsWithNames[i][1]]);
+			projectPersons.push(assignmentsWithNames[i][0]);
 			addRow("projectPersons", assignmentsWithNames[i][0], assignmentsWithNames[i][1]);
 		}
 	}
@@ -290,7 +294,7 @@ function updatePersons(operation, code, projectName, ssn, personName){
 	toggleSelectVisibility("invisible"); //gonna be populated but invisible until "add new project" is pressed
 	$('#selectNewPerson').children().remove().end().append('<option>Select person</option>');
 	for (let i = 0; i < personArray.length; i++){
-		if(!projectPersons.includes(personArray[i])){
+		if(!projectPersons.includes(personArray[i][0])){
 			let personText = personArray[i][0] + ", " + personArray[i][1];
 			$('#selectNewPerson').append($('<option>').val(personArray[i][0]).text(personText));
 		}
