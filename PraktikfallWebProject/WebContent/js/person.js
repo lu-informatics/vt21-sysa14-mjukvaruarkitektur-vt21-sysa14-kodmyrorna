@@ -46,9 +46,6 @@ $(document).ready(function(){
 		$("#personProjects tr").removeClass("highlight");
 		if (!selected)
 			$(this).addClass("highlight");
-		let code = $(this).find("td:eq(0)").text();
-		chosenProject = code;
-		console.log(chosenProject);
 	})
 	$("#AddBtn").click(function(){
 		//TODO multiple adds of same object should not be possible
@@ -152,11 +149,32 @@ $(document).ready(function(){
 				updateProjects("remove", ssn, personName, code, projectName);
 			}
 		}
-	})
+	}) //remove from project
 	$("#addNewProject").click(function(){
 		toggleSelectVisibility("visible");
-		
-	})
+	}) //show add new project menu
+	$("#addToProject").click(function(){
+		let ssn = $("#ssn").val();
+		let code = $("#selectNewProject").val();
+		let jsonString = JSON.stringify({persons_ssn: ssn, projects_projectCode: code});
+		if (code != null && ssn != null){
+			$.ajax({
+				method: "POST",
+				url: "http://localhost:8080/PraktikfallWebProject/Assignments/post",
+				data: jsonString,
+				error: ajaxAddAssignmentError,
+				success: ajaxAddAssignmentSuccess
+			})
+			function ajaxAddAssignmentError(result, status, xhr){
+				//TODO give user error
+				console.log("ajaxAddAssignmentError: " + xhr);
+			}
+			function ajaxAddAssignmentSuccess(result, status, xhr){
+				let personName = $("#allPersons tr.highlight").find("td:eq(1)").text();
+				updateProjects("add", ssn, personName, code);
+			}
+		}
+	}) //addToProject button
 })
 function updateTable(operation, ssn, name){
 	$("#allPersons td").parent().remove(); //Clears table
@@ -207,11 +225,15 @@ function updateProjects(operation, ssn, personName, code, projectName){
 			}
 			assignmentArray.splice(indexOfElement, 1);
 			break;
+		case("add"):
+			assignmentArray.push([ssn, code]);
+			break;
 		case("clear"):
 			$("#projectLegend").text("Projects chosen person is assigned to");
 		default:
 			break;
 	}
+	assignmentArray.sort();
 	let assignmentsWithNames = matchAssignmentNames();
 	let personProjects = new Array(); //this persons projects
 	for (let i = 0; i < assignmentsWithNames.length; i++){

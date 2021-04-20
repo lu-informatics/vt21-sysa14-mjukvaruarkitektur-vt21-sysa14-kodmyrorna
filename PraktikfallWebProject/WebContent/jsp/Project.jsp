@@ -53,18 +53,18 @@
 			</aside>
 			<section id="main">´
 				<section id="content">
-					<form>
-						<fieldset id="PersonalFS" class="box">
-							<legend>Project</legend>
-							Project Code:<br>
-							<input type="text" name="projectCode" id="projectCode" value=""><br>
-							Name:<br>
-							<input type="text" name="name" id="name" value=""><br><br>
-							<input type="button" name="submitBtn" value="Add" id="AddBtn">
-							<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
-							<p id="errorlabel">Error displays here</p>
-						</fieldset>
-						<div id="box">
+					<div class="box">
+						<form>
+							<fieldset id="PersonalFS">
+								<legend>Project</legend>
+								Project Code:<br>
+								<input type="text" name="projectCode" id="projectCode" value=""><br>
+								Name:<br>
+								<input type="text" name="name" id="name" value=""><br><br>
+								<input type="button" name="submitBtn" value="Add" id="AddBtn">
+								<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
+								<p id="errorlabel">Error displays here</p>
+							</fieldset>
 							<img src="../images/search.png" alt="search icon" width="15" height="15">
 							<input type="text" name="searchProject" id="searchProject" value=""><br><br>
 							<table id="allProjects" border="1">
@@ -78,8 +78,31 @@
 								</tbody>
 							</table><br>
 							<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
-						</div>
-					</form>
+						</form>
+					</div>
+					<div class="box">
+						<fieldset>
+							<legend id="personLegend">Persons assigned to chosen project</legend>
+							<table id="projectPersons">
+								<thead>
+									<tr>
+										<th>Social security number</th>
+										<th>Name</th>
+									</tr>
+								</thead>
+							</table>
+							<br><input type="button" name="removePerson" id="removePerson" value="Remove person"><br>
+							<br><input type="button" name="addNewPerson" id="addNewPerson" value="Add new person..."><br>
+							<div id="newPersonMenu" class="newPersonMenu">
+								<fieldset id="newProjectFS" class="newPersonMenu">
+									<br><select id="selectNewPerson" class="newPersonMenu">
+										<option>Select person</option>
+									</select><br>
+									<input type="button" name="addPerson" id="addPerson" value="Add" class="newPersonMenu"><br>
+								</fieldset>
+							</div>
+						</fieldset>
+					</div>
 				</section>
 			</section>
 		</section>

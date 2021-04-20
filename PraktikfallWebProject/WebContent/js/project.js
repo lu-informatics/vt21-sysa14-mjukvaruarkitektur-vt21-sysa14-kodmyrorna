@@ -1,7 +1,10 @@
 let projectArray = new Array();
+let personArray = new Array();
+let assignmentArray = new Array();
 $(document).ready(function(){
 	getWeather();
-	loadProjects();
+	loadAll(); 
+	toggleSelectVisibility("invisible");
 	//filter search
 	document.getElementById("searchProject").addEventListener("keydown", function(e){
 		$("#allProjects td").parent().remove(); //clears table
@@ -19,20 +22,31 @@ $(document).ready(function(){
 				}
 			}
 			if (containsSearch){
-				addRow(projectArray[i][0], projectArray[i][1]);
+				addRow("allProjects", projectArray[i][0], projectArray[i][1]);
 			}
 		}
 	})
-	//Highlight rows in table
+	//Highlight rows in tables
 	$(document).on("click", "#allProjects tr", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#allProjects tr").removeClass("highlight");
+		if (!selected) { //If I wanna highlight a row
+			$(this).addClass("highlight");
+			let code = $(this).find("td:eq(0)").text();
+			$("#projectCode").val(code);
+			updatePersons(null, code, $(this).find("td:eq(1)").text());
+		} else { //Un-highlighting a row
+			updatePersons("clear");
+			$("#projectCode").val("");
+		}
+	})
+	$(document).on("click", "#projectPersons tr", function (){
+		let selected = $(this).hasClass("highlight");
+		$("#projectPersons tr").removeClass("highlight");
 		if (!selected)
 			$(this).addClass("highlight");
-		let projectCode = $(this).find("td:eq(0)").text();
-		$("#projectCode").val(projectCode);
 	})
-	$("#AddBtn").click(function(){
+	$("#AddBtn").click(function(){ 
 		//TODO multiple adds of same object should not be possible
 		let projectCodeStr = $("#projectCode").val();
 		let nameStr = $("#name").val();
@@ -110,11 +124,79 @@ $(document).ready(function(){
 				$("#errorlabel").text("Error updating project");
 			}
 		}
+	}) //UpdateBtn
+	$("#removePerson").click(function(){
+		let code = $("#projectCode").val();
+		let ssn = $("#projectPersons tr.highlight").find("td:eq(0)").text(); 
+		let jsonString = JSON.stringify({persons_ssn: ssn, projects_projectCode: code});
+		if (code != null && ssn != "Social security number"){
+			$.ajax({
+				method: "DELETE",
+				url: "http://localhost:8080/PraktikfallWebProject/Assignments/delete",
+				data: jsonString,
+				error: ajaxDeleteAssignmentError,
+				success: ajaxDeleteAssignmentSuccess
+			})
+			function ajaxDeleteAssignmentError(result, status, xhr){
+				//TODO give user error
+				console.log("ajaxDeleteAssignmentError: " + xhr);
+			}
+			function ajaxDeleteAssignmentSuccess(result, status, xhr){
+				let projectName = $("#allProjects tr.highlight").find("td:eq(1)").text();
+				let personName = $("#projectPersons tr.highlight").find("td:eq(1)").text();
+				updatePersons("remove", code, projectName, ssn, personName);
+			}
+		}
 	})
+	$("#addNewPerson").click(function(){
+		toggleSelectVisibility("visible");
+	}) //addNewPerson (shows addPerson button and select)
+	$("#addPerson").click(function(){
+		let code = $("#projectCode").val();
+		let ssn = $("#selectNewPerson").val();
+		let jsonString = JSON.stringify({persons_ssn: ssn, projects_projectCode: code});
+		if (code != null && ssn != null){
+			$.ajax({
+				method: "POST",
+				url: "http://localhost:8080/PraktikfallWebProject/Assignments/post",
+				data: jsonString,
+				error: ajaxAddAssignmentError,
+				success: ajaxAddAssignmentSuccess
+			})
+			function ajaxAddAssignmentError(result, status, xhr){
+				//TODO give user error
+				console.log("ajaxAddAssignmentError: " + xhr);
+			}
+			function ajaxAddAssignmentSuccess(result, status, xhr){
+				let projectName = $("#allProjects tr.highlight").find("td:eq(1)").text();
+				updatePersons("add", code, projectName, ssn);
+			}
+		}
+	}) //addPerson
 })
 
-function addRow(projectCode, name){
-	$("#allProjects tr:last").after("<tr><td>" + projectCode + "</td><td>" + name + "</td></p></tr>");
+function addRow(element, val1, val2){
+	$("#" + element + " tr:last").after("<tr><td>" + val1 + "</td><td>" + val2 + "</td></p></tr>");
+}
+function matchAssignmentNames(){
+	let result = new Array();
+	for (let i = 0; i < assignmentArray.length; i++){
+		let personName = "";
+		let projectName = "";
+		for(let j = 0; j < personArray.length; j++){
+			if(personArray[j][0] === assignmentArray[i][0]){
+				personName = personArray[j][1];
+			}
+		}
+		for(let j = 0; j < projectArray.length; j++){
+			if(projectArray[j][0] === assignmentArray[i][1]){
+				projectName = projectArray[j][1];
+			}
+		}
+		let assignment = [assignmentArray[i][0], personName, assignmentArray[i][1], projectName];
+		result.push(assignment);
+	}
+	return result;
 }
 function updateTable(operation, code, name){
 	$("#allProjects td").parent().remove(); //Clears table
@@ -146,25 +228,111 @@ function updateTable(operation, code, name){
 	//Adds values back to table
 	projectArray.sort();
 	for(let i = 0; i < projectArray.length; i++){
-		addRow(projectArray[i][0], projectArray[i][1]);
+		addRow("allProjects", projectArray[i][0], projectArray[i][1]);
 	}
 }
-function loadProjects(){ //only called once at beginning inside $(document).ready()
+function updatePersons(operation, code, projectName, ssn, personName){
+	/*FIRST UPDATE TABLE*/
+	$("#projectPersons td").parent().remove(); //Clears table
+	$("#personLegend").text("Persons assigned to " + projectName);
+	let indexOfElement = null;
+	switch(operation){
+		case("remove"):
+			for (let i = 0; i < assignmentArray.length; i++){
+				if (assignmentArray[i][0] === ssn && assignmentArray[i][1] === code){
+					console.log("index of element: " + i);
+					indexOfElement = i;
+				}
+			}
+			assignmentArray.splice(indexOfElement, 1);
+			break;
+		case("add"):
+			assignmentArray.push([ssn, code]);
+			break;
+		case("clear"):
+			$("#personLegend").text("Persons assigned to chosen project");
+		default:
+			break;
+	}
+	assignmentArray.sort();
+	let assignmentsWithNames = matchAssignmentNames();
+	let projectPersons = new Array(); //this project's persons
+	for (let i = 0; i < assignmentsWithNames.length; i++){
+		if (assignmentsWithNames[i][2] === code){
+			projectPersons.push([assignmentsWithNames[i][0], assignmentsWithNames[i][1]]);
+			addRow("projectPersons", assignmentsWithNames[i][0], assignmentsWithNames[i][1]);
+		}
+	}
+	/*THEN UPDATE SELECT*/
+	toggleSelectVisibility("invisible"); //gonna be populated but invisible until "add new project" is pressed
+	$('#selectNewPerson').children().remove().end().append('<option>Select person</option>');
+	for (let i = 0; i < personArray.length; i++){
+		if(!projectPersons.includes(personArray[i])){
+			let personText = personArray[i][0] + ", " + personArray[i][1];
+			$('#selectNewPerson').append($('<option>').val(personArray[i][0]).text(personText));
+		}
+	}
+}
+function toggleSelectVisibility(option){
+	if(option === "invisible"){
+		$(".newPersonMenu").hide("fast");
+	} else if (option === "visible"){
+		$(".newPersonMenu").show("fast");
+	}
+}
+async function loadAll() {
+    await loadProjects();
+    await loadPersons();
+}
+async function loadProjects(){
 	$.ajax({
 		method: "GET",
 		url: "http://localhost:8080/PraktikfallWebProject/Projects/",
-		error: ajaxGetAllProjectsError,
-		success: ajaxGetAllProjectsSuccess
+		error: ajaxGetProjectsError,
+		success: ajaxGetProjectsSuccess
 	})
-	function ajaxGetAllProjectsError (result, status, xhr){
-		console.log("Error retreiving all projects: " + status);
+	function ajaxGetProjectsError(result, status, xhr){
+		console.log("ajaxGetProjectsError xhr: " + xhr);
+		//TODO change all of these to xhr, better error message
 	}
-	function ajaxGetAllProjectsSuccess(result, status, xhr){
+	function ajaxGetProjectsSuccess(result, status, xhr){
 		$.each(result, function(index, element){
-			let project = [element.projectCode, element.name];
-			projectArray.push(project);
+			projectArray.push([element.projectCode, element.name]);
 		})
 		updateTable();
+	}
+}
+async function loadPersons(){
+	$.ajax({
+		method: "GET",
+		url: "http://localhost:8080/PraktikfallWebProject/Persons/",
+		error: ajaxGetPersonsError,
+		success: ajaxGetPersonsSuccess
+	})
+	function ajaxGetPersonsError(result, status, xhr){
+		console.log("ajaxGetPersonsError xhr: " + xhr);
+	}
+	function ajaxGetPersonsSuccess(result, status, xhr){
+		$.each(result, function(index, element){
+			personArray.push([element.ssn, element.name]);
+		})
+		loadAssignments();
+	}
+}
+async function loadAssignments(){
+	$.ajax({
+		method: "GET",
+		url: "http://localhost:8080/PraktikfallWebProject/Assignments/get",
+		error: ajaxGetAssignmentsError,
+		success: ajaxGetAssignmentsSuccess
+	})
+	function ajaxGetAssignmentsError(result, status, xhr){
+		console.log("ajaxGetAssignmentsError xhr: " + xhr);
+	}
+	function ajaxGetAssignmentsSuccess(result, status, xhr){
+		$.each(result, function(index, element){
+			assignmentArray.push([element.persons_ssn, element.projects_projectCode]);
+		})
 	}
 }
 function getWeather(){

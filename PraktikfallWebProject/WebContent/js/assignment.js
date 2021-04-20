@@ -32,7 +32,7 @@ $(document).ready(function(){
 			}
 		}
 	})
-	$("#AddBtn").click(function(){
+	$("#AddBtn").click(function(){ //TODO add clears selects?
 		//TODO multiple adds of same item should not be possible
 		let ssn = $("#selectPerson").val();
 		let code = $("#selectProject").val();
