@@ -52,7 +52,7 @@ public class Project implements Serializable{
 		this.name = name;
 	}
 	
-	@ManyToMany(mappedBy="projects", fetch = FetchType.EAGER)
+	@ManyToMany(mappedBy="projects", fetch=FetchType.EAGER)
 	public Set<Person> getPersons() {
 		return persons;
 	}
@@ -64,6 +64,7 @@ public class Project implements Serializable{
 		this.persons.add(person);
 	}
 	public void removePerson(Person person) {
+		System.out.println("Project.removePerson() " + person.getName());
 		this.persons.remove(person);
 	}
 }

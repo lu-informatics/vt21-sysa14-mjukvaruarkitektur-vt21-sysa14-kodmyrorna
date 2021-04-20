@@ -29,9 +29,11 @@ $(document).ready(function(){
 		$("#allProjects tr").removeClass("highlight");
 		if (!selected)
 			$(this).addClass("highlight");
+		let projectCode = $(this).find("td:eq(0)").text();
 		$("#projectCode").val(projectCode);
 	})
 	$("#AddBtn").click(function(){
+		//TODO multiple adds of same object should not be possible
 		let projectCodeStr = $("#projectCode").val();
 		let nameStr = $("#name").val();
 		let obj = {projectCode: projectCodeStr, name: nameStr};
@@ -115,11 +117,10 @@ function addRow(projectCode, name){
 	$("#allProjects tr:last").after("<tr><td>" + projectCode + "</td><td>" + name + "</td></p></tr>");
 }
 function updateTable(operation, code, name){
-	console.log(projectArray);
 	$("#allProjects td").parent().remove(); //Clears table
+	let indexOfElement = null;
 	switch(operation){
 		case("delete"): //removes the row with the given ssn
-			let indexOfElement = null;
 			for(let i = 0; i < projectArray.length; i++){
 				if(projectArray[i][0] === code){
 					indexOfElement = i;
@@ -131,19 +132,19 @@ function updateTable(operation, code, name){
 			projectArray.push([code, name]);
 			break;
 		case("update"):
-			let newRow = [code, name];
-			indexOfElement = null;
 			for(let i = 0; i < projectArray.length; i++){
 				if(projectArray[i][0] === code){
 					indexOfElement = i;
 				}
 			}
+			let newRow = [code, name];
 			projectArray.splice(indexOfElement, 1, newRow);
 			break;
 		default:
 			break;
 	}
 	//Adds values back to table
+	projectArray.sort();
 	for(let i = 0; i < projectArray.length; i++){
 		addRow(projectArray[i][0], projectArray[i][1]);
 	}

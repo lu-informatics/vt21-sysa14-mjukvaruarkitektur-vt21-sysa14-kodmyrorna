@@ -93,6 +93,10 @@ public class Facade implements FacadeLocal {
     	personEAO.removeProject(project, person);
     }
     
+    public void deleteAssignment(Project project, Person person) {
+    	personEAO.deleteAssignment(project, person);
+    }
+    
     public Set<Project> findProjectsByPerson(Person person) {
     	return personEAO.getProjects(person);
     }

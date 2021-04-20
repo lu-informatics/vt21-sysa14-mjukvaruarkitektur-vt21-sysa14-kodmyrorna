@@ -54,6 +54,7 @@ public class PersonEAOImpl implements PersonEAOLocal {
 		em.merge(person);
 	}
 	public void removeProject(Project project, Person person) {
+		System.out.println("PersonEAO.removeProject() " + project.getName());
 		person.removeProject(project);
 		em.merge(person);
 	}
@@ -73,5 +74,10 @@ public class PersonEAOImpl implements PersonEAOLocal {
 	
 	public Set<Project> getProjects(Person person){
 		return person.getProjects();
+	}
+	
+	public void deleteAssignment(Project project, Person person) {
+		javax.persistence.Query delete = em.createNativeQuery("DELETE FROM Person_Project WHERE persons_ssn ='" + person.getSsn() + "' AND projects_projectCode='" + project.getProjectCode() + "'");
+		delete.executeUpdate();
 	}
 }
