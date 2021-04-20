@@ -4,6 +4,8 @@ let projectArray = new Array();
 $(document).ready(function(){
 	getWeather();
     loadAll();
+    //highlights selected row in table
+	//TODO don't let user highlight header :C
 	$(document).on("click", "#allAssignments thead tr", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#allAssignments tr").removeClass("highlight");
@@ -61,7 +63,7 @@ $(document).ready(function(){
 				}
 				updateTable("add", ssn, code, personName, projectName);
 			}
-			function ajaxAddAssignmentError(result, status, xhr){
+			function ajaxAddAssignmentError(result, status, xhr){ //TODO give user error
 				console.log("ajaxAddAssignmentError xhr: " + xhr);
 			}
 		}
@@ -90,7 +92,7 @@ $(document).ready(function(){
 				updateTable("delete", selectedPerson, selectedProject);
 				alert("success..?");
 			}
-			function ajaxDeleteAssignmentError(result, status, xhr){
+			function ajaxDeleteAssignmentError(result, status, xhr){ //TODO give user error
 				console.log("ajaxDeleteAssignmentError xhr: " + xhr);
 			}
 		} else {
@@ -166,7 +168,7 @@ async function loadPersons(){
 		error: ajaxGetPersonsError,
 		success: ajaxGetPersonsSuccess
 	})
-	function ajaxGetPersonsError(result, status, xhr){
+	function ajaxGetPersonsError(result, status, xhr){ //TODO give user error
 		console.log("ajaxGetPersonsError xhr: " + xhr);
 	}
 	function ajaxGetPersonsSuccess(result, status, xhr){
@@ -182,9 +184,8 @@ async function loadProjects(){
 		error: ajaxGetProjectsError,
 		success: ajaxGetProjectsSuccess
 	})
-	function ajaxGetProjectsError(result, status, xhr){
+	function ajaxGetProjectsError(result, status, xhr){//TODO give user error
 		console.log("ajaxGetProjectsError xhr: " + xhr);
-		//TODO change all of these to xhr, better error message
 	}
 	function ajaxGetProjectsSuccess(result, status, xhr){
 		$.each(result, function(index, element){
@@ -200,7 +201,7 @@ async function loadAssignments(){
 		error: ajaxGetAssignmentsError,
 		success: ajaxGetAssignmentsSuccess
 	})
-	function ajaxGetAssignmentsError(result, status, xhr){
+	function ajaxGetAssignmentsError(result, status, xhr){ //TODO give user error
 		console.log("ajaxGetAssignmentsError xhr: " + xhr);
 	}
 	function ajaxGetAssignmentsSuccess(result, status, xhr){
