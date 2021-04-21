@@ -10,4 +10,10 @@
       <context-root>PraktikfallWebProject</context-root>
     </web>
   </module>
+  <module>
+    <web>
+      <web-uri>TestProject_JUnitEE.war</web-uri>
+      <context-root>TestProject_JUnitEE</context-root>
+    </web>
+  </module>
 </application>
