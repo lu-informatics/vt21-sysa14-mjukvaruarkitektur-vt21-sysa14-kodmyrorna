@@ -57,9 +57,8 @@ public class ProjectEAOImpl implements ProjectEAOLocal {
 		project.addPerson(person);
 		em.merge(project);
 	}
-	public void removePerson(Project project, Person person) {
-		System.out.println("ProjectEAO.removePerson() " + person.getName());
-		project.removePerson(person);
+	public void removePerson(Project project, Set<Person> updatedPersons) {
+		project.setPersons(updatedPersons);
 		em.merge(project);
 	}
 	

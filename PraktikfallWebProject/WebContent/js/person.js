@@ -5,7 +5,6 @@ let projectArray = new Array();
 $(document).ready(function(){
 	getWeather();
 	loadAll();
-	//TODO datepicker for ssn?
 	toggleSelectVisibility("invisible");
 	//filter search
 	document.getElementById("searchPerson").addEventListener("keydown", function(e){
@@ -29,8 +28,8 @@ $(document).ready(function(){
 		}
 	})
 	//Highlight rows in tables
-	//TODO don't let user highlight header :C
-	$(document).on("click", "#allPersons tr", function (){
+	//TODO be able to select multiple rows?
+	$(document).on("click", "#allPersons tr:not(thead tr)", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#allPersons tr").removeClass("highlight");
 		if (!selected) { //If I wanna highlight a row
@@ -43,7 +42,7 @@ $(document).ready(function(){
 			$("#ssn").val("");
 		}
 	})
-	$(document).on("click", "#personProjects tr", function (){
+	$(document).on("click", "#personProjects tr:not(thead tr)", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#personProjects tr").removeClass("highlight");
 		if (!selected)
@@ -52,10 +51,11 @@ $(document).ready(function(){
 	$("#AddBtn").click(function(){
 		let ssnStr = $("#ssn").val();
 		let nameStr = $("#name").val();
-		let obj = {ssn: ssnStr, name: nameStr};
-		let jsonString = JSON.stringify(obj);
 		let ssnArray = getSsnArray();
-		if (nameStr != "" && ssnStr != "" && !(ssnArray.includes(ssnStr))){
+		let isEmpty = !nameStr.replace(/\s/g, '');
+		if (!(ssnArray.includes(ssnStr)) && !isEmpty && ssnStr.length === 10 && ssnStr.value.match(/^[0-9]+$/) && nameStr.length <= 20){
+			let obj = {ssn: ssnStr, name: nameStr};
+			let jsonString = JSON.stringify(obj);
 			$.ajax({
 				method: "POST",
 				url: "http://localhost:8080/PraktikfallWebProject/Persons/",
@@ -67,30 +67,31 @@ $(document).ready(function(){
 			function ajaxAddPersonSuccess(result, status, xhr){
 				//TODO Ask Filiph: Empty fields at successful add or let entered values remain?
 				$("#ssn").val("");
-				$("#ssn").attr("placeholder", "Person added"); //TODO i don't like this confirmation :C it's not pretty enough
+				$("#ssn").attr("placeholder", "YYMMDDXXXX"); 
 				$("#name").val("");
 				updateTable("add", ssnStr, nameStr);
+				$("#feedbackLabel").text("Person added");
 			}
 			function ajaxAddPersonError(result, status, xhr){
-				//TODO give user error
 				console.log("ajaxAddPersonError xhr: " + xhr);
-				$("#errorlabel").text("Error adding person");
+				$("#feedbackLabel").text("Error adding person");
 			}
-		} else if (ssnArray.includes(ssnStr)){
-			//TODO tell user they can't add two persons with same ssn
-			alert("primary key violation");
-		} else if (nameStr === ""){
-			//TODO tell user to enter name
-			alert("name empty");
-		} else if (ssnStr === ""){
-			//TODO tell user to enter ssn
-			alert("ssn empty");
+		} else if (ssnArray.includes(ssnStr)){ //TODO check that code will go into each if else-statement these depending on error!
+			$("#feedbackLabel").text("There already exists a person with this social security number.");
+		} else if (ssnStr.length != 10 || !ssnStr.value.match(/^[0-9]+$/)){ //if the string is not 10 chars or contains anything but numbers
+			$("#feedbackLabel").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX");
+		} else if (isEmpty){
+			$("#feedbackLabel").text("Please enter a name.");
+		} else if (nameStr.length > 20){{
+			$("#feedbackLabel").text("Name can be a maximum of 20 characters.");
+		}
+			
 		}
 	}) //AddBtn
 	$("#DeleteBtn").click(function(){
 		let ssnStr = $("#ssn").val();
 		let ssnArray = getSsnArray();
-		if (ssnStr != null && ssnStr != "" && ssnArray.includes(ssnStr)){
+		if (ssnArray.includes(ssnStr)){
 			let obj = {ssn: ssnStr};
 			let jsonString = JSON.stringify(obj);
 			$.ajax({
@@ -102,25 +103,25 @@ $(document).ready(function(){
 			})
 			function ajaxDelPersonSuccess(result, status, xhr){
 				$("#ssn").val("");
-				$("#ssn").attr("placeholder", "Person deleted"); //TODO i don't like this confirmation :C it's not pretty enough
+				$("#ssn").attr("placeholder", "YYMMDDXXXX"); 
 				updateTable("delete", ssnStr);
 				updateProjects("clear");
+				$("#feedbackLabel").text("Person deleted.");
 			}
 			function ajaxDelPersonError(result, status, xhr){
-				//TODO give user error
 				console.log("ajaxDelPersonError xhr: " + xhr);
-				$("#errorlabel").text("Error deleting person");
+				$("#feedbackLabel").text("Error deleting person");
 			}
-		} else {
-			//TODO tell user to select a valid person
-			alert("invalid ssn");
+		} else { //TODO check that code will go into the else-statement!
+			$("#feedbackLabel").text("Please select a person to delete from the list.");
 		}
 	}) //DeleteBtn
 	$("#UpdateBtn").click(function(){ 
 		let ssnStr = $("#ssn").val();
 		let nameStr = $("#name").val();
 		let ssnArray = getSsnArray();
-		if (nameStr != "" && ssnArray.includes(ssnStr)){
+		let isEmpty = !nameStr.replace(/\s/g, '');
+		if (!isEmpty && ssnArray.includes(ssnStr) && nameStr.length <= 20){
 			let obj = {ssn: ssnStr, name: nameStr};
 			let jsonString = JSON.stringify(obj);
 			$.ajax({
@@ -134,26 +135,27 @@ $(document).ready(function(){
 			function ajaxUpdatePersonSuccess(result, status, xhr){
 				$("#name").val("");
 				$("#ssn").val("");
-				$("#ssn").attr("placeholder", "Person updated"); //TODO i don't like this confirmation :C it's not pretty enough
+				$("#ssn").attr("placeholder", "YYMMDDXXXX"); 
 				updateTable("update", ssnStr, nameStr);
+				$("#feedbackLabel").text("Person updated.");
 			}
 			function ajaxUpdatePersonError(result, status, xhr){
-				//TODO give user error
 				console.log("ajaxUpdatePersonError xhr: " + xhr);
+				$("#feedbackLabel").text("Error updating person.");
 			}
-		} else if (!ssnArray.includes(ssnStr)){
-			//TODO tell user they can only update info of existing persons
-			alert("ssn not in database");
-		} else if (nameStr === ""){
-			//TODO tell user to enter a name???
-			alert("name empty");
+		} else if (!ssnArray.includes(ssnStr)){ //TODO check that code will go into each if else-statement these depending on error!
+			$("#feedbackLabel").text("Please select a person from the list");
+		} else if (isEmpty){
+			$("#feedbackLabel").text("Please enter a name.");
+		} else if (nameStr > 20){
+			$("#feedbackLabel").text("Name can be a maximum of 20 characters.");
 		}
 	})//UpdateBtn
-	$("#removeFromProject").click(function(){
+	$("#removeFromProject").click(function(){ //TODO catch user errors 
 		let ssn = $("#ssn").val();
 		let code = $("#personProjects tr.highlight").find("td:eq(0)").text(); 
-		let jsonString = JSON.stringify({persons_ssn: ssn, projects_projectCode: code});
-		if (code != null && code != "Project code"){
+		let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code});
+		if (code != "" && code != "Project code" && ssn != ""){
 			$.ajax({
 				method: "DELETE",
 				url: "http://localhost:8080/PraktikfallWebProject/Assignments/delete",
@@ -179,11 +181,11 @@ $(document).ready(function(){
 			toggleSelectVisibility("invisible");
 		}
 	}) //toggles visibility of add new project menu
-	$("#addToProject").click(function(){
+	$("#addToProject").click(function(){ //TODO catch user errors 
 		let ssn = $("#ssn").val();
 		let code = $("#selectNewProject").val();
-		let jsonString = JSON.stringify({persons_ssn: ssn, projects_projectCode: code});
-		if (code != null && ssn != null){
+		let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code});
+		if (code != "" && ssn != "" && code != "Select project"){
 			$.ajax({
 				method: "POST",
 				url: "http://localhost:8080/PraktikfallWebProject/Assignments/post",
@@ -199,6 +201,8 @@ $(document).ready(function(){
 				let personName = $("#allPersons tr.highlight").find("td:eq(1)").text();
 				updateProjects("add", ssn, personName, code);
 			}
+		} else if (code != "Select project"){
+			//TODO tell user to select a project, geez haha
 		}
 	}) //addToProject button
 })
@@ -313,7 +317,7 @@ function matchAssignmentNames(){
 	return result;
 }
 function addRow(element, val1, val2){
-	$("#" + element + " tr:last").after("<tr><td>" + val1 + "</td><td>" + val2 + "</td></p></tr>");
+	$("#" + element + " tbody").append("<tr><td>" + val1 + "</td><td>" + val2 + "</td></p></tr>");
 }
 async function loadAll() {
     await loadPersons();
@@ -368,7 +372,7 @@ async function loadAssignments(){
 	}
 	function ajaxGetAssignmentsSuccess(result, status, xhr){
 		$.each(result, function(index, element){
-			assignmentArray.push([element.persons_ssn, element.projects_projectCode]);
+			assignmentArray.push([element.aSsn, element.aProjectCode]);
 		})
 	}
 }

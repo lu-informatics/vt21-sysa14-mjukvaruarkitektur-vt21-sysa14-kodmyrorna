@@ -5,8 +5,9 @@ $(document).ready(function(){
 	getWeather();
     loadAll();
     //highlights selected row in table
-	//TODO don't let user highlight header :C
-	$(document).on("click", "#allAssignments thead tr", function (){
+    //TODO be able to select multiple rows?
+    //TODO sort table?
+	$(document).on("click", "#allAssignments tr:not(thead tr)", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#allAssignments tr").removeClass("highlight");
 		if (!selected)
@@ -34,12 +35,13 @@ $(document).ready(function(){
 			}
 		}
 	})
-	$("#AddBtn").click(function(){ //TODO add clears selects?
+	$("#AddBtn").click(function(){ //TODO add clears selects? 
 		//TODO multiple adds of same item should not be possible
+		//TODO catch user errors 
 		let ssn = $("#selectPerson").val();
 		let code = $("#selectProject").val();
 		if (ssn != "Select person" && code != "Select project"){
-			let obj = {persons_ssn: ssn, projects_projectCode: code};
+			let obj = {aSsn: ssn, aProjectCode: code};
 			let jsonString = JSON.stringify(obj);
 			$.ajax({
 				method: "POST",
@@ -54,22 +56,26 @@ $(document).ready(function(){
 				let personName = ""; 
 				let projectName = "";
 				for (let i = 0; i < assignmentsWithNames; i++){
-					if (result.persons_ssn === assignmentsWithNames[i][0]){
+					if (result.aSsn === assignmentsWithNames[i][0]){
 						personName = assignmentsWithNames[i][1];
 					}
-					if (result.projects_projectCode === assignmentsWithNames[i][2]){
+					if (result.aProjectCode === assignmentsWithNames[i][2]){
 						projectName = assignmentsWithNames[i][3];
 					}
 				}
 				updateTable("add", ssn, code, personName, projectName);
+				$("#feedbackLabel").text("Assignment added.");
 			}
-			function ajaxAddAssignmentError(result, status, xhr){ //TODO give user error
+			function ajaxAddAssignmentError(result, status, xhr){ //TODO can these errors be more specific?
 				console.log("ajaxAddAssignmentError xhr: " + xhr);
+				$("#feedbackLabel").text("Error adding assignment");
 			}
+		} else { //TODO check that code will go into this else statement
+			$("#feedbackLabel").text("Please select a person and project from the drop down menus.");
 		}
 	})
-	$("#DeleteBtn").click(function(){ //TODO DOESN'T DELETE OBJECT FROM DATABASE: NOT SURE WHERE PROBLEM IS
-		//Check which table row is selected
+	$("#DeleteBtn").click(function(){ //TODO catch user errors 
+		//Check which table row is selected 
 		let selectedPerson = null;
 		let selectedProject = null;
 		$("#allAssignments tr").each(function(index, element){
@@ -79,7 +85,7 @@ $(document).ready(function(){
 			}
 		})
 		if (selectedPerson != null && selectedProject != null){
-			let obj = {persons_ssn: selectedPerson, projects_projectCode: selectedProject};
+			let obj = {aSsn: selectedPerson, aProjectCode: selectedProject};
 			let jsonString = JSON.stringify(obj);
 			$.ajax({
 				method: "DELETE",
@@ -90,13 +96,14 @@ $(document).ready(function(){
 			})
 			function ajaxDeleteAssignmentSuccess(result, status, xhr){
 				updateTable("delete", selectedPerson, selectedProject);
-				alert("success..?");
+				$("#feedbackLabel").text("Assignment deleted");
 			}
 			function ajaxDeleteAssignmentError(result, status, xhr){ //TODO give user error
 				console.log("ajaxDeleteAssignmentError xhr: " + xhr);
+				$("#feedbackLabel").text("Error deleting assignment");
 			}
-		} else {
-			//TODO tell user to select a person and project from the table
+		} else { //TODO check that code will go into this else statement
+			$("#feedbackLabel").text("Please select a person and project from the list.");
 		}
 	})
 })
@@ -155,7 +162,7 @@ function fillSelects(){
 	}
 }
 function addRow(row){
-	$("#allAssignments tr:last").after("<tr><td>" + row[0] + "</td><td>" + row[1] + "</td><td>" + row[2] + "</td><td>" + row[3] + "</td></tr>"); 
+	$("#allAssignments tbody").append("<tr><td>" + row[0] + "</td><td>" + row[1] + "</td><td>" + row[2] + "</td><td>" + row[3] + "</td></tr>"); 
 }
 async function loadAll() {
     await loadPersons();
@@ -206,7 +213,7 @@ async function loadAssignments(){
 	}
 	function ajaxGetAssignmentsSuccess(result, status, xhr){
 		$.each(result, function(index, element){
-			assignmentArray.push([element.persons_ssn, element.projects_projectCode]);
+			assignmentArray.push([element.aSsn, element.aProjectCode]);
 		})
 		updateTable();
 		fillSelects();

@@ -63,7 +63,7 @@
 								<input type="text" name="name" id="name" value=""><br><br>
 								<input type="button" name="submitBtn" value="Add" id="AddBtn">
 								<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
-								<p id="errorlabel">Error displays here</p>
+								<p id="feedbackLabel">Feedback displays here</p>
 							</fieldset>
 							<img src="../images/search.png" alt="search icon" width="15" height="15">
 							<input type="text" name="searchProject" id="searchProject" value=""><br><br>
@@ -90,6 +90,7 @@
 										<th>Name</th>
 									</tr>
 								</thead>
+								<tbody></tbody>
 							</table>
 							<br><input type="button" name="removePerson" id="removePerson" value="Remove person"><br>
 							<br><input type="button" name="addNewPerson" id="addNewPerson" value="Add new person..."><br>

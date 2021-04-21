@@ -81,21 +81,39 @@ public class Facade implements FacadeLocal {
     }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
     
 
-    /*******PERSONPROJECT RELATION STUFF*******/
-    public void addPersonProject(Project project, Person person) {
+    /*******ASSIGNMENT STUFF*******/
+    public void addAssignment(Project project, Person person) {
     	projectEAO.addPerson(project, person);
     	personEAO.addProject(project, person);
     }
     
-    public void removePersonProject(Project project, Person person) {
-    	System.out.println("Facade hearing request to delete " + person.getName() + " from " + project.getName());
-    	projectEAO.removePerson(project, person);
-    	personEAO.removeProject(project, person);
+    public void removeAssignment(Project project, Person person) {
+    	//First get new set of persons, excluding this person
+    	Set<Person> persons = this.findPersonsByProject(project);
+    	Person personToRemove = null;
+    	for(Person p : persons){
+    		if (p.getSsn().equals(person.getSsn())) {
+    			personToRemove = p;
+    		}
+    	}
+    	persons.remove(personToRemove);
+    	
+    	
+    	//Then, get new set of projects, excluding this project
+    	Set<Project> projects = this.findProjectsByPerson(person);
+    	Project projectToRemove = null;
+    	for(Project p : projects){
+    		if(p.getProjectCode().equals(project.getProjectCode())) {
+    			projectToRemove = p;
+    		}
+    	}
+    	projects.remove(projectToRemove);
+    	
+    	//Now give the person and project their new sets.
+    	projectEAO.removePerson(project, persons);
+    	personEAO.removeProject(projects, person);
     }
-    
-    public void deleteAssignment(Project project, Person person) {
-    	personEAO.deleteAssignment(project, person);
-    }
+   
     
     public Set<Project> findProjectsByPerson(Person person) {
     	return personEAO.getProjects(person);

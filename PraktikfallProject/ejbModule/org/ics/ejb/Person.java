@@ -13,6 +13,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PostUpdate;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
@@ -50,7 +52,10 @@ public class Person implements Serializable{
 		this.name = name;
 	}
 	
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch=FetchType.EAGER)
+	@JoinTable(name = "Assignment",
+		joinColumns = @JoinColumn(name="aSsn", referencedColumnName="ssn", updatable = true), 
+		inverseJoinColumns = @JoinColumn(name="aProjectCode", referencedColumnName="projectCode", updatable = true))
 	public Set<Project> getProjects() {
 		return projects;
 	}
@@ -62,7 +67,6 @@ public class Person implements Serializable{
 		this.projects.add(project);
 	}
 	public void removeProject(Project project) {
-		System.out.println("Person.removeProject() " + project.getName());
 		this.projects.remove(project);
 	}
 }

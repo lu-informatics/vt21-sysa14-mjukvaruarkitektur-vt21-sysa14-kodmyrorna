@@ -14,6 +14,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PostUpdate;
+import javax.persistence.PreUpdate;
 import javax.persistence.ManyToMany;
 
 @Entity
@@ -64,7 +66,6 @@ public class Project implements Serializable{
 		this.persons.add(person);
 	}
 	public void removePerson(Person person) {
-		System.out.println("Project.removePerson() " + person.getName());
 		this.persons.remove(person);
 	}
 }

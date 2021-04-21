@@ -58,12 +58,12 @@
 							<fieldset id="PersonalFS">
 								<legend>Person</legend>
 								Social Security Number:<br>
-								<input type="text" name="ssn" id="ssn" value=""><br>
+								<input type="text" name="ssn" id="ssn" value="" placeholder="YYMMDDXXXX"><br>
 								Name:<br>
 								<input type="text" name="name" id="name" value=""><br><br>
 								<input type="button" name="submitBtn" value="Add" id="AddBtn">
 								<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
-								<p id="errorlabel">Error displays here</p>
+								<p id="feedbackLabel">Feedback displays here</p>
 							</fieldset>
 						</form>
 						<img src="../images/search.png" alt="search icon" width="15" height="15">
@@ -90,6 +90,7 @@
 										<th>Project name</th>
 									</tr>
 								</thead>
+								<tbody></tbody>
 							</table>
 							<br><input type="button" name="removeFromProject" id="removeFromProject" value="Remove from project"><br>
 							<br><input type="button" name="addNewProject" id="addNewProject" value="Add new project..."><br>

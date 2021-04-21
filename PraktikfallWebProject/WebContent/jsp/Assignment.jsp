@@ -66,6 +66,7 @@
 									<option>Select project</option>
 								</select><br>
 								<input type="button" name="submitBtn" value="Add" id="AddBtn">
+								<br><p id="feedbackLabel">Feedback displays here</p>
 							</fieldset>
 						</div>
 						<div id="box">
