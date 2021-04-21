@@ -15,9 +15,8 @@ public interface PersonEAOLocal {
 	public Person updatePerson(Person person);
 	public void deletePerson(String ssn);
 	public void addProject(Project project, Person person);
-	public void removeProject(Project project, Person person);
+	public void removeProject(Set<Project> updatedProjects, Person person);
 	public List<Person> findAllPersons();
 	public List<Person> findByName(String name);
 	public Set<Project> getProjects(Person person);
-	public void deleteAssignment(Project project, Person person);
 }

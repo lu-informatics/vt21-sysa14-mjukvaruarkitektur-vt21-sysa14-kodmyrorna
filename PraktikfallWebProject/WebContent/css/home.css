@@ -111,7 +111,7 @@ section#main td, th{
 	padding: 8px;
 	border-bottom: 1px solid #ddd;
 }
-.highlight{
+.highlight:not(thead tr){
 	background: SandyBrown;
 }
 .box {
@@ -124,6 +124,6 @@ section#main td, th{
 #DeleteBtn{
 	margin-left: 68%;
 }
-#errorlabel{
+#feedbackLabel{
 	color: red;
 }

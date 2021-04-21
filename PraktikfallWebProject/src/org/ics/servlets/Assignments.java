@@ -43,7 +43,6 @@ public class Assignments extends HttpServlet {
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
 		if (pathInfo.equals("/delete")) {
-			System.out.println("Assignments.service let's delete");
 			doDelete(request, response);
 		} else if (pathInfo.equals("/post")) {
 			doPost(request, response);
@@ -74,11 +73,11 @@ public class Assignments extends HttpServlet {
 		if(pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/post")) {
 			BufferedReader reader = request.getReader();
 			JsonObject jsonRoot = Json.createReader(reader).readObject();
-			String[] assignment = {jsonRoot.getString("persons_ssn"), jsonRoot.getString("projects_projectCode")};
+			String[] assignment = {jsonRoot.getString("aSsn"), jsonRoot.getString("aProjectCode")};
 			Person person = facade.findPersonBySsn(assignment[0]);
 			Project project = facade.findProjectByProjectCode(assignment[1]);
 			if (person != null && project != null) {
-				facade.addPersonProject(project, person);
+				facade.addAssignment(project, person);
 				sendAsJson(response, assignment);
 			} 
 		} else {
@@ -99,11 +98,11 @@ public class Assignments extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		BufferedReader reader = request.getReader();
 		JsonObject jsonRoot = Json.createReader(reader).readObject();
-		String[] assignment = {jsonRoot.getString("persons_ssn"), jsonRoot.getString("projects_projectCode")};
+		String[] assignment = {jsonRoot.getString("aSsn"), jsonRoot.getString("aProjectCode")};
 		Person person = facade.findPersonBySsn(assignment[0]);
 		Project project = facade.findProjectByProjectCode(assignment[1]);
 		if (person != null && project != null) {
-			facade.deleteAssignment(project,  person);
+			facade.removeAssignment(project,  person);
 		}
 	}
 	
@@ -114,8 +113,8 @@ public class Assignments extends HttpServlet {
 			JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 		    for(String[] assignment : assignments) {
 		    	JsonObjectBuilder o = Json.createObjectBuilder();
-		    	o.add("persons_ssn", assignment[0]);
-		    	o.add("projects_projectCode", assignment[1]);
+		    	o.add("aSsn", assignment[0]);
+		    	o.add("aProjectCode", assignment[1]);
 		    	arrayBuilder.add(o);
 		    }
 		    JsonArray array = arrayBuilder.build();
@@ -128,8 +127,8 @@ public class Assignments extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		response.setContentType("application/json");
 		if (assignment != null) {
-			out.print("[{\"persons_ssn\":\"" + assignment[0] + "\",");
-			out.print("\"projects_projectCode\":\"" + assignment[1] + "\"}]");
+			out.print("[{\"aSsn\":\"" + assignment[0] + "\",");
+			out.print("\"aProjectCode\":\"" + assignment[1] + "\"}]");
 		} else {
 			out.print("[]");
 		}

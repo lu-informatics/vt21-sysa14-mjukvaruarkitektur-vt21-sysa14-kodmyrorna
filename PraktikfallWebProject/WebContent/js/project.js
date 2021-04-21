@@ -28,8 +28,8 @@ $(document).ready(function(){
 		}
 	})
 	//Highlight rows in tables
-	//TODO don't let user highlight header :C
-	$(document).on("click", "#allProjects tr", function (){
+	//TODO be able to select multiple rows?
+	$(document).on("click", "#allProjects tr:not(thead tr)", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#allProjects tr").removeClass("highlight");
 		if (!selected) { //If I wanna highlight a row
@@ -42,7 +42,7 @@ $(document).ready(function(){
 			$("#projectCode").val("");
 		}
 	})
-	$(document).on("click", "#projectPersons tr", function (){
+	$(document).on("click", "#projectPersons tr:not(thead tr)", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#projectPersons tr").removeClass("highlight");
 		if (!selected)
@@ -51,8 +51,9 @@ $(document).ready(function(){
 	$("#AddBtn").click(function(){ 
 		let projectCodeStr = $("#projectCode").val();
 		let nameStr = $("#name").val();
+		let isEmpty = !nameStr.replace(/\s/g, '') || !projectCodeStr.replace(/\s/g, ''); //Evaluates to true if the project code or name consist of nothing or just spaces.
 		let projectCodeArray = getProjectCodeArray();
-		if (nameStr != "" && projectCodeStr != "" && (!projectCodeArray.includes(projectCodeStr))){
+		if (!isEmpty && (!projectCodeArray.includes(projectCodeStr)) && projectCodeStr.length <= 10 && nameStr.length <= 20){
 			let obj = {projectCode: projectCodeStr, name: nameStr};
 			let jsonString = JSON.stringify(obj);
 			$.ajax({
@@ -66,30 +67,28 @@ $(document).ready(function(){
 			function ajaxAddProjectSuccess(result, status, xhr){
 				//TODO Ask Filiph: Empty fields at successful add or let entered values remain?
 				$("#projectCode").val("");
-				$("#projectCode").attr("placeholder", "Project added"); //TODO i don't like this confirmation :C it's not pretty enough
+				$("#feedbackLabel").text("Project added.");
 				$("#name").val("");
 				updateTable("add", projectCodeStr, nameStr);
 			}
-			function ajaxAddProjectError(result, status, xhr){ //TODO give user error
+			function ajaxAddProjectError(result, status, xhr){ 
 				console.log("ajaxAddProjectError xhr: " + xhr);
-				$("#errorlabel").text("Error adding project");
+				$("#feedbackLabel").text("Error adding project");
 			}
-		}
-		else if (projectCodeArray.includes(projectCodeStr)){
-			//TODO tell user they can't add two project with same project code
-			alert("primary key violation");
-		} else if (projectCodeStr === ""){
-			//TODO tell user the projectCode cannot be empty
-			alert("no project code");
-		} else if (nameStr === ""){
-			//TODO tell user the name cannot be empty
-			alert("no project name");
+		} else if (projectCodeArray.includes(projectCodeStr)){ //TODO check that code will go into each if else-statement these depending on error!
+			$("#feedbackLabel").text("There already exists a project with this project code.");
+		} else if (isEmpty){
+			$("#feedbackLabel").text("Please enter a project code and name.");
+		} else if (projectCodeStr.length > 10){
+			$("#feedbackLabel").text("Project code can be a maximum of 10 characters.");
+		} else if (nameStr.length > 20) {
+			$("#feedbackLabel").text("Name can be a maximum of 20 characters.");
 		}
 	}) //AddBtn
 	$("#DeleteBtn").click(function(){
 		let projectCodeStr = $("#projectCode").val();
 		let projectCodeArray = getProjectCodeArray();
-		if (projectCodeStr != "" && projectCodeArray.includes(projectCodeStr)){
+		if (projectCodeArray.includes(projectCodeStr)){
 			let obj = {projectCode: projectCodeStr};
 			let jsonString = JSON.stringify(obj);
 			$.ajax({
@@ -101,26 +100,26 @@ $(document).ready(function(){
 			})
 			function ajaxDelProjectSuccess(result, status, xhr){
 				$("#projectCode").val("");
-				$("#projectCode").attr("placeholder", "project deleted"); //TODO i don't like this confirmation :C it's not pretty enough
+				$("#feedbackLabel").text("Project updated");
 				updateTable("delete", projectCodeStr);
 				updatePersons("clear");
 			}
-			function ajaxDelProjectError(result, status, xhr){ //TODO give user error
+			function ajaxDelProjectError(result, status, xhr){ 
 				console.log("ajaxDelProjectError xhr: " + xhr);
-				$("#errorlabel").text("Error deleting project");
+				$("#feedbackLabel").text("Error deleting project");
 			}
 		} else if (!projectCodeArray.includes(projectCodeStr)){
-			//TODO tell user to choose a project
-			alert("no project selected");
+			$("#feedbackLabel").text("Please select a project from the list.");
 		}
 	}) //DeleteBtn
 	$("#UpdateBtn").click(function(){
-		//TODO prevent changes to project code - not possible, primary key!
 		let projectCodeStr = $("#projectCode").val();
 		let nameStr = $("#name").val();
-		let obj = {projectCode: projectCodeStr, name: nameStr};
-		let jsonString = JSON.stringify(obj);
-		if (projectCodeStr != null && nameStr != null){
+		let isEmpty = !nameStr.replace(/\s/g, '');
+		let projectCodeArray = getProjectCodeArray();
+		if (!isEmpty && projectCodeArray.includes(projectCodeStr) && nameStr.length <= 20){
+			let obj = {projectCode: projectCodeStr, name: nameStr};
+			let jsonString = JSON.stringify(obj);
 			$.ajax({
 				method: "PUT",
 				url: "http://localhost:8080/PraktikfallWebProject/Projects/",
@@ -132,20 +131,26 @@ $(document).ready(function(){
 			function ajaxUpdateProjectSuccess(result, status, xhr){
 				$("#name").val("");
 				$("#projectCode").val("");
-				$("#projectCode").attr("placeholder", "Project updated"); //TODO i don't like this confirmation :C it's not pretty enough
+				$("#feedbackLabel").text("Project updated.");
 				updateTable("update", projectCodeStr, nameStr);
 			}
-			function ajaxUpdateProjectError(result, status, xhr){ //TODO give user error
+			function ajaxUpdateProjectError(result, status, xhr){ 
 				console.log("ajaxUpdateProjectError xhr: " + xhr);
-				$("#errorlabel").text("Error updating project");
+				$("#feedbackLabel").text("Error updating project");
 			}
+		} else if (!projectCodeArray.includes(projectCodeStr)){ //TODO check that code will go into each if else-statement these depending on error!
+			$("#feedbackLabel").text("Please select a project to update. The project code cannot be changed.");
+		} else if (isEmpty){
+			$("#feedbackLabel").text("Please enter a name.");
+		} else if (nameStr.length > 20){
+			$("#feedbackLabel").text("Name can be a maximum of 20 characters");
 		}
 	}) //UpdateBtn
-	$("#removePerson").click(function(){
+	$("#removePerson").click(function(){ //TODO catch user errors 
 		let code = $("#projectCode").val();
 		let ssn = $("#projectPersons tr.highlight").find("td:eq(0)").text(); 
-		let jsonString = JSON.stringify({persons_ssn: ssn, projects_projectCode: code});
-		if (code != null && ssn != "Social security number"){
+		let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code});
+		if (code != null && code != "" && ssn != "Social security number" && ssn != ""){
 			$.ajax({
 				method: "DELETE",
 				url: "http://localhost:8080/PraktikfallWebProject/Assignments/delete",
@@ -164,18 +169,18 @@ $(document).ready(function(){
 			}
 		}
 	})
-	$("#addNewPerson").click(function(){
+	$("#addNewPerson").click(function(){ 
 		if ($(".newPersonMenu").is(":hidden")){
 			toggleSelectVisibility("visible");
 		} else {
 			toggleSelectVisibility("invisible");
 		}
 	}) //addNewPerson toggles visibility of add new person menu
-	$("#addPerson").click(function(){
+	$("#addPerson").click(function(){ //TODO catch user errors 
 		let code = $("#projectCode").val();
 		let ssn = $("#selectNewPerson").val();
-		let jsonString = JSON.stringify({persons_ssn: ssn, projects_projectCode: code});
-		if (code != null && ssn != null){
+		let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code});
+		if (code != null && ssn != null && ssn != "Select person"){
 			$.ajax({
 				method: "POST",
 				url: "http://localhost:8080/PraktikfallWebProject/Assignments/post",
@@ -191,6 +196,8 @@ $(document).ready(function(){
 				let projectName = $("#allProjects tr.highlight").find("td:eq(1)").text();
 				updatePersons("add", code, projectName, ssn);
 			}
+		} else if (ssn === "Select person"){
+			//TODO tell user to select a person, geeeez
 		}
 	}) //addPerson
 })
@@ -203,7 +210,7 @@ function getProjectCodeArray(){
 	return projectCodeArray;
 }
 function addRow(element, val1, val2){
-	$("#" + element + " tr:last").after("<tr><td>" + val1 + "</td><td>" + val2 + "</td></p></tr>");
+	$("#" + element + " tbody").append("<tr><td>" + val1 + "</td><td>" + val2 + "</td></p></tr>");
 }
 function matchAssignmentNames(){
 	let result = new Array();
@@ -357,7 +364,7 @@ async function loadAssignments(){
 	}
 	function ajaxGetAssignmentsSuccess(result, status, xhr){
 		$.each(result, function(index, element){
-			assignmentArray.push([element.persons_ssn, element.projects_projectCode]);
+			assignmentArray.push([element.aSsn, element.aProjectCode]);
 		})
 	}
 }

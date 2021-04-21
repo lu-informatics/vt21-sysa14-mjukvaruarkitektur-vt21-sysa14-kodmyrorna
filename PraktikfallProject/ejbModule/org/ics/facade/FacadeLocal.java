@@ -25,9 +25,8 @@ public interface FacadeLocal {
     public void deleteProject(String projectCode);
     public List<Project> findAllProjects();
     public List<Project> findProjectByName(String name);
-    public void addPersonProject(Project project, Person person);
-    public void removePersonProject(Project project, Person person);
-    public void deleteAssignment(Project project, Person person);
+    public void addAssignment(Project project, Person person);
+    public void removeAssignment(Project project, Person person);
     public Set<Project> findProjectsByPerson(Person person);
     public Set<Person> findPersonsByProject(Project project);
     public ArrayList<String[]> findAllAssignments();
