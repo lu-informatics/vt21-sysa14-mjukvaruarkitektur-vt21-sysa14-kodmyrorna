@@ -38,30 +38,15 @@ public class Assignments extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-    /**
-	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String pathInfo = request.getPathInfo();
-		if (pathInfo.equals("/delete")) {
-			doDelete(request, response);
-		} else if (pathInfo.equals("/post")) {
-			doPost(request, response);
-		} else if (pathInfo.equals("/get")) {
-			doGet(request, response);
-		} else {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		}
-	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if (pathInfo.equals("/") || pathInfo == null || pathInfo.equals("/get")) {
+		if (pathInfo.equals("/") || pathInfo == null) {
 			sendAsJson(response, facade.findAllAssignments());
-		} else {
+		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
@@ -71,70 +56,83 @@ public class Assignments extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if(pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/post")) {
-			BufferedReader reader = request.getReader();
-			JsonObject jsonRoot = Json.createReader(reader).readObject();
-			String[] assignment = {jsonRoot.getString("aSsn"), jsonRoot.getString("aProjectCode")};
+		if(pathInfo == null || pathInfo.equals("/")) {
+			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
+			JsonObject jsonRoot = Json.createReader(reader).readObject(); //Reads object sent through request
+			String[] assignment = {jsonRoot.getString("aSsn"), jsonRoot.getString("aProjectCode")}; //Creates a string array for the assignment which can be passed to the method senAsJson()
 			Person person = facade.findPersonBySsn(assignment[0]);
-			Project project = facade.findProjectByProjectCode(assignment[1]);
-			if (person != null && project != null) {
+			Project project = facade.findProjectByProjectCode(assignment[1]); //Finds the correct person and project object to pass to the facade method addAssignment()
+			if (person != null && project != null) { //If the person and project were found in the database
 				facade.addAssignment(project, person);
 				sendAsJson(response, assignment);
 			} 
-		} else {
+		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
-	}
-
-	/**
-	 * @see HttpServlet#doPut(HttpServletRequest, HttpServletResponse)
-	 */
-	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 	}
 
 	/**
 	 * @see HttpServlet#doDelete(HttpServletRequest, HttpServletResponse)
 	 */
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		BufferedReader reader = request.getReader();
-		JsonArray jsonArray = Json.createReader(reader).readArray();
-		for (int i = 0; i < jsonArray.size(); i++) {
-			JsonObject assignment = jsonArray.getJsonObject(i);
-			Person person = facade.findPersonBySsn(assignment.getString("aSsn"));
-			Project project = facade.findProjectByProjectCode(assignment.getString("aProjectCode"));
-			if (person != null && project != null) {
-				facade.removeAssignment(project, person);
+		String pathInfo = request.getPathInfo();
+		if(pathInfo == null || pathInfo.equals("/")) {
+			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
+			JsonArray jsonArray = Json.createReader(reader).readArray(); //Reads the data from the request as an array of assignments as json objects
+			for (int i = 0; i < jsonArray.size(); i++) { //Iterates through the array and deletes each assignment from the database
+				JsonObject assignment = jsonArray.getJsonObject(i); 
+				Person person = facade.findPersonBySsn(assignment.getString("aSsn")); //Finds the correct person and proejct to pass to the facade method removeAssignment()
+				Project project = facade.findProjectByProjectCode(assignment.getString("aProjectCode"));
+				if (person != null && project != null) { //If the person and project were found in the database
+					facade.removeAssignment(project, person);
+				}
 			}
+		} else { //If user has input an ending to the path, which isn't supported
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
 	
+	/*************
+	 * Function sendAsJson
+	 * Parameters: 	HttpServletResponse
+	 * 				ArrayList<String>
+	 * Description: parses an arraylist of arrays of strings representing assignments to an array of json objects and uses the HttpServletResponse to send 
+	 * 				the array back with the response
+	 */
 	public void sendAsJson(HttpServletResponse response, ArrayList<String[]> assignments) throws IOException{
-		PrintWriter out = response.getWriter();
-		response.setContentType("application/json");
+		PrintWriter out = response.getWriter(); //Enables servlet to print outgoing data
+		response.setContentType("application/json"); //Specifies data type to send back
 		if (assignments != null) {
-			JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+			JsonArrayBuilder arrayBuilder = Json.createArrayBuilder(); //Need to build an array of json objects to send back with the response
 		    for(String[] assignment : assignments) {
-		    	JsonObjectBuilder o = Json.createObjectBuilder();
+		    	JsonObjectBuilder o = Json.createObjectBuilder(); //A simple way to create new JSON Objects
 		    	o.add("aSsn", assignment[0]);
 		    	o.add("aProjectCode", assignment[1]);
 		    	arrayBuilder.add(o);
 		    }
 		    JsonArray array = arrayBuilder.build();
-		    out.print(array);
+		    out.print(array); //Send the array back with the response!
 		} else {
-			out.flush();
+			out.print("[]"); //If the list of persons is empty, an empty array is sent back with the response
 		}
+		out.flush(); //clears the out feed to avoid errors
 	}
+	
+	/*************
+	 * Function sendAsJson
+	 * Parameters: 	HttpServletResponse
+	 * 				String[]
+	 * Description: parses the string array representing an assignment to a json object and uses the HttpServletResponse to send it back with the response
+	 */
 	public void sendAsJson(HttpServletResponse response, String[] assignment) throws IOException{
-		PrintWriter out = response.getWriter();
-		response.setContentType("application/json");
+		PrintWriter out = response.getWriter(); //Enables servlet to print outgoing data
+		response.setContentType("application/json"); //Specifies data type to send back
 		if (assignment != null) {
-			out.print("[{\"aSsn\":\"" + assignment[0] + "\",");
+			out.print("[{\"aSsn\":\"" + assignment[0] + "\","); //Creating a JSON object 'manually'
 			out.print("\"aProjectCode\":\"" + assignment[1] + "\"}]");
 		} else {
-			out.print("[]");
+			out.print("[]"); //If the assignment is null, an empty array of objects is sent back instead
 		}
-		out.flush();
+		out.flush(); //clears the out feed to avoid errors
 	}
 }
