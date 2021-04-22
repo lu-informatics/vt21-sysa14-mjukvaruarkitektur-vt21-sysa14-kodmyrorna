@@ -86,9 +86,9 @@ public class Persons extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
 		if(pathInfo == null || pathInfo.equals("/")) {
-			JsonReader jsonReader = Json.createReader(request.getReader()); //Creates a reader for getting Json-formatted data
-			JsonObject jsonRoot = jsonReader.readObject(); //We assume there is only one object sent to doDelete, not an array
-			String ssn = jsonRoot.getString("ssn"); //Collects social security number data from the object
+			JsonReader jsonReader = Json.createReader(request.getReader()); //Create a reader for getting Json-formatted data
+			JsonObject jsonRoot = jsonReader.readObject(); //Assume there is only one object sent to doDelete, not an array
+			String ssn = jsonRoot.getString("ssn"); //Collect social security number from the object
 			facade.deletePerson(ssn);
 		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -105,7 +105,7 @@ public class Persons extends HttpServlet {
 		PrintWriter out = response.getWriter(); //Enables servlet to print outgoing data
 		response.setContentType("application/json"); //Specifies data type to send back
 		if (persons != null) {
-			JsonArrayBuilder arrayBuilder = Json.createArrayBuilder(); //Need to build an array of objects to send back with the response
+			JsonArrayBuilder arrayBuilder = Json.createArrayBuilder(); //Need to build an array of json objects to send back with the response
 			for (Person p : persons) {
 				JsonObjectBuilder o = Json.createObjectBuilder(); //A simple way to create new JSON Objects
 				o.add("ssn", p.getSsn());
@@ -124,7 +124,7 @@ public class Persons extends HttpServlet {
 	 * Function sendAsJson
 	 * Parameters: 	HttpServletResponse
 	 * 				Person
-	 * Description: parses the person to a json object and uses the HttpServletResponse to send the person back with the response
+	 * Description: parses the person to a json object and uses the HttpServletResponse to send it back with the response
 	 */
 	public void sendAsJson(HttpServletResponse response, Person person) throws IOException{
 		PrintWriter out = response.getWriter(); //Enables servlet to print outgoing data
@@ -145,8 +145,8 @@ public class Persons extends HttpServlet {
 	 * Description: Parses a Json object to an instance of the Person entity bean
 	 */
 	private Person parseJsonPerson(BufferedReader reader) {
-		JsonReader jsonReader = Json.createReader(reader); //Creates a reader for getting Json-formatted data
-		JsonObject jsonRoot = jsonReader.readObject();  //We assume there is only one object, not an array
+		JsonReader jsonReader = Json.createReader(reader); //Create a reader for getting Json-formatted data
+		JsonObject jsonRoot = jsonReader.readObject();  //Assume there is only one object, not an array
 		Person person = new Person();
 		person.setSsn(jsonRoot.getString("ssn")); //Collect person data from the object
 		person.setName(jsonRoot.getString("name"));

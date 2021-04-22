@@ -1,6 +1,10 @@
+/*GLOBAL VARIABLES*/
+//Used to store assignments, persons, and projects so that GET method of ajax only needs to be called once
 let assignmentArray = new Array(); 
 let personArray = new Array();
 let projectArray = new Array();
+
+/*DOCUMENT READY*/
 $(document).ready(function(){
 	getWeather();
     loadAll();
@@ -46,7 +50,7 @@ $(document).ready(function(){
 			let jsonString = JSON.stringify(obj);
 			$.ajax({
 				method: "POST",
-				url: "http://localhost:8080/PraktikfallWebProject/Assignments/post",
+				url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
 				data: jsonString,
 				dataType: "json",
 				error: ajaxAddAssignmentError,
@@ -90,7 +94,7 @@ $(document).ready(function(){
 			let jsonString = JSON.stringify(obj);
 			$.ajax({
 				method: "DELETE",
-				url: "http://localhost:8080/PraktikfallWebProject/Assignments/delete",
+				url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
 				data: jsonString,
 				error: ajaxDeleteAssignmentError,
 				success: ajaxDeleteAssignmentSuccess
@@ -107,6 +111,8 @@ $(document).ready(function(){
 		}
 	})
 })
+
+/*FUNCTIONS*/
 function clearFeedback(){
 	$("#addFeedback").text("");
 	$("#deleteFeedback").text("");
@@ -228,7 +234,7 @@ async function loadProjects(){
 async function loadAssignments(){
 	$.ajax({
 		method: "GET",
-		url: "http://localhost:8080/PraktikfallWebProject/Assignments/get",
+		url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
 		error: ajaxGetAssignmentsError,
 		success: ajaxGetAssignmentsSuccess
 	})
