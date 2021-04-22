@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 
 public class PersonTest extends TestCase {
 	
-	PersonTest person;
+	Person person;
 
 	public PersonTest(String name) {
 		super(name);
@@ -19,7 +19,7 @@ public class PersonTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		Context context = new InitialContext();
-		person =(PersonTest)context.lookup("java:app/PraktikfallProject/Project!org.ics.ejb.Project\"");
+		person =(Person)context.lookup("java:app/PraktikfallProject/Project!org.ics.ejb.Project\"");
 	}
 
 	protected void tearDown() throws Exception {
