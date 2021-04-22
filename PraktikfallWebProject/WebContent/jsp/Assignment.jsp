@@ -66,7 +66,7 @@
 									<option>Select project</option>
 								</select><br>
 								<input type="button" name="submitBtn" value="Add" id="AddBtn">
-								<br><p id="feedbackLabel">Feedback displays here</p>
+								<br><p id="addFeedback"></p>
 							</fieldset>
 						</div>
 						<div id="box">
@@ -87,7 +87,8 @@
 								</thead>
 								<tbody>
 								</tbody>
-							</table><br>
+							</table>
+							<p id="deleteFeedback"></p>
 							<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
 						</div>
 					</form>

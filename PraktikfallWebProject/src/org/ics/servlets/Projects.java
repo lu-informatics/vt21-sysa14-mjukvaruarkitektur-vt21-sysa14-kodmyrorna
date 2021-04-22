@@ -47,7 +47,7 @@ public class Projects extends HttpServlet {
 			List<Project> projects = facade.findAllProjects();
 			sendAsJson(response, projects);
 			return;
-		} else {
+		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
@@ -58,11 +58,11 @@ public class Projects extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
 		if (pathInfo == null || pathInfo.equals("/")) {
-			BufferedReader reader = request.getReader();
+			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
 			Project project = parseJsonProject(reader);
 			facade.createProject(project);
 			sendAsJson(response, project);
-		} else {
+		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
@@ -70,11 +70,11 @@ public class Projects extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
 		if (pathInfo == null || pathInfo.equals("/")) {
-			BufferedReader reader = request.getReader();
+			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
 			Project project = parseJsonProject(reader);
 			facade.updateProject(project);
 			sendAsJson(response, project);
-		} else {
+		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
@@ -85,51 +85,70 @@ public class Projects extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
 		if(pathInfo == null || pathInfo.equals("/")) {
-			JsonReader jsonReader = Json.createReader(request.getReader());
-			JsonObject jsonRoot = jsonReader.readObject();
-			String projectCode = jsonRoot.getString("projectCode");
+			JsonReader jsonReader = Json.createReader(request.getReader()); //Create a reader for getting Json-formatted data
+			JsonObject jsonRoot = jsonReader.readObject(); //Assume there is only one object sent to doDelete, not an array
+			String projectCode = jsonRoot.getString("projectCode"); //Collect project code from the object
 			facade.deleteProject(projectCode);
-		} else {
+		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
 	
+	/*************
+	 * Function sendAsJson
+	 * Parameters: 	HttpServletResponse
+	 * 				List<Project>
+	 * Description: parses a list of Projects to an array of json objects and uses the HttpServletResponse to send the array back with the response
+	 */
 	public void sendAsJson(HttpServletResponse response, List<Project> projects) throws IOException {
-		PrintWriter out = response.getWriter();
-		response.setContentType("application/json");
+		PrintWriter out = response.getWriter(); //Enables servlet to print outgoing data
+		response.setContentType("application/json"); //Specifies data type to send back
 		if (projects != null) {
-			JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+			JsonArrayBuilder arrayBuilder = Json.createArrayBuilder(); //Need to build an array of objects to send back with the response
 			for (Project p : projects) {
-				JsonObjectBuilder o = Json.createObjectBuilder();
+				JsonObjectBuilder o = Json.createObjectBuilder(); //A simple way to create new JSON Objects
 				o.add("projectCode", p.getProjectCode());
 				o.add("name", p.getName());
 				arrayBuilder.add(o);
 			}
 			JsonArray array = arrayBuilder.build();
-			out.print(array);
+			out.print(array); //Send the array back with the response!
 		}
-		else {
+		else { //If the list of persons is empty, an empty array is sent back with the response
 			out.print("[]");
 		}
-		out.flush();
+		out.flush(); //clears the out feed to avoid errors
 	}
 	
+	/*************
+	 * Function sendAsJson
+	 * Parameters: 	HttpServletResponse
+	 * 				Project
+	 * Description: parses the project to a json object and uses the HttpServletResponse to send it back with the response
+	 */
 	public void sendAsJson(HttpServletResponse response, Project project) throws IOException{
-		PrintWriter out = response.getWriter();
-		response.setContentType("application/json");
+		PrintWriter out = response.getWriter(); //Enables servlet to print outgoing data
+		response.setContentType("application/json"); //Specifies data type to send back
 		if (project != null) {
-			out.print("[{\"projectCode\":\"" + project.getProjectCode() + "\",");
+			out.print("[{\"projectCode\":\"" + project.getProjectCode() + "\","); //Creating a JSON object 'manually'
 			out.print("\"name\":\"" + project.getName() + "\"}]");
 		} else {
-			out.print("[]");
+			out.print("[]"); //If the person is null, an empty array of objects is sent back instead
 		}
-		out.flush();
+		out.flush(); //clears the out feed to avoid errors
 	}
+	
+	/*************
+	 * Function parseJsonReader
+	 * Parameter: BufferedReader
+	 * Returns: Project
+	 * Description: Parses a Json object to an instance of the Project entity bean
+	 */
 	private Project parseJsonProject(BufferedReader reader) {
-		JsonReader jsonReader = Json.createReader(reader);
-		JsonObject jsonRoot = jsonReader.readObject();
+		JsonReader jsonReader = Json.createReader(reader); //Create a reader for getting Json-formatted data
+		JsonObject jsonRoot = jsonReader.readObject();  //Assume there is only one object, not an array
 		Project project = new Project();
-		project.setProjectCode(jsonRoot.getString("projectCode"));
+		project.setProjectCode(jsonRoot.getString("projectCode")); //Collect project data from the object
 		project.setName(jsonRoot.getString("name"));
 		return project;
 	}

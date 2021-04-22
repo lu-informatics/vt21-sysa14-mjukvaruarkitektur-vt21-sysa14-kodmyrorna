@@ -4,17 +4,18 @@ let projectArray = new Array();
 $(document).ready(function(){
 	getWeather();
     loadAll();
-    //highlights selected row in table
-    //TODO be able to select multiple rows?
-    //TODO sort table?
 	$(document).on("click", "#allAssignments tr:not(thead tr)", function (){
+		clearFeedback();
 		let selected = $(this).hasClass("highlight");
-		$("#allAssignments tr").removeClass("highlight");
-		if (!selected)
+		if (!selected){
 			$(this).addClass("highlight");
+		} else {
+			$(this).removeClass("highlight");
+		}
 	})
 	//searchbar
 	document.getElementById("searchAssignment").addEventListener("keydown", function(e){
+		clearFeedback();
 		$("#allAssignments td").parent().remove(); //clears table
 		let search = "";
 		if(e.keyCode === 8){ //If the user presses backspace
@@ -35,12 +36,12 @@ $(document).ready(function(){
 			}
 		}
 	})
-	$("#AddBtn").click(function(){ //TODO add clears selects? 
-		//TODO multiple adds of same item should not be possible
-		//TODO catch user errors 
+	$("#AddBtn").click(function(){
+		clearFeedback();
 		let ssn = $("#selectPerson").val();
 		let code = $("#selectProject").val();
-		if (ssn != "Select person" && code != "Select project"){
+		let assignmentAlreadyExists = checkAssignmentExists(ssn, code);
+		if (ssn != "Select person" && code != "Select project" && !assignmentAlreadyExists){
 			let obj = {aSsn: ssn, aProjectCode: code};
 			let jsonString = JSON.stringify(obj);
 			$.ajax({
@@ -63,29 +64,29 @@ $(document).ready(function(){
 						projectName = assignmentsWithNames[i][3];
 					}
 				}
-				updateTable("add", ssn, code, personName, projectName);
-				$("#feedbackLabel").text("Assignment added.");
+				updateTable("add", ssn, code);
 			}
 			function ajaxAddAssignmentError(result, status, xhr){ //TODO can these errors be more specific?
 				console.log("ajaxAddAssignmentError xhr: " + xhr);
-				$("#feedbackLabel").text("Error adding assignment");
+				$("#addFeedback").text("Error adding assignment");
 			}
-		} else { //TODO check that code will go into this else statement
-			$("#feedbackLabel").text("Please select a person and project from the drop down menus.");
+		} else if (ssn === "Select person" || code === "Select project"){ 
+			$("#addFeedback").text("Please select a person and project from the drop down menus.");
+		} else if (assignmentAlreadyExists){
+			$("#addFeedback").text("This person is already assigned to this project.");
 		}
 	})
-	$("#DeleteBtn").click(function(){ //TODO catch user errors 
-		//Check which table row is selected 
-		let selectedPerson = null;
-		let selectedProject = null;
-		$("#allAssignments tr").each(function(index, element){
-			if($(this).hasClass("highlight")){
-				selectedPerson = $(this).find("td:eq(0)").text();
-				selectedProject = $(this).find("td:eq(2)").text();
+	$("#DeleteBtn").click(function(){ 
+		clearFeedback();
+		let selectedAssignments = getSelectedAssignments();
+		if (selectedAssignments != null && selectedAssignments.length != 0){	
+			let obj =[];
+			for (let i = 0; i < selectedAssignments.length; i++){
+				let assignment = {};
+				assignment.aSsn = selectedAssignments[i][0];
+				assignment.aProjectCode = selectedAssignments[i][1];
+				obj.push(assignment);
 			}
-		})
-		if (selectedPerson != null && selectedProject != null){
-			let obj = {aSsn: selectedPerson, aProjectCode: selectedProject};
 			let jsonString = JSON.stringify(obj);
 			$.ajax({
 				method: "DELETE",
@@ -95,18 +96,41 @@ $(document).ready(function(){
 				success: ajaxDeleteAssignmentSuccess
 			})
 			function ajaxDeleteAssignmentSuccess(result, status, xhr){
-				updateTable("delete", selectedPerson, selectedProject);
-				$("#feedbackLabel").text("Assignment deleted");
+				updateTable("delete", null, null, selectedAssignments);
 			}
-			function ajaxDeleteAssignmentError(result, status, xhr){ //TODO give user error
+			function ajaxDeleteAssignmentError(result, status, xhr){ 
 				console.log("ajaxDeleteAssignmentError xhr: " + xhr);
-				$("#feedbackLabel").text("Error deleting assignment");
+				$("#deleteFeedback").text("Error deleting assignment");
 			}
-		} else { //TODO check that code will go into this else statement
-			$("#feedbackLabel").text("Please select a person and project from the list.");
+		} else {
+			$("#deleteFeedback").text("Please select a person and project from the list.");
 		}
 	})
 })
+function clearFeedback(){
+	$("#addFeedback").text("");
+	$("#deleteFeedback").text("");
+}
+function getSelectedAssignments(){
+	let selectedAssignments = new Array();
+	$("#allAssignments tr").each(function(index, element){
+		if($(this).hasClass("highlight")){
+			let ssn = $(this).find("td:eq(0)").text();
+			let code = $(this).find("td:eq(2)").text();
+			selectedAssignments.push([ssn, code]);
+		}
+	});
+	return selectedAssignments;
+}
+function checkAssignmentExists(ssn, code){
+	let exists = false;
+	for (let i = 0; i < assignmentArray.length; i++){
+		if (assignmentArray[i][0] === ssn && assignmentArray[i][1] === code){
+			exists = true;
+		}
+	}
+	return exists;
+}
 function matchAssignmentNames(){
 	let result = new Array();
 	for (let i = 0; i < assignmentArray.length; i++){
@@ -127,20 +151,20 @@ function matchAssignmentNames(){
 	}
 	return result;
 }
-function updateTable(operation, personSsn, projectCode, personName, projectName){
+function updateTable(operation, personSsn, projectCode, assignmentsToRemove){
 	$("#allAssignments td").parent().remove(); //Clears table
 	switch(operation){
 		case("add"):
 			assignmentArray.push([personSsn, projectCode]);
 			break;
 		case("delete"):
-			let indexOfElement = null;
-			for (let i = 0; i < assignmentArray.length; i++){
-				if (assignmentArray[i][0] === personSsn && assignmentArray[i][1] === projectCode){
-					indexOfElement = i;
+			for (let i = 0; i < assignmentsToRemove.length; i++){
+				for (let j = 0; j < assignmentArray.length; j++){
+					if (assignmentArray[j][0] === assignmentsToRemove[i][0] && assignmentArray[j][1] === assignmentsToRemove[i][1]){
+						assignmentArray.splice(j, 1);
+					}
 				}
 			}
-			assignmentArray.splice(indexOfElement, 1);
 			break;
 		default:
 			break;
