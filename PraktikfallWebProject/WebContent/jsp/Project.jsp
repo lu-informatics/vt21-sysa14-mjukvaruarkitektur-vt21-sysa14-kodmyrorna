@@ -5,32 +5,30 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta charset="ISO-8859-1">
-		<link rel="stylesheet" type="text/css" href="../css/home.css">
+		<link rel="stylesheet" type="text/css" href="../css/project.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+		<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
 		<script src="../js/project.js"></script>
 		<title>Praktikfall  Project</title>
 	</head>
 	<body>
-		<body>
-		<header>
-			<p>Praktikfall</p>
-		</header>
-		<section id="row">
-			<nav>
-				<ul>
-					<li class="active"><a href="../html/Home.html">Home</a>
-						<ul class="innerlist">
-							<li><a href="Person.jsp">Person</a></li>
-							<li class="innerActive"><a>Project</a></li>
-							<li><a href="Assignment.jsp">Assignment</a></li>
-						</ul>
-					</li>
-					<li><a href="../html/About.html">About</a></li>
-					<li><a>Test</a></li>
-				</ul>
-			</nav>
-			<aside>
-				<table id="asideTable">
+	<div class="header">
+		<h1>Project</h1>
+		<p><span>Add or remove projects</span></p>
+	</div>
+	<div class ="wrapper">
+		<div class="sidebar">
+			<h2><img src="../images/logo.png"></h2>
+			<ul>
+				<li><a href="../html/Home.html"><i class="fas fa-home"></i>Home</a></li>
+				<li><a href="../jsp/Person.jsp"><i class="fas fa-user-friends"></i>Person</a></li>
+				<li><a href="../jsp/Project.jsp"><i class="fas fa-project-diagram"></i>Project</a></li>
+				<li><a href="../jsp/Assignment.jsp"><i class="fas fa-network-wired"></i>Assignment</a></li>
+				<li><a href="../html/About.html"><i class="fas fa-address-card"></i>About</a></li>
+				<li><a href="../html/Test.html"><i class="fas fa-file-alt"></i>Test</a></li>
+			</ul>
+			<aside class="weather_container">
+				<table class="weather">
 					<tr>
 						<th><span id="city"></span></th>
 						<th><span></span></th>
@@ -38,8 +36,10 @@
 						<th><span id="ipNbr"></span></th>
 					</tr>
 					<tr>
-						<td><span id="degree"></span></td>
-						<td><span id="weather"></span></td>
+						<td colspan="4"><span id="degree"></span></td>
+					</tr>
+					<tr>
+						<td colspan="4"><span id="weather"></span></td>
 						<td><span></span></td>
 						<td><span></span></td>
 					</tr>
@@ -51,11 +51,12 @@
 					</tr>
 				</table>
 			</aside>
+		</div>
 			<section id="main">´
 				<section id="content">
 					<div class="box">
 						<form>
-							<fieldset id="PersonalFS">
+							<fieldset class="PersonalFS">
 								<legend>Project</legend>
 								Project Code:<br>
 								<input type="text" name="projectCode" id="projectCode" value=""><br>
@@ -63,9 +64,9 @@
 								<input type="text" name="name" id="name" value=""><br><br>
 								<input type="button" name="submitBtn" value="Add" id="AddBtn">
 								<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
-								<p id="feedbackLabel">Feedback displays here</p>
+								<p id="fieldsetFeedback"></p>
 							</fieldset>
-							<img src="../images/search.png" alt="search icon" width="15" height="15">
+							<br><img src="../images/search.png" alt="search icon" width="25" height="25" id="searchImage">
 							<input type="text" name="searchProject" id="searchProject" value=""><br><br>
 							<table id="allProjects" border="1">
 								<thead>
@@ -76,12 +77,13 @@
 								</thead>
 								<tbody>
 								</tbody>
-							</table><br>
+							</table>
+							<p id="deleteFeedback"></p>
 							<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
 						</form>
 					</div>
 					<div class="box">
-						<fieldset>
+						<fieldset class="PersonalFS">
 							<legend id="personLegend">Persons assigned to chosen project</legend>
 							<table id="projectPersons">
 								<thead>
@@ -107,7 +109,7 @@
 					</div>
 				</section>
 			</section>
-		</section>
+			</div>
 		<footer>
 		<p>&copy; Arbetsgrupp 7 2021</p>
 		</footer>

@@ -1,126 +1,274 @@
-@media screen and (max-width:600px) {
-.column {
+@media screen and (max-width:768px){
+
+	section#content{
+		padding: 10px 5% 10px 5%;
+	}
+}
+
+@media screen and (max-width:1024px) and (min-width: 768px){
+
+	section#content{
+		padding: 10px 10% 10px 10%;
+	}
+}
+
+@media screen and (min-width: 1024px){
+	section#content{
+		padding: 10px 15% 10px 15%;
+	}
+}
+
+*{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	list-style: none;
+	text-decoration: none;
+	font-family: 'Josefin Sans', sans-serif;
+}
+
+body,
+html {
+	width: 100%;
+	height: 100%;
+	background: url(../images/background.png) no-repeat center center fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+.header {
+	font-size: 20px;
+	position: absolute;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 50px;
+	text-align: center;
+	top: 0;
 	width: 100%;
 }
+
+.header span{
+  border-bottom: thin solid black;
 }
-* {
-	box-sizing: border-box;
+
+.wrapper{
+	width: 100%;
+	height: 100%;
+	display: flex;
+	position: absolute;
+	justify-content: center;
 }
-header{
-	padding: 10px;
+
+.wrapper .sidebar{
+	width: 210px;
+	height: 100%;
+	background: rgba(0,0,0,0.3);
+	padding: 30px 0px;
+	/*position: fixed;*/
+}
+
+.wrapper .sidebar h2{
+	color: black;
+	text-transform: uppercase;
 	text-align: center;
-	font-size: 35px;
-	background-color: #f1f1f1;
+	margin-bottom: 30px;
 }
-section#row{
-	padding: 10px 0px 10px 0px;
-	display:block;
+
+.wrapper .sidebar ul li{
+	padding: 15px;
+	border-bottom: 1px solid #bdb8d7;
+	border-bottom: 1px solid rgba(0,0,0,0.05);
+	border-top: 1px solid rgba(255,255,255,0.05);
+}    
+
+.wrapper .sidebar ul li a{
+	color: black;
+	display: block;
 }
-section#row:after {
-	content: "";
-	display: table;
-	clear: both;
+
+.wrapper .sidebar ul li a .fas{
+	width: 25px;
 }
+
+.wrapper .sidebar ul li:hover{
+	background-color: lightgrey;
+}
+
+.wrapper .sidebar ul li:hover a{
+	color: black;
+}
+
+.wrapper .sidebar .weather_container{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+}
+
 section#main {
-	float: left;
-	width:47%;
+	position:relative; 
+	min-height: 100px;
+	width: 100%;
 	padding: 0px 10px 0px 15px;
-	background-color: #ffffff;
 	color: #000000;
 	display: inline-block;
 }
+
 section#content {
-	padding: 10px 10px 10px 10px;
-	background-color: #f1f1f1;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	align-items: center;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	height: 350px;
+	width: 100%;
 	color: #000000;
 }
-#PersonalFS {
-	width:40%;
-}
-footer{
-	text-align: center;
-	padding: 1px;
-	background-color: #f1f1f1;
-	clear: both;
-}
-nav{
-	float: left;
-	width:20%;
-	background-color: #f1f1f1;
-	padding: 10px, 10px;
-}
-a:visited { 
-	text-decoration: none; 
-	color: black;
-}
-nav a {
-	display: block;
-	color: ffffff;
-	padding: 10px 10px;
-	text-decoration: none;
-}
-/* Change color on hover */
-nav1 a:hover {
-	background-color: #ddd;
-	color: black;
-}
-nav ul {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-}
-nav li:hover{
-	color: #666;
-	background-color: #d6d6d6;
-}
-nav li.active {
-	background: #555;
-	color: #ffffff !important;
-}
-nav ul.innerlist {
-	background: #f1f1f1;
-	margin-left: 15px;
-}
-nav li.active ul.innerlist {
-	background: #d6d6d6;
-}
-nav li.innerActive {
-	background: #555;
-	color: #ffffff !important;
+
+#personalFS{
+	padding-left: 5px;
+	padding-top: 20px;
+	padding-right: 100px;
 }
 
-aside {
-	float: right;
-	width: 30%;
-	background-color: #f1f1f1;
+#searchbox{
+	padding-left: 5px;
 }
+
+#searchAssignment{
+	margin-top: 20px;
+	border-radius: 9px;
+	padding: 8px;
+
+}
+
 section#main table{
 	border-collapse: collapse;
+	font-size: 0.9em;
+	font-family: sans-serif;
+	min-width: 400px;
+	max-height: 100%;
+	border-radius: 5px 5px 0px 0px;
+	overflow: hidden;
+	background-color: white;
 }
-section#main tbody{
-	overflow-y: scroll;
-}
-section#main tr{
+
+section#main thead tr {
 	width: 50%;
+	background-color: lightgrey;
+	color: black;
+	text-align: left;
 }
-section#main tr:hover {
+
+section#main tr:nth-child(n+3):hover {
 	cursor: pointer;
 	background: PeachPuff;
 }
-section#main td, th{
-	padding: 8px;
-	border-bottom: 1px solid #ddd;
+
+section#main th, section#main td{
+	padding: 12px 15px;
+	border: 1px solid black;
 }
+
+th{
+  text-align: center;
+}
+
+section#main tbody tr {
+	border-bottom: 1px solid #dddddd;
+}
+
+section#main tbody tr:last-of-type {
+	border-bottom: 2px solid #dddddd;
+}
+
+section#main tbody tr.active-row {
+	font-weight: bold;
+	color: #ee4b08;
+}
+
+section#main tbody{
+	overflow-y: scroll;
+}
+
 .highlight:not(thead tr){
-	background: SandyBrown;
+    background: SandyBrown;
 }
-.box {
-    float: left;
-    width: 40%;
-    margin-left: 30px;
+
+input[type="button"]{
+  color: #fff;
+  background-color: black;
+  border-color: black;
+  display: inline-block;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  border-radius: 2px;
+  font-weight: 300;
+}
+
+#DeleteBtn{
     margin-top: 10px;
-    padding: 5px;
 }
+
+.tabell{
+	overflow-y: scroll;
+	max-height: 300px;
+}
+
+input[type="button"]:hover{
+  background-color: #ee4b08;
+  border-color: #ee4b08;
+  cursor: pointer;
+}
+
+#selectPerson{
+	padding: 8px 12px;
+	margin: 10px 2px 20px 2px; 
+	color: black;
+	background-color: white;
+	border: 1px solid #dddddd;
+	cursor: pointer;
+	border-radius: 5px; 
+}
+
+#selectPerson:focus,
+#selectPerson:hover{
+	outline: none;
+	border: 1px solid #bbbbbb;
+	cursor: pointer;
+}
+
+#selectProject{
+	padding: 8px 12px;
+	margin: 10px 2px 20px 2px; 
+	color: black;
+	background-color: white;
+	border: 1px solid #dddddd;
+	cursor: pointer;
+	border-radius: 5px; 
+}
+
+#selectProject:focus,
+#selectProject:hover{
+	outline: none;
+	border: 1px solid #bbbbbb;
+}
+
 #feedbackLabel{
+	display: none;
 	color: red;
 }
+
+footer{
+	position: absolute;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	bottom: 0;
+	width: 100%;
+}
+

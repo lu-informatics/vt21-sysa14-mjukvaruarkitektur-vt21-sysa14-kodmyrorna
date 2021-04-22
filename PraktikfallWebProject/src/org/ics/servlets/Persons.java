@@ -34,7 +34,6 @@ public class Persons extends HttpServlet {
      */
     public Persons() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -46,7 +45,7 @@ public class Persons extends HttpServlet {
 			List<Person> persons = facade.findAllPersons();
 			sendAsJson(response, persons);
 			return;
-		} else {
+		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
@@ -56,12 +55,13 @@ public class Persons extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if (pathInfo == null || pathInfo.equals("/")) {
-			BufferedReader reader = request.getReader();
+		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
+		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
+			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
 			Person person = parseJsonPerson(reader);
 			facade.createPerson(person);
 			sendAsJson(response, person);
-		} else {
+		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
@@ -71,12 +71,13 @@ public class Persons extends HttpServlet {
 	 */
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if (pathInfo == null || pathInfo.equals("/")) {
-			BufferedReader reader = request.getReader();
+		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
+		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
+			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
 			Person person = parseJsonPerson(reader);
 			facade.updatePerson(person);
 			sendAsJson(response, person);
-		} else {
+		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
@@ -86,50 +87,71 @@ public class Persons extends HttpServlet {
 	 */
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if(pathInfo == null || pathInfo.equals("/")) {
-			JsonReader jsonReader = Json.createReader(request.getReader());
-			JsonObject jsonRoot = jsonReader.readObject();
-			String ssn = jsonRoot.getString("ssn");
+		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets
+		if((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
+			JsonReader jsonReader = Json.createReader(request.getReader()); //Create a reader for getting Json-formatted data
+			JsonObject jsonRoot = jsonReader.readObject(); //Assume there is only one object sent to doDelete, not an array
+			String ssn = jsonRoot.getString("ssn"); //Collect social security number from the object
 			facade.deletePerson(ssn);
-		} else {
+		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
 	
+	/*************
+	 * Function sendAsJson
+	 * Parameters: 	HttpServletResponse
+	 * 				List<Person>
+	 * Description: parses a list of Persons to an array of json objects and uses the HttpServletResponse to send the array back with the response
+	 */
 	public void sendAsJson(HttpServletResponse response, List<Person> persons) throws IOException{
-		PrintWriter out = response.getWriter();
-		response.setContentType("application/json");
+		PrintWriter out = response.getWriter(); //Enables servlet to print outgoing data
+		response.setContentType("application/json"); //Specifies data type to send back
 		if (persons != null) {
-			JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+			JsonArrayBuilder arrayBuilder = Json.createArrayBuilder(); //Need to build an array of json objects to send back with the response
 			for (Person p : persons) {
-				JsonObjectBuilder o = Json.createObjectBuilder();
+				JsonObjectBuilder o = Json.createObjectBuilder(); //A simple way to create new JSON Objects
 				o.add("ssn", p.getSsn());
 				o.add("name", p.getName());
-				arrayBuilder.add(o);
+				arrayBuilder.add(o); 
 			}
 			JsonArray array = arrayBuilder.build();
-			out.print(array);
-		} else {
+			out.print(array); //Send the array back with the response!
+		} else { //If the list of persons is empty, an empty array is sent back with the response
 			out.print("[]");
 		}
-		out.flush();
+		out.flush(); //clears the out feed to avoid errors
 	}
+	
+	/*************
+	 * Function sendAsJson
+	 * Parameters: 	HttpServletResponse
+	 * 				Person
+	 * Description: parses the person to a json object and uses the HttpServletResponse to send it back with the response
+	 */
 	public void sendAsJson(HttpServletResponse response, Person person) throws IOException{
-		PrintWriter out = response.getWriter();
-		response.setContentType("application/json");
+		PrintWriter out = response.getWriter(); //Enables servlet to print outgoing data
+		response.setContentType("application/json"); //Specifies data type to send back
 		if (person != null) {
-			out.print("[{\"ssn\":\"" + person.getSsn() + "\",");
+			out.print("[{\"ssn\":\"" + person.getSsn() + "\","); //Creating a JSON object 'manually'
 			out.print("\"name\":\"" + person.getName() + "\"}]");
 		} else {
-			out.print("[]");
+			out.print("[]"); //If the person is null, an empty array of objects is sent back instead
 		}
-		out.flush();
+		out.flush(); //clears the out feed to avoid errors
 	}
+	
+	/*************
+	 * Function parseJsonReader
+	 * Parameter: BufferedReader
+	 * Returns: Person
+	 * Description: Parses a Json object to an instance of the Person entity bean
+	 */
 	private Person parseJsonPerson(BufferedReader reader) {
-		JsonReader jsonReader = Json.createReader(reader);
-		JsonObject jsonRoot = jsonReader.readObject();
+		JsonReader jsonReader = Json.createReader(reader); //Create a reader for getting Json-formatted data
+		JsonObject jsonRoot = jsonReader.readObject();  //Assume there is only one object, not an array
 		Person person = new Person();
-		person.setSsn(jsonRoot.getString("ssn"));
+		person.setSsn(jsonRoot.getString("ssn")); //Collect person data from the object
 		person.setName(jsonRoot.getString("name"));
 		return person;
 	}
