@@ -16,4 +16,10 @@
       <context-root>TestProject_JUnitEE</context-root>
     </web>
   </module>
+  <module>
+    <web>
+      <web-uri>PraktikfallTestProject.war</web-uri>
+      <context-root>PraktikfallTestProject</context-root>
+    </web>
+  </module>
 </application>
