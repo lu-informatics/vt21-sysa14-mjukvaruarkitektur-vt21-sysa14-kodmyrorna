@@ -1,4 +1,3 @@
-//TODO limit nbr of characters for ssn and name
 let assignmentArray = new Array(); 
 let personArray = new Array();
 let projectArray = new Array();
@@ -28,7 +27,6 @@ $(document).ready(function(){
 		}
 	})
 	//Highlight rows in tables
-	//TODO be able to select multiple rows?
 	$(document).on("click", "#allPersons tr:not(thead tr)", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#allPersons tr").removeClass("highlight");
@@ -41,14 +39,17 @@ $(document).ready(function(){
 			updateProjects("clear");
 			$("#ssn").val("");
 		}
+		$("#newProjectFeedback").text("");
 	})
 	$(document).on("click", "#personProjects tr:not(thead tr)", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#personProjects tr").removeClass("highlight");
 		if (!selected)
 			$(this).addClass("highlight");
+		$("#newProjectFeedback").text("");
 	})
 	$("#AddBtn").click(function(){
+		$("#newProjectFeedback").text("");
 		let ssnStr = $("#ssn").val();
 		let nameStr = $("#name").val();
 		let ssnArray = getSsnArray();
@@ -70,7 +71,7 @@ $(document).ready(function(){
 				$("#ssn").attr("placeholder", "YYMMDDXXXX"); 
 				$("#name").val("");
 				updateTable("add", ssnStr, nameStr);
-				$("#feedbackLabel").text("Person added");
+				$("#feedbackLabel").text("");
 			}
 			function ajaxAddPersonError(result, status, xhr){
 				console.log("ajaxAddPersonError xhr: " + xhr);
@@ -110,7 +111,7 @@ $(document).ready(function(){
 			}
 			function ajaxDelPersonError(result, status, xhr){
 				console.log("ajaxDelPersonError xhr: " + xhr);
-				$("#feedbackLabel").text("Error deleting person");
+				$("#feedbackLabel").text("");
 			}
 		} else { //TODO check that code will go into the else-statement!
 			$("#feedbackLabel").text("Please select a person to delete from the list.");
@@ -137,7 +138,7 @@ $(document).ready(function(){
 				$("#ssn").val("");
 				$("#ssn").attr("placeholder", "YYMMDDXXXX"); 
 				updateTable("update", ssnStr, nameStr);
-				$("#feedbackLabel").text("Person updated.");
+				$("#feedbackLabel").text("");
 			}
 			function ajaxUpdatePersonError(result, status, xhr){
 				console.log("ajaxUpdatePersonError xhr: " + xhr);
@@ -151,7 +152,7 @@ $(document).ready(function(){
 			$("#feedbackLabel").text("Name can be a maximum of 20 characters.");
 		}
 	})//UpdateBtn
-	$("#removeFromProject").click(function(){ //TODO catch user errors 
+	$("#removeFromProject").click(function(){ 
 		let ssn = $("#ssn").val();
 		let code = $("#personProjects tr.highlight").find("td:eq(0)").text(); 
 		let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code});
@@ -164,14 +165,17 @@ $(document).ready(function(){
 				success: ajaxDeleteAssignmentSuccess
 			})
 			function ajaxDeleteAssignmentError(result, status, xhr){
-				//TODO give user error
+				$("#newProjectFeedback").text("Error removing project assignment from person");
 				console.log("ajaxDeleteAssignmentError xhr: " + xhr);
 			}
 			function ajaxDeleteAssignmentSuccess(result, status, xhr){
 				let personName = $("#allPersons tr.highlight").find("td:eq(1)").text();
 				let projectName = $("#personProjects tr.highlight").find("td:eq(1)").text();
 				updateProjects("remove", ssn, personName, code, projectName);
+				$("#newProjectFeedback").text("");
 			}
+		} else {
+			$("#newProjectFeedback").text("Please select a project assignment to remove.");
 		}
 	}) //remove from project
 	$("#addNewProject").click(function(){
@@ -180,8 +184,9 @@ $(document).ready(function(){
 		} else {
 			toggleSelectVisibility("invisible");
 		}
+		$("#newProjectFeedback").text("");
 	}) //toggles visibility of add new project menu
-	$("#addToProject").click(function(){ //TODO catch user errors 
+	$("#addToProject").click(function(){ 
 		let ssn = $("#ssn").val();
 		let code = $("#selectNewProject").val();
 		let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code});
@@ -194,15 +199,16 @@ $(document).ready(function(){
 				success: ajaxAddAssignmentSuccess
 			})
 			function ajaxAddAssignmentError(result, status, xhr){
-				//TODO give user error
+				$("#newProjectFeedback").text("Error assigning person to project.");
 				console.log("ajaxAddAssignmentError xhr: " + xhr);
 			}
 			function ajaxAddAssignmentSuccess(result, status, xhr){
 				let personName = $("#allPersons tr.highlight").find("td:eq(1)").text();
 				updateProjects("add", ssn, personName, code);
+				$("#newProjectFeedback").text("");
 			}
-		} else if (code != "Select project"){
-			//TODO tell user to select a project, geez haha
+		} else if (code === "Select project"){
+			$("#newProjectFeedback").text("Please select a project to assign this person to.");
 		}
 	}) //addToProject button
 })
