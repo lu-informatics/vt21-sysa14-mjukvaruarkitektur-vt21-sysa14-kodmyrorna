@@ -63,11 +63,11 @@
 								<input type="text" name="name" id="name" value=""><br><br>
 								<input type="button" name="submitBtn" value="Add" id="AddBtn">
 								<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
-								<p id="feedbackLabel">Feedback displays here</p>
+								<p id="fieldsetFeedback"></p>
 							</fieldset>
 						</form>
-						<img src="../images/search.png" alt="search icon" width="15" height="15">
-						<input type="text" name="searchPerson" id="searchPerson" value=""><br><br>
+						<br><img src="../images/search.png" alt="search icon" width="15" height="15">
+						<input type="text" name="searchPerson" id="searchPerson" value=""><br>
 						<table id="allPersons" border="1">
 							<thead>
 								<tr>
@@ -77,7 +77,8 @@
 							</thead>
 							<tbody>
 							</tbody>
-						</table><br>
+						</table>
+						<p id="deleteFeedback"></p>
 						<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
 					</div>
 					<div class="box">

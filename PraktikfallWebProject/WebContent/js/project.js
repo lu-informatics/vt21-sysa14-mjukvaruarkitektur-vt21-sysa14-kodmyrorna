@@ -7,6 +7,7 @@ $(document).ready(function(){
 	toggleSelectVisibility("invisible");
 	//filter search
 	document.getElementById("searchProject").addEventListener("keydown", function(e){
+		clearFeedback();
 		$("#allProjects td").parent().remove(); //clears table
 		let search = "";
 		if(e.keyCode === 8){ //If the user presses backspace
@@ -28,6 +29,7 @@ $(document).ready(function(){
 	})
 	//Highlight rows in tables
 	$(document).on("click", "#allProjects tr:not(thead tr)", function (){
+		clearFeedback();
 		let selected = $(this).hasClass("highlight");
 		$("#allProjects tr").removeClass("highlight");
 		if (!selected) { //If I wanna highlight a row
@@ -39,16 +41,16 @@ $(document).ready(function(){
 			updatePersons("clear");
 			$("#projectCode").val("");
 		}
-		$("#newPersonFeedback").text("");
 	})
 	$(document).on("click", "#projectPersons tr:not(thead tr)", function (){
+		clearFeedback();
 		let selected = $(this).hasClass("highlight");
 		$("#projectPersons tr").removeClass("highlight");
 		if (!selected)
 			$(this).addClass("highlight");
-		$("#newPersonFeedback").text("");
 	})
 	$("#AddBtn").click(function(){ 
+		clearFeedback();
 		let projectCodeStr = $("#projectCode").val();
 		let nameStr = $("#name").val();
 		let isEmpty = !nameStr.replace(/\s/g, '') || !projectCodeStr.replace(/\s/g, ''); //Evaluates to true if the project code or name consist of nothing or just spaces.
@@ -65,28 +67,27 @@ $(document).ready(function(){
 				success: ajaxAddProjectSuccess
 			})
 			function ajaxAddProjectSuccess(result, status, xhr){
-				//TODO Ask Filiph: Empty fields at successful add or let entered values remain?
 				$("#projectCode").val("");
-				$("#feedbackLabel").text("");
 				$("#name").val("");
 				updateTable("add", projectCodeStr, nameStr);
 			}
 			function ajaxAddProjectError(result, status, xhr){ 
 				console.log("ajaxAddProjectError xhr: " + xhr);
-				$("#feedbackLabel").text("Error adding project");
+				$("#fieldsetFeedback").text("Error adding project");
 			}
-		} else if (projectCodeArray.includes(projectCodeStr)){ //TODO check that code will go into each if else-statement these depending on error!
-			$("#feedbackLabel").text("There already exists a project with this project code.");
+		} else if (projectCodeArray.includes(projectCodeStr)){ 
+			$("#fieldsetFeedback").text("There already exists a project with this project code.");
 		} else if (isEmpty){
-			$("#feedbackLabel").text("Please enter a project code and name.");
+			$("#fieldsetFeedback").text("Please enter a project code and name.");
 		} else if (projectCodeStr.length > 10){
-			$("#feedbackLabel").text("Project code can be a maximum of 10 characters.");
+			$("#fieldsetFeedback").text("Project code can be a maximum of 10 characters.");
 		} else if (nameStr.length > 20) {
-			$("#feedbackLabel").text("Name can be a maximum of 20 characters.");
+			$("#fieldsetFeedback").text("Name can be a maximum of 20 characters.");
 		}
 	}) //AddBtn
 	$("#DeleteBtn").click(function(){
-		let projectCodeStr = $("#projectCode").val();
+		clearFeedback();
+		let projectCodeStr = $("#allProjects tr.highlight").find("td:eq(0)").text(); 
 		let projectCodeArray = getProjectCodeArray();
 		if (projectCodeArray.includes(projectCodeStr)){
 			let obj = {projectCode: projectCodeStr};
@@ -100,19 +101,19 @@ $(document).ready(function(){
 			})
 			function ajaxDelProjectSuccess(result, status, xhr){
 				$("#projectCode").val("");
-				$("#feedbackLabel").text("");
 				updateTable("delete", projectCodeStr);
 				updatePersons("clear");
 			}
 			function ajaxDelProjectError(result, status, xhr){ 
 				console.log("ajaxDelProjectError xhr: " + xhr);
-				$("#feedbackLabel").text("Error deleting project");
+				$("#deleteFeedback").text("Error deleting project");
 			}
 		} else if (!projectCodeArray.includes(projectCodeStr)){
-			$("#feedbackLabel").text("Please select a project from the list.");
+			$("#deleteFeedback").text("Please select a project from the list.");
 		}
 	}) //DeleteBtn
 	$("#UpdateBtn").click(function(){
+		clearFeedback();
 		let projectCodeStr = $("#projectCode").val();
 		let nameStr = $("#name").val();
 		let isEmpty = !nameStr.replace(/\s/g, '');
@@ -131,22 +132,22 @@ $(document).ready(function(){
 			function ajaxUpdateProjectSuccess(result, status, xhr){
 				$("#name").val("");
 				$("#projectCode").val("");
-				$("#feedbackLabel").text("");
 				updateTable("update", projectCodeStr, nameStr);
 			}
 			function ajaxUpdateProjectError(result, status, xhr){ 
 				console.log("ajaxUpdateProjectError xhr: " + xhr);
-				$("#feedbackLabel").text("Error updating project");
+				$("#fieldsetFeedback").text("Error updating project");
 			}
-		} else if (!projectCodeArray.includes(projectCodeStr)){ //TODO check that code will go into each if else-statement these depending on error!
-			$("#feedbackLabel").text("Please select a project to update. The project code cannot be changed.");
+		} else if (!projectCodeArray.includes(projectCodeStr)){ 
+			$("#fieldsetFeedback").text("Please select a project to update. The project code cannot be changed.");
 		} else if (isEmpty){
-			$("#feedbackLabel").text("Please enter a name.");
+			$("#fieldsetFeedback").text("Please enter a name.");
 		} else if (nameStr.length > 20){
-			$("#feedbackLabel").text("Name can be a maximum of 20 characters");
+			$("#fieldsetFeedback").text("Name can be a maximum of 20 characters");
 		}
 	}) //UpdateBtn
-	$("#removePerson").click(function(){ //TODO catch user errors 
+	$("#removePerson").click(function(){ 
+		clearFeedback();
 		let code = $("#projectCode").val();
 		let ssn = $("#projectPersons tr.highlight").find("td:eq(0)").text(); 
 		let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code});
@@ -166,13 +167,13 @@ $(document).ready(function(){
 				let projectName = $("#allProjects tr.highlight").find("td:eq(1)").text();
 				let personName = $("#projectPersons tr.highlight").find("td:eq(1)").text();
 				updatePersons("remove", code, projectName, ssn, personName);
-				$("#newPersonFeedback").text("");
 			}
 		} else {
 			$("#newPersonFeedback").text("Please select a person to remove from this project.");
 		}
 	})
 	$("#addNewPerson").click(function(){ 
+		clearFeedback();
 		if ($(".newPersonMenu").is(":hidden")){
 			toggleSelectVisibility("visible");
 		} else {
@@ -181,6 +182,7 @@ $(document).ready(function(){
 		$("#newPersonFeedback").text("");
 	}) //addNewPerson toggles visibility of add new person menu
 	$("#addPerson").click(function(){ 
+		clearFeedback();
 		let code = $("#projectCode").val();
 		let ssn = $("#selectNewPerson").val();
 		let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code});
@@ -199,14 +201,17 @@ $(document).ready(function(){
 			function ajaxAddAssignmentSuccess(result, status, xhr){
 				let projectName = $("#allProjects tr.highlight").find("td:eq(1)").text();
 				updatePersons("add", code, projectName, ssn);
-				$("#newPersonFeedback").text("");
 			}
 		} else if (ssn === "Select person"){
 			$("#newPersonFeedback").text("Please select a person to remove from this project.");
 		}
 	}) //addPerson
 })
-
+function clearFeedback(){
+	$("#fieldsetFeedback").text("");
+	$("#deleteFeedback").text("");
+	$("#newPersonFeedback").text("");
+}
 function getProjectCodeArray(){
 	let projectCodeArray = new Array();
 	for (let i = 0; i < projectArray.length; i++){
@@ -239,27 +244,24 @@ function matchAssignmentNames(){
 }
 function updateTable(operation, code, name){
 	$("#allProjects td").parent().remove(); //Clears table
-	let indexOfElement = null;
 	switch(operation){
 		case("delete"): //removes the row with the given ssn
 			for(let i = 0; i < projectArray.length; i++){
 				if(projectArray[i][0] === code){
-					indexOfElement = i;
+					projectArray.splice(i, 1);
 				}
 			}
-			projectArray.splice(indexOfElement, 1);
 			break;
 		case("add"):
 			projectArray.push([code, name]);
 			break;
 		case("update"):
+			let newRow = [code, name];
 			for(let i = 0; i < projectArray.length; i++){
 				if(projectArray[i][0] === code){
-					indexOfElement = i;
+					projectArray.splice(i, 1, newRow);
 				}
 			}
-			let newRow = [code, name];
-			projectArray.splice(indexOfElement, 1, newRow);
 			break;
 		default:
 			break;
@@ -274,15 +276,13 @@ function updatePersons(operation, code, projectName, ssn, personName){
 	/*FIRST UPDATE TABLE*/
 	$("#projectPersons td").parent().remove(); //Clears table
 	$("#personLegend").text("Persons assigned to " + projectName);
-	let indexOfElement = null;
 	switch(operation){
 		case("remove"):
 			for (let i = 0; i < assignmentArray.length; i++){
 				if (assignmentArray[i][0] === ssn && assignmentArray[i][1] === code){
-					indexOfElement = i;
+					assignmentArray.splice(i, 1);
 				}
 			}
-			assignmentArray.splice(indexOfElement, 1);
 			break;
 		case("add"):
 			assignmentArray.push([ssn, code]);

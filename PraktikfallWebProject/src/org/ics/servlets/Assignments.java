@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.ejb.EJB;
 import javax.json.Json;
@@ -97,12 +98,14 @@ public class Assignments extends HttpServlet {
 	 */
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		BufferedReader reader = request.getReader();
-		JsonObject jsonRoot = Json.createReader(reader).readObject();
-		String[] assignment = {jsonRoot.getString("aSsn"), jsonRoot.getString("aProjectCode")};
-		Person person = facade.findPersonBySsn(assignment[0]);
-		Project project = facade.findProjectByProjectCode(assignment[1]);
-		if (person != null && project != null) {
-			facade.removeAssignment(project,  person);
+		JsonArray jsonArray = Json.createReader(reader).readArray();
+		for (int i = 0; i < jsonArray.size(); i++) {
+			JsonObject assignment = jsonArray.getJsonObject(i);
+			Person person = facade.findPersonBySsn(assignment.getString("aSsn"));
+			Project project = facade.findProjectByProjectCode(assignment.getString("aProjectCode"));
+			if (person != null && project != null) {
+				facade.removeAssignment(project, person);
+			}
 		}
 	}
 	
