@@ -90,6 +90,7 @@ public class Facade implements FacadeLocal {
     public void removeAssignment(Project project, Person person) {
     	//First get new set of persons, excluding this person
     	Set<Person> persons = this.findPersonsByProject(project);
+    	//Below is a workaround as persons.remove(person) did not work.
     	Person personToRemove = null;
     	for(Person p : persons){
     		if (p.getSsn().equals(person.getSsn())) {
@@ -101,6 +102,7 @@ public class Facade implements FacadeLocal {
     	
     	//Then, get new set of projects, excluding this project
     	Set<Project> projects = this.findProjectsByPerson(person);
+    	//Below is a workaround as projects.remove(project) did not work.
     	Project projectToRemove = null;
     	for(Project p : projects){
     		if(p.getProjectCode().equals(project.getProjectCode())) {

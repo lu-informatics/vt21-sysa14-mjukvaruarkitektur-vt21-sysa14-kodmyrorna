@@ -1,4 +1,3 @@
-//TODO limit nbr of characters for project code and name
 let projectArray = new Array();
 let personArray = new Array();
 let assignmentArray = new Array();
@@ -28,7 +27,6 @@ $(document).ready(function(){
 		}
 	})
 	//Highlight rows in tables
-	//TODO be able to select multiple rows?
 	$(document).on("click", "#allProjects tr:not(thead tr)", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#allProjects tr").removeClass("highlight");
@@ -41,12 +39,14 @@ $(document).ready(function(){
 			updatePersons("clear");
 			$("#projectCode").val("");
 		}
+		$("#newPersonFeedback").text("");
 	})
 	$(document).on("click", "#projectPersons tr:not(thead tr)", function (){
 		let selected = $(this).hasClass("highlight");
 		$("#projectPersons tr").removeClass("highlight");
 		if (!selected)
 			$(this).addClass("highlight");
+		$("#newPersonFeedback").text("");
 	})
 	$("#AddBtn").click(function(){ 
 		let projectCodeStr = $("#projectCode").val();
@@ -67,7 +67,7 @@ $(document).ready(function(){
 			function ajaxAddProjectSuccess(result, status, xhr){
 				//TODO Ask Filiph: Empty fields at successful add or let entered values remain?
 				$("#projectCode").val("");
-				$("#feedbackLabel").text("Project added.");
+				$("#feedbackLabel").text("");
 				$("#name").val("");
 				updateTable("add", projectCodeStr, nameStr);
 			}
@@ -100,7 +100,7 @@ $(document).ready(function(){
 			})
 			function ajaxDelProjectSuccess(result, status, xhr){
 				$("#projectCode").val("");
-				$("#feedbackLabel").text("Project updated");
+				$("#feedbackLabel").text("");
 				updateTable("delete", projectCodeStr);
 				updatePersons("clear");
 			}
@@ -131,7 +131,7 @@ $(document).ready(function(){
 			function ajaxUpdateProjectSuccess(result, status, xhr){
 				$("#name").val("");
 				$("#projectCode").val("");
-				$("#feedbackLabel").text("Project updated.");
+				$("#feedbackLabel").text("");
 				updateTable("update", projectCodeStr, nameStr);
 			}
 			function ajaxUpdateProjectError(result, status, xhr){ 
@@ -150,7 +150,7 @@ $(document).ready(function(){
 		let code = $("#projectCode").val();
 		let ssn = $("#projectPersons tr.highlight").find("td:eq(0)").text(); 
 		let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code});
-		if (code != null && code != "" && ssn != "Social security number" && ssn != ""){
+		if (code != "" && ssn != "Social security number" && ssn != ""){
 			$.ajax({
 				method: "DELETE",
 				url: "http://localhost:8080/PraktikfallWebProject/Assignments/delete",
@@ -159,14 +159,17 @@ $(document).ready(function(){
 				success: ajaxDeleteAssignmentSuccess
 			})
 			function ajaxDeleteAssignmentError(result, status, xhr){
-				//TODO give user error
+				$("#newPersonFeedback").text("Error assigning person to project.");
 				console.log("ajaxDeleteAssignmentError xhr: " + xhr);
 			}
-			function ajaxDeleteAssignmentSuccess(result, status, xhr){ //TODO give user error
+			function ajaxDeleteAssignmentSuccess(result, status, xhr){ 
 				let projectName = $("#allProjects tr.highlight").find("td:eq(1)").text();
 				let personName = $("#projectPersons tr.highlight").find("td:eq(1)").text();
 				updatePersons("remove", code, projectName, ssn, personName);
+				$("#newPersonFeedback").text("");
 			}
+		} else {
+			$("#newPersonFeedback").text("Please select a person to remove from this project.");
 		}
 	})
 	$("#addNewPerson").click(function(){ 
@@ -175,12 +178,13 @@ $(document).ready(function(){
 		} else {
 			toggleSelectVisibility("invisible");
 		}
+		$("#newPersonFeedback").text("");
 	}) //addNewPerson toggles visibility of add new person menu
-	$("#addPerson").click(function(){ //TODO catch user errors 
+	$("#addPerson").click(function(){ 
 		let code = $("#projectCode").val();
 		let ssn = $("#selectNewPerson").val();
 		let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code});
-		if (code != null && ssn != null && ssn != "Select person"){
+		if (code != "" && code != null && ssn != null && ssn != "Select person"){
 			$.ajax({
 				method: "POST",
 				url: "http://localhost:8080/PraktikfallWebProject/Assignments/post",
@@ -189,15 +193,16 @@ $(document).ready(function(){
 				success: ajaxAddAssignmentSuccess
 			})
 			function ajaxAddAssignmentError(result, status, xhr){ 
-				//TODO give user error
+				$("#newPersonFeedback").text("Error assigning person to project");
 				console.log("ajaxAddAssignmentError xhr: " + xhr);
 			}
 			function ajaxAddAssignmentSuccess(result, status, xhr){
 				let projectName = $("#allProjects tr.highlight").find("td:eq(1)").text();
 				updatePersons("add", code, projectName, ssn);
+				$("#newPersonFeedback").text("");
 			}
 		} else if (ssn === "Select person"){
-			//TODO tell user to select a person, geeeez
+			$("#newPersonFeedback").text("Please select a person to remove from this project.");
 		}
 	}) //addPerson
 })
@@ -274,7 +279,6 @@ function updatePersons(operation, code, projectName, ssn, personName){
 		case("remove"):
 			for (let i = 0; i < assignmentArray.length; i++){
 				if (assignmentArray[i][0] === ssn && assignmentArray[i][1] === code){
-					console.log("index of element: " + i);
 					indexOfElement = i;
 				}
 			}
