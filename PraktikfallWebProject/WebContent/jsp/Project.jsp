@@ -102,6 +102,7 @@
 									<input type="button" name="addPerson" id="addPerson" value="Add" class="newPersonMenu"><br>
 								</fieldset>
 							</div>
+							<p id="newPersonFeedback"></p>
 						</fieldset>
 					</div>
 				</section>

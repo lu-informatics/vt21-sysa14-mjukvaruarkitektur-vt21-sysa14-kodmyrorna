@@ -102,6 +102,7 @@
 									<input type="button" name="addToProject" id="addToProject" value="Add" class="newProjectMenu"><br>
 								</fieldset>
 							</div>
+							<p id="newProjectFeedback"></p>
 						</fieldset>
 					</div>
 				</section>
