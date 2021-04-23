@@ -4,6 +4,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import org.ics.ejb.Person;
 import org.ics.ejb.Project;
+import org.ics.facade.FacadeLocal;
 import org.ics.facade.facadeLocal;
 
 
@@ -29,11 +30,17 @@ public class FacadeTest extends TestCase {
 	}
 	
 	public void testFacadeMethodProject() throws Exception {
-		
+		Project p = facade.findPersonBySsn(970325);
+		p.setName("Mats");
+		assertEquals(p.getName(), "Mats");
 		}
+		
 	
 	public void testFacadeMethodPerson() throws Exception {
-		
+		Project p = facade.findProjectByProjectCode("123");
+		p.setName("Professor");
+		assertEquals(p.getName(), "Professor");
 		}
-
-}
+		
+		
+	}
