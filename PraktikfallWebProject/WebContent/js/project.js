@@ -38,6 +38,7 @@ $(document).ready(function(){
 	//Highlight rows in project table
 	$(document).on("click", "#allProjects tr:not(thead tr)", function (){
 		clearFeedback();
+		$("#name").val(""); //clear name input field when new project is selected
 		let selected = $(this).hasClass("highlight"); //boolean, evaluates to true if the clicked row is already highlighted
 		$("#allProjects tr").removeClass("highlight"); //removes all highlights for entire table
 		if (!selected) { //If the clicked row is not already highlighted
@@ -75,6 +76,7 @@ $(document).ready(function(){
 			let jsonString = JSON.stringify(obj); //Creates JSON object to send to servlet
 			$.ajax({
 				method: "POST",
+				contentType: "application/json",
 				url: "http://localhost:8080/PraktikfallWebProject/Projects/",
 				data: jsonString,
 				dataType:'json',
@@ -111,6 +113,7 @@ $(document).ready(function(){
 			let jsonString = JSON.stringify(obj); //Creates JSON object to send to servlet
 			$.ajax({
 				method: "DELETE",
+				contentType: "application/json",
 				url: "http://localhost:8080/PraktikfallWebProject/Projects/",
 				data: jsonString,
 				error: ajaxDelProjectError,
@@ -142,6 +145,7 @@ $(document).ready(function(){
 			let jsonString = JSON.stringify(obj); //Creates JSON object to send to servlet
 			$.ajax({
 				method: "PUT",
+				contentType: "application/json",
 				url: "http://localhost:8080/PraktikfallWebProject/Projects/",
 				data: jsonString,
 				dataType: "json",
@@ -172,9 +176,10 @@ $(document).ready(function(){
 		let code = $("#projectCode").val();
 		let ssn = $("#projectPersons tr.highlight").find("td:eq(0)").text(); //Gets the chosen person from the first column of the highlighted row in the person table
 		if (code != "" && ssn != "Social security number" && ssn != ""){ //checks that the user has selected a valid person
-			let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code}); //Creates json object to send to servlet
+			let jsonString = JSON.stringify([{aSsn: ssn, aProjectCode: code}]); //Creates json object to send to servlet
 			$.ajax({
 				method: "DELETE",
+				contentType: "application/json",
 				url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
 				data: jsonString,
 				error: ajaxDeleteAssignmentError,
@@ -215,6 +220,7 @@ $(document).ready(function(){
 			let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code}); //Creates a json object to send to servlet
 			$.ajax({
 				method: "POST",
+				contentType: "application/json",
 				url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
 				data: jsonString,
 				error: ajaxAddAssignmentError,
@@ -257,7 +263,6 @@ function toggleSelectVisibility(option){
 		$(".newPersonMenu").show("fast");
 	}
 }
-
 
 /************
  * Function 	updateTable
@@ -338,11 +343,16 @@ function updatePersons(operation, code, projectName, ssn, personName){
 	/*THEN UPDATE SELECT*/
 	toggleSelectVisibility("invisible"); //gonna be populated but invisible until "add new person" is pressed
 	$('#selectNewPerson').children().remove().end().append('<option>Select person</option>'); //clears the select element
+	let numPersonsToAssign = 0; //Number of persons that can be assigned to this project
 	for (let i = 0; i < personArray.length; i++){
 		if(!projectPersons.includes(personArray[i][0])){ //evaluates to true if  the person is not already assigned to the project
+			numPersonsToAssign++;
 			let personText = personArray[i][0] + ", " + personArray[i][1];//text to be displayed in the select element
 			$('#selectNewPerson').append($('<option>').val(personArray[i][0]).text(personText)); //Adds the person to the select element
 		}
+	}
+	if(numPersonsToAssign == 0){ //If all possible persons are already assigned to this project
+		$('#selectNewPerson').children().remove().end().append('<option>All persons already assigned</option>'); //Changes text in select element
 	}
 }
 
@@ -416,8 +426,9 @@ async function loadProjects(){
 		error: ajaxGetProjectsError,
 		success: ajaxGetProjectsSuccess
 	})
-	function ajaxGetProjectsError(result, status, xhr){ //TODO give user error
+	function ajaxGetProjectsError(result, status, xhr){ 
 		console.log("ajaxGetProjectsError xhr: " + xhr);
+		alert("Error retreiving data from database. Try again later or contact IT if the problem persists.");
 	}
 	function ajaxGetProjectsSuccess(result, status, xhr){
 		$.each(result, function(index, element){
@@ -438,8 +449,9 @@ async function loadPersons(){
 		error: ajaxGetPersonsError,
 		success: ajaxGetPersonsSuccess
 	})
-	function ajaxGetPersonsError(result, status, xhr){//TODO give user error
+	function ajaxGetPersonsError(result, status, xhr){
 		console.log("ajaxGetPersonsError xhr: " + xhr);
+		alert("Error retreiving data from database. Try again later or contact IT if the problem persists.");
 	}
 	function ajaxGetPersonsSuccess(result, status, xhr){
 		$.each(result, function(index, element){
@@ -460,8 +472,9 @@ async function loadAssignments(){
 		error: ajaxGetAssignmentsError,
 		success: ajaxGetAssignmentsSuccess
 	})
-	function ajaxGetAssignmentsError(result, status, xhr){ //TODO give user error
+	function ajaxGetAssignmentsError(result, status, xhr){ 
 		console.log("ajaxGetAssignmentsError xhr: " + xhr);
+		alert("Error retreiving data from database. Try again later or contact IT if the problem persists.");
 	}
 	function ajaxGetAssignmentsSuccess(result, status, xhr){
 		$.each(result, function(index, element){

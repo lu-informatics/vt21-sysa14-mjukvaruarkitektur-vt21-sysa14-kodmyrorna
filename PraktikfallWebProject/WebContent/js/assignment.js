@@ -57,6 +57,7 @@ $(document).ready(function(){
 			let jsonString = JSON.stringify(obj); //json object to send to servlet
 			$.ajax({
 				method: "POST",
+				contentType: "application/json",
 				url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
 				data: jsonString,
 				dataType: "json",
@@ -77,7 +78,7 @@ $(document).ready(function(){
 				}
 				updateTable("add", ssn, code); //adds the new assignment to the global assignment array and as a row to the table
 			}
-			function ajaxAddAssignmentError(result, status, xhr){ //TODO can these errors be more specific?
+			function ajaxAddAssignmentError(result, status, xhr){ 
 				console.log("ajaxAddAssignmentError xhr: " + xhr); //logs error to console for debugging
 				$("#addFeedback").text("Error adding assignment"); //generic (:C) user feedback
 			}
@@ -103,6 +104,7 @@ $(document).ready(function(){
 			let jsonString = JSON.stringify(arrayOfObjects); //parses the arrayOfObjects as a json string to send to servlet
 			$.ajax({
 				method: "DELETE",
+				contentType: "application/json",
 				url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
 				data: jsonString,
 				error: ajaxDeleteAssignmentError,
@@ -271,8 +273,9 @@ async function loadPersons(){
 		error: ajaxGetPersonsError,
 		success: ajaxGetPersonsSuccess
 	})
-	function ajaxGetPersonsError(result, status, xhr){ //TODO give user error
+	function ajaxGetPersonsError(result, status, xhr){ 
 		console.log("ajaxGetPersonsError xhr: " + xhr);
+		alert("Error retreiving data from database. Try again later or contact IT if the problem persists.");
 	}
 	function ajaxGetPersonsSuccess(result, status, xhr){
 		$.each(result, function(index, element){
@@ -292,8 +295,9 @@ async function loadProjects(){
 		error: ajaxGetProjectsError,
 		success: ajaxGetProjectsSuccess
 	})
-	function ajaxGetProjectsError(result, status, xhr){//TODO give user error
+	function ajaxGetProjectsError(result, status, xhr){
 		console.log("ajaxGetProjectsError xhr: " + xhr);
+		alert("Error retreiving data from database. Try again later or contact IT if the problem persists.");
 	}
 	function ajaxGetProjectsSuccess(result, status, xhr){
 		$.each(result, function(index, element){
@@ -307,6 +311,7 @@ async function loadProjects(){
  * Function 	loadAssignments
  * Description	async function which loads the assignments in the database and stores them in the global assignment array
  ************/
+
 async function loadAssignments(){
 	$.ajax({
 		method: "GET",
@@ -314,8 +319,9 @@ async function loadAssignments(){
 		error: ajaxGetAssignmentsError,
 		success: ajaxGetAssignmentsSuccess
 	})
-	function ajaxGetAssignmentsError(result, status, xhr){ //TODO give user error
+	function ajaxGetAssignmentsError(result, status, xhr){ 
 		console.log("ajaxGetAssignmentsError xhr: " + xhr);
+		alert("Error retreiving data from database. Try again later or contact IT if the problem persists.");
 	}
 	function ajaxGetAssignmentsSuccess(result, status, xhr){
 		$.each(result, function(index, element){

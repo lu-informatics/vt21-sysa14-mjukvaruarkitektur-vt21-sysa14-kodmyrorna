@@ -56,7 +56,8 @@ public class Assignments extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if(pathInfo == null || pathInfo.equals("/")) {
+		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
+		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
 			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
 			JsonObject jsonRoot = Json.createReader(reader).readObject(); //Reads object sent through request
 			String[] assignment = {jsonRoot.getString("aSsn"), jsonRoot.getString("aProjectCode")}; //Creates a string array for the assignment which can be passed to the method senAsJson()
@@ -76,7 +77,8 @@ public class Assignments extends HttpServlet {
 	 */
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if(pathInfo == null || pathInfo.equals("/")) {
+		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
+		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
 			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
 			JsonArray jsonArray = Json.createReader(reader).readArray(); //Reads the data from the request as an array of assignments as json objects
 			for (int i = 0; i < jsonArray.size(); i++) { //Iterates through the array and deletes each assignment from the database
