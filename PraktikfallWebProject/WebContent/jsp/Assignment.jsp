@@ -60,10 +60,6 @@
 						Person<br>
 						<select id="selectPerson">
 							<option disabled selected>Select person</option>
-							<option>Test Test Test Test Test</option>
-							<option>Test Test Test Test Test</option>
-							<option>Test Test Test Test Test</option>
-							<option>Test</option>
 						</select><br>
 						Project<br>
 						<select id="selectProject">
@@ -74,8 +70,8 @@
 					</fieldset>
 				</div>
 				<div id="WorksAt">
-					<img src="../images/search.png" alt="search icon" width="15" height="15">
-					<input type="text" name="searchAssignment" id="searchAssignment" value=""><br><br>
+					<input type="text" name="searchAssignment" id="searchAssignment" value="" placeholder="Search..."><br><br>
+					<div class="tabell">
 					<table id="allAssignments">
 						<thead>
 							<tr>
@@ -92,7 +88,8 @@
 						<tbody>
 						</tbody>
 					</table><br>
-					<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
+					</div>
+					<input type="button" class="btn" name="submitBtn" value="Delete" id="DeleteBtn">
 					<br><p id="feedbackLabel">Feedback displays here</p>
 				</div>
 			</section>
