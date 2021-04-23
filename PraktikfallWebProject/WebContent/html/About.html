@@ -1,33 +1,27 @@
 <!DOCTYPE html>
-<html>
-	<head>
+<html lang="sv">
+<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta charset="ISO-8859-1">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="../css/home.css">
-		<title>Praktikfall  About</title>
+		<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/about.css">
+		<title>Home</title>
 	</head>
-	<body>
-		<body>
-		<header>
-			<p>Praktikfall</p>
-		</header>
-		<section id="row">
-			<nav>
-				<ul>
-					<li><a href="Home.html">Home</a>
-						<ul class="innerlist">
-							<li><a href="../jsp/Person.jsp">Person</a></li>
-							<li><a href="../jsp/Project.jsp">Project</a></li>
-							<li><a href="../jsp/Assignment.jsp">Assignment</a></li>
-						</ul>
-					</li>
-					<li class="active"><a>About</a></li>
-					<li><a href="Test.html">Test</a></li>
-				</ul>
-			</nav>
-			<aside>
-				<table id="asideTable">
+<body>
+	<div class ="wrapper">
+		<div class="sidebar">
+			<h2><img src="../images/logo.png"></h2>
+			<ul>
+				<li><a href="../html/Home.html"><i class="fas fa-home"></i>Home</a></li>
+				<li><a href="../jsp/Person.jsp"><i class="fas fa-user-friends"></i>Person</a></li>
+				<li><a href="../jsp/Project.jsp"><i class="fas fa-project-diagram"></i>Project</a></li>
+				<li><a href="../jsp/Assignment.jsp"><i class="fas fa-network-wired"></i>Assignment</a></li>
+				<li><a href="../html/About.html"><i class="fas fa-address-card"></i>About</a></li>
+				<li><a href="../html/Test.html"><i class="fas fa-file-alt"></i>Test</a></li>
+			</ul>
+			<aside class="weather_container">
+				<table class="weather">
 					<tr>
 						<th><span id="city"></span></th>
 						<th><span></span></th>
@@ -35,8 +29,10 @@
 						<th><span id="ipNbr"></span></th>
 					</tr>
 					<tr>
-						<td><span id="degree"></span></td>
-						<td><span id="weather"></span></td>
+						<td colspan="4"><span id="degree"></span></td>
+					</tr>
+					<tr>
+						<td colspan="4"><span id="weather"></span></td>
 						<td><span></span></td>
 						<td><span></span></td>
 					</tr>
@@ -48,13 +44,22 @@
 					</tr>
 				</table>
 			</aside>
-			<section id="main">
-			</section>
-		</section>
-		<footer>
+		</div>
+		<div class="main_content">
+			<div class = "header"><h2>About us</h2></div>
+			<div id="logga">
+					<img src="../images/logga.png">
+				</div>
+				<div class="info">
+					<p>Our team has created this system to be able to staff projects in a quick and easy way.
+					You as a customer must have the opportunity to staff your projects in our easy-to-understand system in no time.</p>
+			</div>
+		</div>
+	</div>
+	<footer>
 		<p>&copy; Arbetsgrupp 7 2021</p>
-		</footer>
-	</body>
+</footer>
+</body>
 </html>
 <script>
 	$(document).ready(function(){
@@ -93,8 +98,8 @@
 			var timeStrSunset = sunsetDate.toLocaleTimeString();
 			$("#sunrise").text("Sunrise: "+timeStrSunrise);
 			$("#sunset").text("Sunset: "+timeStrSunset);
-			$("#weather").text(result.weather[0].main);
-			$("#degree").text(result.main.temp+" \u2103");
+			$("#weather").text("Weather: "+result.weather[0].main);
+			$("#degree").text("Degrees: "+result.main.temp+" \u2103");
 		}//ajaxWeatherReturn_Success
 		function ajaxWeatherReturn_Error(result, status, xhr) {
 			alert("Error i OpenWeatherMap Ajax");
