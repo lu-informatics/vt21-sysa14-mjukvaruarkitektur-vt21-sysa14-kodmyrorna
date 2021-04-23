@@ -22,7 +22,7 @@ $(document).ready(function(){
 		} else {
 			search = $("#searchPerson").val().toUpperCase() + String.fromCharCode(e.which).toUpperCase();
 		}
-		for (let i = 0; i < personArray.length; i++){ //Iterates through the outer person array (which contains inner arrays representing persons)
+		for (let i = 0; i < personArray.length; i++){ //Iterates through the outer person array (which contains inner arrays representing individual persons)
 			let containsSearch = false;
 			for(let j = 0; j < personArray[i].length; j++){ //Iterates through the two fields of the inner array
 				if(personArray[i][j].toUpperCase().includes(search)){ //checks if the current search value, regardless of casing, matches the string of the current field
@@ -89,7 +89,7 @@ $(document).ready(function(){
 				updateTable("add", ssnStr, nameStr); //add new person to the table
 			}
 			function ajaxAddPersonError(result, status, xhr){
-				console.log("ajaxAddPersonError xhr: " + xhr); //logs error in the console for debugging purposes
+				console.log("ajaxAddPersonError xhr: " + xhr); //logs error in the console for debugging
 				$("#fieldsetFeedback").text("Error adding person"); //Gives user generic (:C) error
 			}
 		} else if (ssnArray.includes(ssnStr)){  
@@ -110,7 +110,7 @@ $(document).ready(function(){
 		clearFeedback();
 		let ssnStr = $("#allPersons tr.highlight").find("td:eq(0)").text(); //Gets the chosen person from the first column of the highlighted row in the person table
 		let ssnArray = getSsnArray(); //gets a list of the social security numbers of the already existing persons
-		if (ssnArray.includes(ssnStr)){ //Checks that there is a person matching this ssn 
+		if (ssnArray.includes(ssnStr)){ //ssnArray.includes(ssnStr) checks that this person is in the data and therefore updatable
 			let obj = {ssn: ssnStr}; 
 			let jsonString = JSON.stringify(obj); //Creates JSON object to send to servlet
 			$.ajax({
@@ -216,7 +216,7 @@ $(document).ready(function(){
 		clearFeedback();
 		let ssn = $("#ssn").val();
 		let code = $("#selectNewProject").val();
-		if (code != "" && ssn != "" && code != "Select project"){
+		if (code != "" && ssn != "" && code != "Select project"){ //Checks that user selected a valid project
 			let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code}); //Creates a json object to send to servlet
 			$.ajax({
 				method: "POST",
@@ -241,16 +241,26 @@ $(document).ready(function(){
 
 /*FUNCTIONS*/
 /************
- * Function 	getSsnArray
- * Returns 		array
- * Description	Returns an array containing just the social security numbers of the person data collected at load
+ * Function 	clearFeedback
+ * Description	Clears the user feedback messages in all parts of the page
  ************/
-function getSsnArray(){ 
-	let ssnArray = new Array();
-	for(let i = 0; i < personArray.length; i++){
-		ssnArray.push(personArray[i][0]);
+function clearFeedback(){
+	$("#fieldsetFeedback").text("");
+	$("#deleteFeedback").text("");
+	$("#newProjectFeedback").text("");
+}
+
+/************
+ * Function 	toggleSelectVisibility
+ * Parameter	string	option
+ * Description	Toggles visibility of the part of the new project menu allowing user to add a new project to a person
+ ************/
+function toggleSelectVisibility(option){
+	if(option === "invisible"){
+		$(".newProjectMenu").hide("fast");
+	} else if (option === "visible"){
+		$(".newProjectMenu").show("fast");
 	}
-	return ssnArray;
 }
 
 /************
@@ -330,47 +340,25 @@ function updateProjects(operation, ssn, personName, code, projectName){
 		}
 	}
 	/*THEN UPDATE SELECT*/
+	toggleSelectVisibility("invisible"); //gonna be populated but invisible until "add new project" is pressed
 	$('#selectNewProject').children().remove().end().append('<option>Select project</option>'); //clears the select element
 	for (let i = 0; i < projectArray.length; i++){ 
 		if(!personProjects.includes(projectArray[i][0])){ //evaluates to true if the person is not already assigned to the project
-			let projectText = projectArray[i][0] + ", " + projectArray[i][1]; //text to displayed in the select element
+			let projectText = projectArray[i][0] + ", " + projectArray[i][1]; //text to be displayed in the select element
 			$('#selectNewProject').append($('<option>').val(projectArray[i][0]).text(projectText)); //Adds the project to the select element
 		}
 	}
 }
 
 /************
- * Function 	updateProjects
- * Parameters	string	operation
- * 				string	ssn
- * 				string 	name
- * 				string 	code
- * 				string 	projectName
- * Description	Updates the table of projects belonging to a specific person and manipulates the global project or assignment array depending on the operation performed
- * 				Also updates the select element which contains projects the person can be assigned to
+ * Function 	addRow
+ * Parameters	string	element
+ * 				string 	val1
+ * 				string	val2
+ * Description	Adds a new row with val1 and val2 to the specified table
  ************/
-
-/************
- * Function 	clearFeedback
- * Description	Clears the user feedback messages in all parts of the page
- ************/
-function clearFeedback(){
-	$("#fieldsetFeedback").text("");
-	$("#deleteFeedback").text("");
-	$("#newProjectFeedback").text("");
-}
-
-/************
- * Function 	toggleSelectVisibility
- * Parameter	string	option
- * Description	Toggles visibility of the part of the new project menu allowing user to add a new project to a person
- ************/
-function toggleSelectVisibility(option){
-	if(option === "invisible"){
-		$(".newProjectMenu").hide("fast");
-	} else if (option === "visible"){
-		$(".newProjectMenu").show("fast");
-	}
+function addRow(element, val1, val2){
+	$("#" + element + " tbody").append("<tr><td>" + val1 + "</td><td>" + val2 + "</td></p></tr>");
 }
 
 /************
@@ -400,14 +388,16 @@ function matchAssignmentNames(){
 }
 
 /************
- * Function 	addRow
- * Parameters	string	element
- * 				string 	val1
- * 				string	val2
- * Description	Adds a new row with val1 and val2 to the specified table
+ * Function 	getSsnArray
+ * Returns 		array
+ * Description	Returns an array containing just the social security numbers of the person data collected at load
  ************/
-function addRow(element, val1, val2){
-	$("#" + element + " tbody").append("<tr><td>" + val1 + "</td><td>" + val2 + "</td></p></tr>");
+function getSsnArray(){ 
+	let ssnArray = new Array();
+	for(let i = 0; i < personArray.length; i++){
+		ssnArray.push(personArray[i][0]);
+	}
+	return ssnArray;
 }
 
 /************
