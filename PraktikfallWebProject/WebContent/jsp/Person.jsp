@@ -56,7 +56,7 @@
 			<section id="content">
 				<div class="box">
 					<form>
-						<fieldset id="PersonalFS">
+						<fieldset class="PersonalFS">
 							<legend>Person</legend>
 							Social Security Number:<br>
 							<input type="text" name="ssn" id="ssn" value="" placeholder="YYMMDDXXXX" maxlength="10"> <br>
@@ -64,10 +64,10 @@
 							<input type="text" name="name" id="name" value="" maxlength="25"><br><br>
 							<input type="button" name="submitBtn" value="Add" id="AddBtn">
 							<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
-							<br><p id="feedbackLabel">Feedback displays here</p>
+							<br><p id="fieldsetFeedback"></p>
 						</fieldset>
 					</form>
-					<br><img src="../images/search.png" alt="search icon" width="15" height="15">
+					<br><img src="../images/search.png" alt="search icon" width="25" height="25" id="searchImage">
 					<input type="text" name="searchPerson" id="searchPerson" value=""><br>
 					<table id="allPersons">
 						<thead>
@@ -83,7 +83,7 @@
 					<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
 				</div>
 				<div class="box">
-					<fieldset style="padding-left: 5px">
+					<fieldset class="PersonalFS">
 						<legend id="projectLegend">Projects chosen person is assigned to</legend>
 						<table id="personProjects">
 							<thead>
@@ -96,7 +96,7 @@
 						</table>
 						<br><input type="button" name="removeFromProject" id="removeFromProject" value="Remove from project"><br>
 						<br><input type="button" name="addNewProject" id="addNewProject" value="Add new project..."><br>
-						<br><p id="feedbackLabel">Feedback displays here</p>
+						<br><p id="newProjectFeedback"></p>
 						<hr>
 						<div id="newProjectMenu" class="newProjectMenu">
 							<div id="newProjectFS" class="newProjectMenu">
