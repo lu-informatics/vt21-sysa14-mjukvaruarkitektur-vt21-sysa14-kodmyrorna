@@ -68,4 +68,11 @@ public class Project implements Serializable{
 	public void removePerson(Person person) {
 		this.persons.remove(person);
 	}
+	
+	public boolean equals(Project p) {
+		if(this.projectCode.equals(p.getProjectCode())) {
+			return true;
+		}
+		return false;
+	}
 }

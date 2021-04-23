@@ -57,7 +57,8 @@ public class Projects extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if (pathInfo == null || pathInfo.equals("/")) {
+		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
+		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
 			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
 			Project project = parseJsonProject(reader);
 			facade.createProject(project);
@@ -69,7 +70,8 @@ public class Projects extends HttpServlet {
 	
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if (pathInfo == null || pathInfo.equals("/")) {
+		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
+		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
 			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
 			Project project = parseJsonProject(reader);
 			facade.updateProject(project);
@@ -84,7 +86,8 @@ public class Projects extends HttpServlet {
 	 */
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if(pathInfo == null || pathInfo.equals("/")) {
+		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
+		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
 			JsonReader jsonReader = Json.createReader(request.getReader()); //Create a reader for getting Json-formatted data
 			JsonObject jsonRoot = jsonReader.readObject(); //Assume there is only one object sent to doDelete, not an array
 			String projectCode = jsonRoot.getString("projectCode"); //Collect project code from the object

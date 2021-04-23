@@ -1,4 +1,4 @@
-package org.ics.servlet;
+package org.ics.servlets;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import org.ics.facade.FacadeLocal;
  * Servlet implementation class PraktikfallServlet
  */
 @WebServlet("/PraktikfallServlet")
-public class PraktikfallServlet extends HttpServlet {
+public class TestServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	@EJB
@@ -33,7 +33,7 @@ public class PraktikfallServlet extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public PraktikfallServlet() {
+    public TestServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -98,10 +98,10 @@ public class PraktikfallServlet extends HttpServlet {
 		
 		/****Create and delete PersonProject relations****/
 		out.println("<h3>Creating personproject relations...</h3>");
-//		facade.addPersonProject(pr1, p1);
-		facade.addPersonProject(pr1, p2);
-//		facade.addPersonProject(pr2, p1);
-		facade.addPersonProject(pr2, p2);
+//		facade.addAssignment(pr1, p1);
+		facade.addAssignment(pr1, p2);
+//		facade.addAssignment(pr2, p1);
+		facade.addAssignment(pr2, p2);
 		out.println("<h4>" + p2.getName() + " is assigned to...</h4>");
 		ArrayList<String[]> allAssignments = facade.findAllAssignments();
 		for (String[] assignment : allAssignments) {
@@ -110,7 +110,7 @@ public class PraktikfallServlet extends HttpServlet {
 			}
 		}
 		out.println("<h3>Removing personproject relation...</h3>");
-		facade.removePersonProject(pr2, p2);
+		facade.removeAssignment(pr2, p2);
 		//let's see which projects p2 now has: 
 		out.println("<h4>" + p2.getName() + " is now assigned to...</h4>");
 		allAssignments = facade.findAllAssignments();
@@ -133,10 +133,10 @@ public class PraktikfallServlet extends HttpServlet {
 //		facade.createProject(pr3);
 		Project pr4 = new Project("RNDM12", "Examensarbete");
 //		facade.createProject(pr4);
-//		facade.addPersonProject(pr3, p1);
-//		facade.addPersonProject(pr4, p1);
-//		facade.addPersonProject(pr1, p5);
-//		facade.addPersonProject(pr1, p4);
+//		facade.addAssignment(pr3, p1);
+//		facade.addAssignment(pr4, p1);
+//		facade.addAssignment(pr1, p5);
+//		facade.addAssignment(pr1, p4);
 		
 		/*****Queries:*****/
 		out.println("<h1>Queries</h1>");
