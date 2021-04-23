@@ -30,7 +30,7 @@ public class FacadeTest extends TestCase {
 	}
 	
 	public void testFacadeMethodProject() throws Exception {
-		Project p = facade.findPersonBySsn(970325);
+		Person p = facade.findPersonBySsn(970325);
 		p.setName("Mats");
 		assertEquals(p.getName(), "Mats");
 		}
@@ -38,8 +38,8 @@ public class FacadeTest extends TestCase {
 	
 	public void testFacadeMethodPerson() throws Exception {
 		Project p = facade.findProjectByProjectCode("123");
-		p.setName("Professor");
-		assertEquals(p.getName(), "Professor");
+		p.setName("Plugg");
+		assertEquals(p.getName(), "Plugg");
 		}
 		
 		
