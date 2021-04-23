@@ -348,11 +348,16 @@ function updateProjects(operation, ssn, personName, code, projectName){
 	/*THEN UPDATE SELECT*/
 	toggleSelectVisibility("invisible"); //gonna be populated but invisible until "add new project" is pressed
 	$('#selectNewProject').children().remove().end().append('<option>Select project</option>'); //clears the select element
+	let numProjectsToAssign = 0; //Number of projects the person can be assigned to
 	for (let i = 0; i < projectArray.length; i++){ 
 		if(!personProjects.includes(projectArray[i][0])){ //evaluates to true if the person is not already assigned to the project
+			numProjectsToAssign++; 
 			let projectText = projectArray[i][0] + ", " + projectArray[i][1]; //text to be displayed in the select element
 			$('#selectNewProject').append($('<option>').val(projectArray[i][0]).text(projectText)); //Adds the project to the select element
 		}
+	}
+	if(numProjectsToAssign == 0){ //If the person is already assigned to all possible projects
+		$('#selectNewProject').children().remove().end().append('<option>Already assigned to all projects</option>'); //Changes text in select element
 	}
 }
 
