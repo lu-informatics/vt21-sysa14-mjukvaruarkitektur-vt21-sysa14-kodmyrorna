@@ -469,6 +469,11 @@ async function loadAssignments(){
 		})
 	}
 }
+
+/************
+ * Function 	getWeather
+ * Description	loads IP-address, location, and weather-data from ipstack and openweathermap
+ ************/
 function getWeather(){
 	$.ajax({
 		method: "GET",

@@ -351,17 +351,6 @@ function updateProjects(operation, ssn, personName, code, projectName){
 }
 
 /************
- * Function 	updateProjects
- * Parameters	string	operation
- * 				string	ssn
- * 				string 	name
- * 				string 	code
- * 				string 	projectName
- * Description	Updates the table of projects belonging to a specific person and manipulates the global project or assignment array depending on the operation performed
- * 				Also updates the select element which contains projects the person can be assigned to
- ************/
-
-/************
  * Function 	addRow
  * Parameters	string	element
  * 				string 	val1
