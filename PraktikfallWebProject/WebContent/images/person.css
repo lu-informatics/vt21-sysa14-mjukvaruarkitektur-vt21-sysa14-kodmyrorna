@@ -30,10 +30,6 @@ html {
   transform: translateX(10%) translateY(40%);
 }
 
-.highlight:not(thead tr){
-    background: #ffb399;
-}
-
 .header span{
   border-bottom: thin solid black;
 }
@@ -126,13 +122,6 @@ section#main table{
   white-space: nowrap;
 }
 
-section#main thead tr {
-  width: 50%;
-  background-color: lightgrey;
-  color: black;
-  text-align: center;
-}
-
 .box {
     float: left;
     width: 40%;
@@ -145,9 +134,20 @@ th{
   text-align: center;
 }
 
+section#main thead tr {
+  width: 50%;
+  background-color: #ecd8c2;
+  color: black;
+  text-align: center;
+}
+
+.highlight:not(thead tr){
+    background: #ffb399;
+}
+
 section#main tr:nth-child(n+1):hover:not(thead tr):not(.highlight) {
   cursor: pointer;
-  background: #ffd9cc;
+  background: #f6d275;
 }
 section#main tr:nth-child(n+1).highlight {
   cursor: pointer;
@@ -184,7 +184,7 @@ section#main tbody tr.active-row {
   padding-right: 15px;
   padding-bottom: 15px;
   padding-top: 20px;
-  padding-right: 100px;
+  padding-right: 10px;
 }
 
 #personProjects{
@@ -197,11 +197,8 @@ section#main tbody tr.active-row {
 }
 
 #searchPerson{
-  width:95%;
-}
-
-#searchImage{
-  transform:translateY(7px);
+  width:93%;
+  float: right;
 }
 
 input[type=text]{
@@ -210,21 +207,8 @@ input[type=text]{
   padding: 4px;
 }
 
-#newProjectFS{
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-bottom: 15px;
-  padding-top: 20px;
-  padding-right: 100px;
-  
-}
-
 #label{
   margin-top: 40px;
-}
-
-#feedbackLabel{
-  color: red;
 }
 
 #selectNewProject{
@@ -257,7 +241,7 @@ input[type="button"]{
   background-color: black;
   border-color: black;
   display: inline-block;
-  padding: 5px 10px;
+  padding: 6px 11px;
   margin-bottom: 10px;
   border-radius: 2px;
   font-weight: 300;
