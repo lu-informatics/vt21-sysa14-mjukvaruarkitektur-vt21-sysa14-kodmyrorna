@@ -34,3 +34,4 @@ public class ProjectTest extends TestCase {
 		project = null;
 	}
 }
+

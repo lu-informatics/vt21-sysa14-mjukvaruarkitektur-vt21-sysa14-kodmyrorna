@@ -22,10 +22,4 @@
       <context-root>PraktikfallTestProject</context-root>
     </web>
   </module>
-  <module>
-    <web>
-      <web-uri>PraktikFallTest.war</web-uri>
-      <context-root>PraktikFallTest</context-root>
-    </web>
-  </module>
 </application>
