@@ -102,9 +102,9 @@
 							<p id="newPersonFeedback"></p>
 							<div id="newPersonMenu" class="newPersonMenu">
 								<fieldset id="newProjectFS" class="newPersonMenu">
-									<span id=label>Choose project to add to person</span>
+									<span id=label>Choose person to add to project</span>
 									<br><select id="selectNewPerson" class="newPersonMenu">
-										<option>Select person</option>
+										<option disabled selected>Select person</option>
 									</select><br>
 									<input type="button" name="addPerson" id="addPerson" value="Add" class="newPersonMenu"><br>
 								</fieldset>

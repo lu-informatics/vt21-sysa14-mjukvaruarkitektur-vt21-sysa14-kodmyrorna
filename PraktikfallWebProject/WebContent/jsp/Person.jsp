@@ -105,7 +105,7 @@
 							<div id="newProjectFS" class="newProjectMenu">
 								<span id=label>Choose project to add to person</span>
 								<br><select id="selectNewProject" class="newProjectMenu">
-									<option>Select project</option>
+									<option disabled selected>Select project</option>
 								</select><br>
 								<input type="button" name="addToProject" id="addToProject" value="Add" class="newProjectMenu"><br>
 						</div>

@@ -251,11 +251,6 @@ footer{
 	border: 1px solid #bbbbbb;
 }
 
-#feedbackLabel{
-	display: none;
-	color: red;
-}
-
 .personalFS{
   padding-left: 15px;
   padding-right: 15px;
@@ -275,4 +270,8 @@ footer{
 
 #DeleteBtn{
 	float: right;
+}
+
+#searchAssignment{
+  margin-bottom: 10px;
 }

@@ -13,7 +13,7 @@
 </head>
 <body>
 	<div class="header">
-		<h1>Configure</h1>
+		<h1>Configure assignments</h1>
 		<p><span>Add or remove people from different projects</span></p>
 	</div>
 	<div class ="wrapper">
@@ -66,8 +66,9 @@
 							<option disabled selected>Select project</option>
 						</select><br>
 						<input type="button" name="submitBtn" value="Add" id="AddBtn">
-						<br><p id="feedbackLabel">Feedback displays here</p>
+						
 					</fieldset>
+					<br><p id="addFeedback"></p>
 				</div>
 				<div id="WorksAt">
 					<input type="text" name="searchAssignment" id="searchAssignment" value="" placeholder="Search..."><br>
@@ -90,7 +91,7 @@
 						</table><br>
 					</div>
 					<input type="button" class="btn" name="submitBtn" value="Delete" id="DeleteBtn">
-					<br><p id="feedbackLabel">Feedback displays here</p>
+					<br><p id="deleteFeedback"></p>
 				</div>
 			</section>
 		</section>

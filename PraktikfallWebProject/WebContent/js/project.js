@@ -343,7 +343,7 @@ function updatePersons(operation, code, projectName, ssn, personName){
 	}
 	/*THEN UPDATE SELECT*/
 	toggleSelectVisibility("invisible"); //gonna be populated but invisible until "add new person" is pressed
-	$('#selectNewPerson').children().remove().end().append('<option>Select person</option>'); //clears the select element
+	$('#selectNewPerson').children().remove().end().append('<option disabled selected>Select person</option>'); //clears the select element
 	let numPersonsToAssign = 0; //Number of persons that can be assigned to this project
 	for (let i = 0; i < personArray.length; i++){
 		if(!projectPersons.includes(personArray[i][0])){ //evaluates to true if  the person is not already assigned to the project
