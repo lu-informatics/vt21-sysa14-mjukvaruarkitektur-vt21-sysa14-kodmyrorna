@@ -13,7 +13,7 @@
 </head>
 <body>
 	<div class="header">
-		<h1>Configure</h1>
+		<h1>Configure assignments</h1>
 		<p><span>Add or remove people from different projects</span></p>
 	</div>
 	<div class ="wrapper">
@@ -55,7 +55,7 @@
 		<section id="main">
 			<section id="content">
 				<div id="box">
-					<fieldset id="personalFS">
+					<fieldset class="personalFS">
 						<legend>Assign</legend>
 						Person<br>
 						<select id="selectPerson">
@@ -66,31 +66,32 @@
 							<option disabled selected>Select project</option>
 						</select><br>
 						<input type="button" name="submitBtn" value="Add" id="AddBtn">
-						<br><p id="feedbackLabel">Feedback displays here</p>
+						
 					</fieldset>
+					<br><p id="addFeedback"></p>
 				</div>
 				<div id="WorksAt">
-					<input type="text" name="searchAssignment" id="searchAssignment" value="" placeholder="Search..."><br><br>
+					<input type="text" name="searchAssignment" id="searchAssignment" value="" placeholder="Search..."><br>
 					<div class="tabell">
-					<table id="allAssignments">
-						<thead>
-							<tr>
-								<th colspan="2">Person</th>
-								<th colspan="2">Project</th>
-							</tr>
-							<tr>
-								<th>Social Security Number</th>
-								<th>Name</th>
-								<th>Code</th>
-								<th>Name</th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
-					</table><br>
+						<table id="allAssignments">
+							<thead>
+								<tr>
+									<th colspan="2">Person</th>
+									<th colspan="2">Project</th>
+								</tr>
+								<tr>
+									<th>Social Security Number</th>
+									<th>Name</th>
+									<th>Code</th>
+									<th>Name</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table><br>
 					</div>
 					<input type="button" class="btn" name="submitBtn" value="Delete" id="DeleteBtn">
-					<br><p id="feedbackLabel">Feedback displays here</p>
+					<br><p id="deleteFeedback"></p>
 				</div>
 			</section>
 		</section>

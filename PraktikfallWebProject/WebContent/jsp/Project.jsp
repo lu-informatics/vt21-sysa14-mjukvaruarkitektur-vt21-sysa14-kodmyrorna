@@ -9,7 +9,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 		<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
 		<script src="../js/project.js"></script>
-		<title>Praktikfall  Project</title>
+		<title>Project</title>
 	</head>
 	<body>
 	<div class="header">
@@ -52,7 +52,7 @@
 				</table>
 			</aside>
 		</div>
-			<section id="main">´
+			<section id="main">
 				<section id="content">
 					<div class="box">
 						<form>
@@ -66,18 +66,19 @@
 								<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
 								<p id="fieldsetFeedback"></p>
 							</fieldset>
-							<br><img src="../images/search.png" alt="search icon" width="25" height="25" id="searchImage">
-							<input type="text" name="searchProject" id="searchProject" value=""><br><br>
-							<table id="allProjects" border="1">
-								<thead>
-									<tr>
-										<th>Project Code</th>
-										<th>Name</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
+							<input type="text" name="searchProject" id="searchProject" value="" placeholder="Search...">
+							<div class="tabell">
+								<table id="allProjects" border="1">
+									<thead class="fixed">
+										<tr>
+											<th>Project Code</th>
+											<th>Name</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</div>
 							<p id="deleteFeedback"></p>
 							<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
 						</form>
@@ -85,26 +86,29 @@
 					<div class="box">
 						<fieldset class="PersonalFS">
 							<legend id="personLegend">Persons assigned to chosen project</legend>
-							<table id="projectPersons">
-								<thead>
-									<tr>
-										<th>Social security number</th>
-										<th>Name</th>
-									</tr>
-								</thead>
-								<tbody></tbody>
-							</table>
+							<div class="tabell">
+								<table id="projectPersons">
+									<thead class="fixed">
+										<tr>
+											<th>Social security number</th>
+											<th>Name</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
 							<br><input type="button" name="removePerson" id="removePerson" value="Remove person"><br>
 							<br><input type="button" name="addNewPerson" id="addNewPerson" value="Add new person..."><br>
+							<p id="newPersonFeedback"></p>
 							<div id="newPersonMenu" class="newPersonMenu">
 								<fieldset id="newProjectFS" class="newPersonMenu">
+									<span id=label>Choose person to add to project</span>
 									<br><select id="selectNewPerson" class="newPersonMenu">
-										<option>Select person</option>
+										<option disabled selected>Select person</option>
 									</select><br>
 									<input type="button" name="addPerson" id="addPerson" value="Add" class="newPersonMenu"><br>
 								</fieldset>
 							</div>
-							<p id="newPersonFeedback"></p>
 						</fieldset>
 					</div>
 				</section>

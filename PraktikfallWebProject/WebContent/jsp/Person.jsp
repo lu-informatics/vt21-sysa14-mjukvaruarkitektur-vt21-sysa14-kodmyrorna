@@ -67,10 +67,10 @@
 							<br><p id="fieldsetFeedback"></p>
 						</fieldset>
 					</form>
-					<br><img src="../images/search.png" alt="search icon" width="25" height="25" id="searchImage">
-					<input type="text" name="searchPerson" id="searchPerson" value=""><br>
-					<table id="allPersons">
-						<thead>
+					<input type="text" name="searchPerson" id="searchPerson" value="" placeholder="Search...">
+					<div class="tabell">
+						<table id="allPersons">
+						<thead class="fixed">
 							<tr>
 								<th colspan="1">Social Security Number</th>
 								<th colspan="1">Name</th>
@@ -79,21 +79,24 @@
 						<tbody>
 						</tbody>
 					</table>
+					</div>
 					<p id="deleteFeedback"></p>
 					<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
 				</div>
 				<div class="box">
 					<fieldset class="PersonalFS">
 						<legend id="projectLegend">Projects chosen person is assigned to</legend>
-						<table id="personProjects">
-							<thead>
-								<tr>
-									<th>Project Code</th>
-									<th>Project name</th>
-								</tr>
-							</thead>
-							<tbody></tbody>
-						</table>
+						<div class="tabell">
+							<table id="personProjects">
+								<thead class="fixed">
+									<tr>
+										<th>Project Code</th>
+										<th>Project name</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
 						<br><input type="button" name="removeFromProject" id="removeFromProject" value="Remove from project"><br>
 						<br><input type="button" name="addNewProject" id="addNewProject" value="Add new project..."><br>
 						<br><p id="newProjectFeedback"></p>
@@ -102,7 +105,7 @@
 							<div id="newProjectFS" class="newProjectMenu">
 								<span id=label>Choose project to add to person</span>
 								<br><select id="selectNewProject" class="newProjectMenu">
-									<option>Select project</option>
+									<option disabled selected>Select project</option>
 								</select><br>
 								<input type="button" name="addToProject" id="addToProject" value="Add" class="newProjectMenu"><br>
 						</div>
