@@ -25,7 +25,7 @@
 				<li><a href="../jsp/Project.jsp"><i class="fas fa-project-diagram"></i>Project</a></li>
 				<li><a href="../jsp/Assignment.jsp"><i class="fas fa-network-wired"></i>Assignment</a></li>
 				<li><a href="../html/About.html"><i class="fas fa-address-card"></i>About</a></li>
-				<li><a href="../html/Test.html"><i class="fas fa-file-alt"></i>Test</a></li>
+				<li><a href="../index.html"><i class="fas fa-file-alt"></i>Test</a></li>
 			</ul>
 			<aside class="weather_container">
 				<table class="weather">
@@ -59,9 +59,9 @@
 							<fieldset class="PersonalFS">
 								<legend>Project</legend>
 								Project Code:<br>
-								<input type="text" name="projectCode" id="projectCode" value=""><br>
+								<input type="text" name="projectCode" id="projectCode" value="" maxlength="10"><br>
 								Name:<br>
-								<input type="text" name="name" id="name" value=""><br><br>
+								<input type="text" name="name" id="name" value="" maxlength="25"><br><br>
 								<input type="button" name="submitBtn" value="Add" id="AddBtn">
 								<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
 								<p id="fieldsetFeedback"></p>
