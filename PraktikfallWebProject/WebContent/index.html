@@ -1,15 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="sv">
 <head>
-<meta charset="ISO-8859-1">
-<title>MyTestPage</title>
-</head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta charset="ISO-8859-1">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+		<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/test.css">
+		<title>Home</title>
+	</head>
 <body>
-	<form action="TestServlet" method="get" name="youPickItForm">
+	<div class ="wrapper">
+		<div class="sidebar">
+			<h2><img src="images/logo.png"></h2>
+			<ul>
+				<li><a href="html/Home.html"><i class="fas fa-home"></i>Home</a></li>
+				<li><a href="jsp/Person.jsp"><i class="fas fa-user-friends"></i>Person</a></li>
+				<li><a href="jsp/Project.jsp"><i class="fas fa-project-diagram"></i>Project</a></li>
+				<li><a href="jsp/Assignment.jsp"><i class="fas fa-network-wired"></i>Assignment</a></li>
+				<li><a href="html/About.html"><i class="fas fa-address-card"></i>About</a></li>
+				<li><a href="index.html"><i class="fas fa-file-alt"></i>Test</a></li>
+			</ul>
+			<aside class="weather_container">
+				<table class="weather">
+					<tr>
+						<th><span id="city"></span></th>
+						<th><span></span></th>
+						<th><span></span></th>
+						<th><span id="ipNbr"></span></th>
+					</tr>
+					<tr>
+						<td colspan="4"><span id="degree"></span></td>
+					</tr>
+					<tr>
+						<td colspan="4"><span id="weather"></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+					</tr>
+					<tr>
+						<td colspan="4"><span id="sunrise"></span></td>
+					</tr>
+					<tr>
+						<td colspan="4"><span id="sunset"></span></td>
+					</tr>
+				</table>
+			</aside>
+		</div>
+		<div class="main_content">
+		<div class = "header"><h2>Test</h2></div>
+			<div id="logga">
+					<img src="images/logga.png">
+				</div>
+			<form action="TestServlet" method="get" name="youPickItForm">
 		<select name="suite" size="2" multiple>
 			<option value="ics.junit.ejb.FacadeTest">
 				ics.junit.ejb.FacadeTest</option>
 		</select> <input type="submit" value="Run" />
 	</form>
+		</div>
+	</div>
+	<footer>
+		<p>&copy; Arbetsgrupp 7 2021</p>
+</footer>
 </body>
 </html>
+	<script>
+		$(document).ready(function(){
+			$.ajax({
+				method: "GET",
+				url: "http://api.ipstack.com/check?access_key=c79834c89a7000a01355d5bfb1a1e504",
+				error: ajaxReturn_Error,
+				success: ajaxReturn_Success
+			})
+			function ajaxReturn_Success(result, status, xhr) {
+				ParseJsonFile(result);
+			}
+			function ajaxReturn_Error(result, status, xhr) {
+				console.log("Ajax-api-stack: "+status);
+			}
+		});
+		function ParseJsonFile(result) {
+			var lat = result.latitude;
+			var long = result.longitude;
+			var city = result.city;
+			var ipNbr = result.ip;
+			$("#city").text(city);
+			$("#ipNbr").text(ipNbr);
+			$.ajax({
+				method: "GET",
+				url: "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+long+"&units=metric"+ "&APPID=f632f8955e8a686bc42802e882ecad84",
+				error: ajaxWeatherReturn_Error,
+				success: ajaxWeatherReturn_Success
+			})
+			function ajaxWeatherReturn_Success(result, status, xhr) {
+				var sunrise = result.sys.sunrise;
+				var sunset = result.sys.sunset;
+				var sunriseDate = new Date(sunrise*1000);
+				var timeStrSunrise = sunriseDate.toLocaleTimeString();
+				var sunsetDate = new Date(sunset*1000);
+				var timeStrSunset = sunsetDate.toLocaleTimeString();
+				$("#sunrise").text("Sunrise: "+timeStrSunrise);
+				$("#sunset").text("Sunset: "+timeStrSunset);
+				$("#weather").text("Weather: "+result.weather[0].main);
+				$("#degree").text("Degrees: "+result.main.temp+" \u2103");
+		}//ajaxWeatherReturn_Success
+		function ajaxWeatherReturn_Error(result, status, xhr) {
+			alert("Error i OpenWeatherMap Ajax");
+		}
+	}
+</script>
