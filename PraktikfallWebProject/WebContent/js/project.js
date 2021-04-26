@@ -156,6 +156,7 @@ $(document).ready(function(){
 				$("#name").val("");
 				$("#projectCode").val(""); //clears input fields
 				updateTable("update", projectCodeStr, nameStr); //Updates the project information in the table
+				$("#personLegend").text("Persons assigned to " + nameStr); //updates side table legend
 			}
 			function ajaxUpdateProjectError(result, status, xhr){ 
 				console.log("ajaxUpdateProjectError xhr: " + xhr); //logs error to console for debugging

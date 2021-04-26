@@ -9,13 +9,13 @@
 
 body,
 html {
-  width: 100%;
-  height: 100%;
-  background: url(../images/beige.jpg) no-repeat center center fixed; 
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+	width: 100%;
+	height: 100%;
+	background: url(../images/background.png) no-repeat center center fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
 }
 
 .header {
@@ -28,10 +28,6 @@ html {
   top: 0;
   width: 100%;
   transform: translateX(10%) translateY(40%);
-}
-
-.highlight:not(thead tr){
-    background: #ffb399;
 }
 
 .header span{
@@ -124,13 +120,9 @@ section#main table{
   overflow: hidden;
   table-layout:fixed;
   white-space: nowrap;
-}
-
-section#main thead tr {
-  width: 50%;
-  background-color: lightgrey;
-  color: black;
-  text-align: center;
+  width: 100%;
+  overflow-y: scroll;
+  max-height: 10px;
 }
 
 .box {
@@ -145,9 +137,20 @@ th{
   text-align: center;
 }
 
+section#main thead tr {
+  width: 50%;
+  background-color: #ffbb4a;
+  color: black;
+  text-align: center;
+}
+
+.highlight:not(thead tr){
+    background: #fe7547;
+}
+
 section#main tr:nth-child(n+1):hover:not(thead tr):not(.highlight) {
   cursor: pointer;
-  background: #ffd9cc;
+  background: #ffb399;
 }
 section#main tr:nth-child(n+1).highlight {
   cursor: pointer;
@@ -158,16 +161,8 @@ section#main th, section#main td{
   border: 1px solid black;
 }
 
-section#main tbody tr {
-  border-bottom: 1px solid #dddddd;
-}
-
-section#main tbody tr:nth-of-type(even):not(.highlight) {
-  background-color: #f3f3f3;
-}
-
-section#main tbody tr:last-of-type {
-  border-bottom: 2px solid #ee4b08;
+section#main tbody tr:not(.highlight) {
+  background: white;
 }
 
 section#main tbody tr.active-row {
@@ -175,6 +170,52 @@ section#main tbody tr.active-row {
   color: #ee4b08;
 }
 
+
+input[type=text]{
+	border-radius: 9px;
+	padding: 8px;
+  margin-bottom: 10px;
+}
+
+
+input[type="button"]{
+  color: #fff;
+  background-color: black;
+  border-color: black;
+  display: inline-block;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  border-radius: 2px;
+  font-weight: 300;
+}
+
+input[type="button"]:hover{
+  background-color: #ee4b08;
+  border-color: #ee4b08;
+  cursor: pointer;
+}
+
+
+footer{
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  bottom: 5px;
+  width: 100%;
+  transform: translateX(10%);
+}
+
+.tabell th{
+  top: 0;
+  z-index: 2;
+  position: sticky;
+  background: #ffbb4a;
+}
+.tabell{
+	overflow-y: scroll;
+	max-height: 250px;
+}
 #ssn{
   margin-bottom: 15px;
 }
@@ -184,47 +225,21 @@ section#main tbody tr.active-row {
   padding-right: 15px;
   padding-bottom: 15px;
   padding-top: 20px;
-  padding-right: 100px;
+  padding-right: 10px;
 }
-
-#personProjects{
-  width: 98%;
-}
-#allPersons{
-  justify-content: space-between;
-  overflow-y: scroll;
-  width: 100%;
-}
-
+  
 #searchPerson{
-  width:95%;
+	margin-top: 13px;
+	border-radius: 9px;
+	padding: 8px;
 }
 
 #searchImage{
   transform:translateY(7px);
 }
 
-input[type=text]{
-  border: 1px solid black;
-  border-radius: 4px;
-  padding: 4px;
-}
-
-#newProjectFS{
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-bottom: 15px;
-  padding-top: 20px;
-  padding-right: 100px;
-  
-}
-
 #label{
   margin-top: 40px;
-}
-
-#feedbackLabel{
-  color: red;
 }
 
 #selectNewProject{
@@ -244,37 +259,11 @@ input[type=text]{
 
 #DeleteBtn{
   float:right;
+  margin-top: 10px;
 }
 
 #selectNewProject:focus,
 #selectNewProject:hover{
   outline: none;
   border: 1px solid #bbbbbb;
-}
-
-input[type="button"]{
-  color: #fff;
-  background-color: black;
-  border-color: black;
-  display: inline-block;
-  padding: 5px 10px;
-  margin-bottom: 10px;
-  border-radius: 2px;
-  font-weight: 300;
-}
-
-input[type="button"]:hover{
-  background-color: #ee4b08;
-  border-color: #ee4b08;
-  cursor: pointer;
-}
-
-footer{
-  position: absolute;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  bottom: 5px;
-  width: 100%;
-  transform: translateX(10%);
 }

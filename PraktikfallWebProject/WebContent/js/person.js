@@ -162,6 +162,7 @@ $(document).ready(function(){
 				$("#ssn").val("");
 				$("#ssn").attr("placeholder", "YYMMDDXXXX"); //clears input fields
 				updateTable("update", ssnStr, nameStr); //Updates the person information in the table
+				$("#projectLegend").text("Projects " + nameStr + " is assigned to"); //Updates side table legend
 			}
 			function ajaxUpdatePersonError(result, status, xhr){
 				console.log("ajaxUpdatePersonError xhr: " + xhr); //logs error to console for debugging
