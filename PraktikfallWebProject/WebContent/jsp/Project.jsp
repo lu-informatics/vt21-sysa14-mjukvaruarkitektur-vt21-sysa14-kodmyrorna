@@ -12,10 +12,6 @@
 		<title>Project</title>
 	</head>
 	<body>
-	<div class="header">
-		<h1>Project</h1>
-		<p><span>Add or remove projects</span></p>
-	</div>
 	<div class ="wrapper">
 		<div class="sidebar">
 			<h2><img src="../images/logo.png"></h2>
@@ -53,6 +49,10 @@
 			</aside>
 		</div>
 			<section id="main">
+			<div class="header">
+		<h1>Project</h1>
+		<p><span>Add or remove projects</span></p>
+	</div>
 				<section id="content">
 					<div class="box">
 						<form>
