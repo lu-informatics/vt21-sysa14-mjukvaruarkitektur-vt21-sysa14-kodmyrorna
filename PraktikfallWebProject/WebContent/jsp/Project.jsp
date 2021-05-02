@@ -8,6 +8,7 @@
 		<link rel="stylesheet" type="text/css" href="../css/project.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 		<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+		<script src="../js/weather.js"></script>
 		<script src="../js/project.js"></script>
 		<title>Project</title>
 	</head>
@@ -55,15 +56,15 @@
 	</header>
 				<section id="content">
 					<div class="box">
-						<form>
+						<form action="/PraktikfallWebProject/Projects" method="POST" onsubmit="return validateProjectOp();">
 							<fieldset class="PersonalFS">
 								<legend>Project</legend>
 								Project Code:<br>
 								<input type="text" name="projectCode" id="projectCode" value="" maxlength="10"><br>
 								Name:<br>
 								<input type="text" name="name" id="name" value="" maxlength="25"><br><br>
-								<input type="button" name="submitBtn" value="Add" id="AddBtn">
-								<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
+								<input type="submit" name="submitBtn" value="Add" id="AddBtn">
+								<input type="submit" name="submitBtn" value="Update" id="UpdateBtn">
 								<p id="fieldsetFeedback"></p>
 							</fieldset>
 							<input type="text" name="searchProject" id="searchProject" value="" placeholder="Search...">
@@ -80,36 +81,40 @@
 								</table>
 							</div>
 							<p id="deleteFeedback"></p>
-							<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
+							<input type="submit" name="submitBtn" value="Delete" id="DeleteBtn">
 						</form>
 					</div>
 					<div class="box">
-						<fieldset class="PersonalFS">
-							<legend id="personLegend">Persons assigned to chosen project</legend>
-							<div class="tabell">
-								<table id="projectPersons">
-									<thead class="fixed">
-										<tr>
-											<th>Social security number</th>
-											<th>Name</th>
-										</tr>
-									</thead>
-									<tbody></tbody>
-								</table>
-							</div>
-							<br><input type="button" name="removePerson" id="removePerson" value="Remove person"><br>
-							<br><input type="button" name="addNewPerson" id="addNewPerson" value="Add new person..."><br>
-							<p id="newPersonFeedback"></p>
-							<div id="newPersonMenu" class="newPersonMenu">
-								<fieldset id="newProjectFS" class="newPersonMenu">
-									<span id=label>Choose person to add to project</span>
-									<br><select id="selectNewPerson" class="newPersonMenu">
-										<option disabled selected>Select person</option>
-									</select><br>
-									<input type="button" name="addPerson" id="addPerson" value="Add" class="newPersonMenu"><br>
-								</fieldset>
-							</div>
-						</fieldset>
+						<form action="/PraktikfallWebProject/Assignments" method="POST" onsubmit="return validateAssignmentOp();">
+							<fieldset class="PersonalFS">
+								<legend id="personLegend">Persons assigned to chosen project</legend>
+								<div class="tabell">
+									<table id="projectPersons">
+										<thead class="fixed">
+											<tr>
+												<th>Social security number</th>
+												<th>Name</th>
+											</tr>
+										</thead>
+										<tbody></tbody>
+									</table>
+								</div>
+								<br><input type="submit" name="submitBtn" id="removePerson" value="Remove person"><br>
+								<br><input type="button" name="addNewPerson" id="addNewPerson" value="Add new person..."><br>
+								<input type="hidden" name="selectedPerson" id="selectedPerson" value="">
+								<input type="hidden" name="selectedProject" id="selectedProject" value="">
+								<p id="newPersonFeedback"></p>
+								<div id="newPersonMenu" class="newPersonMenu">
+									<fieldset id="newProjectFS" class="newPersonMenu">
+										<span id=label>Choose person to add to project</span>
+										<br><select id="selectNewPerson" class="newPersonMenu">
+											<option disabled selected>Select person</option>
+										</select><br>
+										<input type="submit" name="submitBtn" id="addPerson" value="AddPerson" class="newPersonMenu"><br>
+									</fieldset>
+								</div>
+							</fieldset>
+						</form>
 					</div>
 				</section>
 			</section>

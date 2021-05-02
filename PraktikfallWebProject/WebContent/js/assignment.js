@@ -6,7 +6,6 @@ let projectArray = new Array();
 
 /*DOCUMENT READY*/
 $(document).ready(function(){
-	getWeather();
     loadAll();
     
     //Highlight rows in table when clicked
@@ -15,6 +14,12 @@ $(document).ready(function(){
 		let selected = $(this).hasClass("highlight"); //evaluates to true if the class is already highlighted
 		if (!selected){
 			$(this).addClass("highlight");	//If the class is not already highlighed, it becomes highlighted
+			//TODO new functionality will only work for selecting one assignment at a time when deleting. Fix that.
+			let ssn = $(this).find("td:eq(0)").text();
+			let code = $(this).find("td:eq(2)").text();
+			console.log("ssn: " + ssn + "\ncode: " + code);
+			$("#selectedPerson").val(ssn);
+			$("#selectedProject").val(code);
 		} else { 
 			$(this).removeClass("highlight"); //else, the highlight is removed.
 		}
@@ -46,84 +51,13 @@ $(document).ready(function(){
 		}
 	})
 	
-	//Click Add Button
-	$("#AddBtn").click(function(){
-		clearFeedback();
-		let ssn = $("#selectPerson").val();
-		let code = $("#selectProject").val();
-		let assignmentAlreadyExists = checkAssignmentExists(ssn, code); 
-		if (ssn != "Select person" && code != "Select project" && !assignmentAlreadyExists){ //if the user has made a choice and the assignment doesn't already exist
-			let obj = {aSsn: ssn, aProjectCode: code};
-			let jsonString = JSON.stringify(obj); //json object to send to servlet
-			$.ajax({
-				method: "POST",
-				contentType: "application/json",
-				url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
-				data: jsonString,
-				dataType: "json",
-				error: ajaxAddAssignmentError,
-				success: ajaxAddAssignmentSuccess
-			})
-			function ajaxAddAssignmentSuccess(result, status, xhr){
-				let assignmentsWithNames = matchAssignmentNames();//array containing both primary keys of the person and project as well as their names
-				let personName = ""; 
-				let projectName = "";
-				for (let i = 0; i < assignmentsWithNames; i++){ //iterates through assignmentsWithNames to find names of person and project added
-					if (result.aSsn === assignmentsWithNames[i][0]){
-						personName = assignmentsWithNames[i][1];
-					}
-					if (result.aProjectCode === assignmentsWithNames[i][2]){
-						projectName = assignmentsWithNames[i][3];
-					}
-				}
-				updateTable("add", ssn, code); //adds the new assignment to the global assignment array and as a row to the table
-			}
-			function ajaxAddAssignmentError(result, status, xhr){ 
-				console.log("ajaxAddAssignmentError xhr: " + xhr); //logs error to console for debugging
-				$("#addFeedback").text("Error adding assignment"); //generic (:C) user feedback
-			}
-		} else if (ssn === "Select person" || code === "Select project"){ //If the user didn't choose a project or person
-			$("#addFeedback").text("Please select a person and project from the drop down menus.");
-		} else if (assignmentAlreadyExists){ //If the assignment already exists in the assignment array
-			$("#addFeedback").text("This person is already assigned to this project.");
-		}
-	}) //END Click Add Button
-	
-	//Click Delete Button
-	$("#DeleteBtn").click(function(){ 
-		clearFeedback();
-		let selectedAssignments = getSelectedAssignments(); //array containing the rows of the assignment table which have been selected
-		if (selectedAssignments != null && selectedAssignments.length != 0){ 
-			let arrayOfObjects =[]; //empty array for storing json objects
-			for (let i = 0; i < selectedAssignments.length; i++){ //creating an object for each selected row and adding to the arrayOfObjects
-				let assignment = {};
-				assignment.aSsn = selectedAssignments[i][0];
-				assignment.aProjectCode = selectedAssignments[i][1];
-				arrayOfObjects.push(assignment);
-			}
-			let jsonString = JSON.stringify(arrayOfObjects); //parses the arrayOfObjects as a json string to send to servlet
-			$.ajax({
-				method: "DELETE",
-				contentType: "application/json",
-				url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
-				data: jsonString,
-				error: ajaxDeleteAssignmentError,
-				success: ajaxDeleteAssignmentSuccess
-			})
-			function ajaxDeleteAssignmentSuccess(result, status, xhr){
-				updateTable("delete", null, null, selectedAssignments); 
-			}
-			function ajaxDeleteAssignmentError(result, status, xhr){ 
-				console.log("ajaxDeleteAssignmentError xhr: " + xhr); //logs error to console for debugging
-				$("#deleteFeedback").text("Error deleting assignment"); //generic (:C) user feedback
-			}
-		} else {
-			$("#deleteFeedback").text("Please select a person and project from the list.");
-		}
-	}) //END Click Delete Button
 })
 
 /*FUNCTIONS*/
+
+function validateAssignmentOp(){
+	//TODO write this
+}
 /************
  * Function 	clearFeedback
  * Description	Clears the user feedback messages in all parts of the page
@@ -192,11 +126,11 @@ function updateTable(operation, personSsn, projectCode, assignmentsToRemove){
 function fillSelects(){
 	for (let i = 0; i < personArray.length; i++){ //Iterates through global person array
 		let personText = personArray[i][0] + ", " + personArray[i][1]; //Text to be displayed in the select box
-		$('#selectPerson').append($('<option>').val(personArray[i][0]).text(personText)); //appends the select box
+		$('#choosePerson').append($('<option>').val(personArray[i][0]).text(personText)); //appends the select box
 	}
 	for (let i = 0; i < projectArray.length; i++){ //Iterates through global project array
 		let projectText = projectArray[i][0] + ", " + projectArray[i][1]; //Text to be displayed in the select box
-		$('#selectProject').append($('<option>').val(projectArray[i][0]).text(projectText)) //appends the select box
+		$('#chooseProject').append($('<option>').val(projectArray[i][0]).text(projectText)) //appends the select box
 	}
 }
 
@@ -329,53 +263,5 @@ async function loadAssignments(){
 		})
 		updateTable(); //Updates the assignment table
 		fillSelects(); //Updates the select boxes
-	}
-}
-
-/************
- * Function 	getWeather
- * Description	loads IP-address, location, and weather-data from ipstack and openweathermap
- ************/
-function getWeather(){
-	$.ajax({
-		method: "GET",
-		url: "http://api.ipstack.com/check?access_key=c79834c89a7000a01355d5bfb1a1e504",
-		error: ajaxReturn_Error,
-		success: ajaxReturn_Success
-	})
-	function ajaxReturn_Success(result, status, xhr) {
-		ParseJsonFile(result);
-	}
-	function ajaxReturn_Error(result, status, xhr) {
-		console.log("Ajax-api-stack: "+status);
-	}
-	function ParseJsonFile(result) {
-		let lat = result.latitude;
-		let long = result.longitude;
-		let city = result.city;
-		let ipNbr = result.ip;
-		$("#city").text(city);
-		$("#ipNbr").text(ipNbr);
-		$.ajax({
-			method: "GET",
-			url: "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+long+"&units=metric"+ "&APPID=f632f8955e8a686bc42802e882ecad84",
-			error: ajaxWeatherReturn_Error,
-			success: ajaxWeatherReturn_Success
-		})
-		function ajaxWeatherReturn_Success(result, status, xhr) {
-			let sunrise = result.sys.sunrise;
-			let sunset = result.sys.sunset;
-			let sunriseDate = new Date(sunrise*1000);
-			let timeStrSunrise = sunriseDate.toLocaleTimeString();
-			let sunsetDate = new Date(sunset*1000);
-			let timeStrSunset = sunsetDate.toLocaleTimeString();
-			$("#sunrise").text("Sunrise: "+timeStrSunrise);
-			$("#sunset").text("Sunset: "+timeStrSunset);
-			$("#weather").text(result.weather[0].main);
-			$("#degree").text(result.main.temp+" \u2103");
-		}//ajaxWeatherReturn_Success
-		function ajaxWeatherReturn_Error(result, status, xhr) {
-			alert("Error i OpenWeatherMap Ajax");
-		}
 	}
 }

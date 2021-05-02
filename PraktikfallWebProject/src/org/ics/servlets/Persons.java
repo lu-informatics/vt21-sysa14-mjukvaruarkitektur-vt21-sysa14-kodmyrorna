@@ -49,14 +49,13 @@ public class Persons extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
-
+	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
-		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
+		if ((pathInfo == null || pathInfo.equals("/")) ) {
 			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
 			Person person = parseJsonPerson(reader);
 			facade.createPerson(person);

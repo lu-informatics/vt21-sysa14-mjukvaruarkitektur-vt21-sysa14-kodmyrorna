@@ -12,12 +12,14 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ics.ejb.Person;
 import org.ics.ejb.Project;
 import org.ics.facade.FacadeLocal;
 
@@ -57,44 +59,45 @@ public class Projects extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
-		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
-			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
-			Project project = parseJsonProject(reader);
-			facade.createProject(project);
-			sendAsJson(response, project);
+		String operation = request.getParameter("submitBtn");
+		request.setAttribute("object", "project");
+		if ((pathInfo == null || pathInfo.equals("/"))) {
+			if (operation.equals("Add")) {
+				String code = (String)request.getParameter("projectCode");
+				String name = (String)request.getParameter("name");
+				if(code != null && name != null) {
+					Project project = new Project(code, name);
+					facade.createProject(project);
+					request.setAttribute("project", project);
+					request.setAttribute("operation", "add");
+				}
+				else {
+					//failed?
+				}
+			}
+			else if (operation.equals("Update")) {
+				String code = (String)request.getParameter("projectCode");
+				String name = (String)request.getParameter("name");
+				if (code != null && name != null) {
+					Project project = new Project(code, name);
+					if(facade.findProjectByProjectCode(code) != null) {
+						facade.updateProject(project);
+						request.setAttribute("project", project);
+						request.setAttribute("operation", "update");
+					}
+				}
+			} else if (operation.equals("Delete")) {
+				String code = (String)request.getParameter("projectCode");
+				if (facade.findProjectByProjectCode(code) != null) {
+					facade.deleteProject(code);
+					request.setAttribute("operation", "delete");
+				}
+			}
 		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
-	}
-	
-	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String pathInfo = request.getPathInfo();
-		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
-		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
-			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
-			Project project = parseJsonProject(reader);
-			facade.updateProject(project);
-			sendAsJson(response, project);
-		} else { //If user has input an ending to the path, which isn't supported
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		}
-	}
-
-	/**
-	 * @see HttpServlet#doDelete(HttpServletRequest, HttpServletResponse)
-	 */
-	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String pathInfo = request.getPathInfo();
-		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
-		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
-			JsonReader jsonReader = Json.createReader(request.getReader()); //Create a reader for getting Json-formatted data
-			JsonObject jsonRoot = jsonReader.readObject(); //Assume there is only one object sent to doDelete, not an array
-			String projectCode = jsonRoot.getString("projectCode"); //Collect project code from the object
-			facade.deleteProject(projectCode);
-		} else { //If user has input an ending to the path, which isn't supported
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		}
+		RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/Confirmation.jsp");
+		dispatcher.forward(request, response);
 	}
 	
 	/*************
@@ -122,38 +125,4 @@ public class Projects extends HttpServlet {
 		}
 		out.flush(); //clears the out feed to avoid errors
 	}
-	
-	/*************
-	 * Function sendAsJson
-	 * Parameters: 	HttpServletResponse
-	 * 				Project
-	 * Description: parses the project to a json object and uses the HttpServletResponse to send it back with the response
-	 */
-	public void sendAsJson(HttpServletResponse response, Project project) throws IOException{
-		PrintWriter out = response.getWriter(); //Enables servlet to print outgoing data
-		response.setContentType("application/json"); //Specifies data type to send back
-		if (project != null) {
-			out.print("[{\"projectCode\":\"" + project.getProjectCode() + "\","); //Creating a JSON object 'manually'
-			out.print("\"name\":\"" + project.getName() + "\"}]");
-		} else {
-			out.print("[]"); //If the person is null, an empty array of objects is sent back instead
-		}
-		out.flush(); //clears the out feed to avoid errors
-	}
-	
-	/*************
-	 * Function parseJsonReader
-	 * Parameter: BufferedReader
-	 * Returns: Project
-	 * Description: Parses a Json object to an instance of the Project entity bean
-	 */
-	private Project parseJsonProject(BufferedReader reader) {
-		JsonReader jsonReader = Json.createReader(reader); //Create a reader for getting Json-formatted data
-		JsonObject jsonRoot = jsonReader.readObject();  //Assume there is only one object, not an array
-		Project project = new Project();
-		project.setProjectCode(jsonRoot.getString("projectCode")); //Collect project data from the object
-		project.setName(jsonRoot.getString("name"));
-		return project;
-	}
-
 }
