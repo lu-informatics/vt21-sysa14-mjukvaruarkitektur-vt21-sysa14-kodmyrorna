@@ -63,12 +63,12 @@ public class Assignments extends HttpServlet {
 			String operation = request.getParameter("submitBtn");
 			if (operation.equals("Add")) {
 				System.out.println("operation is add"); //TODO remove this
-				String ssn = (String)request.getParameter("selectedPerson");
+				String ssn = (String)request.getParameter("choosePerson");
 				Person person = facade.findPersonBySsn(ssn);
-				String code = (String)request.getParameter("selectedProject");
+				String code = (String)request.getParameter("chooseProject");
 				Project project = facade.findProjectByProjectCode(code);
 				if(person != null && project != null) {
-					System.out.println(person.getName() + " add to  " + project.getName());
+					System.out.println(person.getName() + " add to " + project.getName());
 					facade.addAssignment(project, person);
 					request.setAttribute("project", project);
 					request.setAttribute("person", person);

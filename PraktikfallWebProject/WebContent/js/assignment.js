@@ -17,6 +17,7 @@ $(document).ready(function(){
 			//TODO new functionality will only work for selecting one assignment at a time when deleting. Fix that.
 			let ssn = $(this).find("td:eq(0)").text();
 			let code = $(this).find("td:eq(2)").text();
+			console.log("ssn: " + ssn + "\ncode: " + code);
 			$("#selectedPerson").val(ssn);
 			$("#selectedProject").val(code);
 		} else { 
@@ -125,11 +126,11 @@ function updateTable(operation, personSsn, projectCode, assignmentsToRemove){
 function fillSelects(){
 	for (let i = 0; i < personArray.length; i++){ //Iterates through global person array
 		let personText = personArray[i][0] + ", " + personArray[i][1]; //Text to be displayed in the select box
-		$('#selectPerson').append($('<option>').val(personArray[i][0]).text(personText)); //appends the select box
+		$('#choosePerson').append($('<option>').val(personArray[i][0]).text(personText)); //appends the select box
 	}
 	for (let i = 0; i < projectArray.length; i++){ //Iterates through global project array
 		let projectText = projectArray[i][0] + ", " + projectArray[i][1]; //Text to be displayed in the select box
-		$('#selectProject').append($('<option>').val(projectArray[i][0]).text(projectText)) //appends the select box
+		$('#chooseProject').append($('<option>').val(projectArray[i][0]).text(projectText)) //appends the select box
 	}
 }
 

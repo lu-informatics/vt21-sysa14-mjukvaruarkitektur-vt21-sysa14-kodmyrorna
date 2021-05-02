@@ -60,11 +60,11 @@
 						<fieldset class="personalFS">
 							<legend>Assign</legend>
 							Person<br>
-							<select id="selectPerson">
+							<select id="choosePerson" name="choosePerson">
 								<option disabled selected>Select person</option>
 							</select><br>
 							Project<br>
-							<select id="selectProject">
+							<select id="chooseProject" name="chooseProject">
 								<option disabled selected>Select project</option>
 							</select><br>
 							<input type="submit" name="submitBtn" value="Add" id="AddBtn">
