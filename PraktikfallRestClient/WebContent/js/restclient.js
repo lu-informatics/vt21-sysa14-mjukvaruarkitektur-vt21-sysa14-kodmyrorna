@@ -42,22 +42,22 @@ $(document).ready(function(){
    	}
    	
    	$("#FindBtn").click( function() {
-   	 var strSsn = $("#ssn").val();
-   	 if (strSsn != "") {
-   	 $.ajax({
-   	 method: "GET",
-   	 url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn,
-   	 error: ajaxFindReturnError,
-   	 success: ajaxFindReturnSuccess
-   	})
-   	function ajaxFindReturnSuccess(result, status, xhr) {
-   		ParseJsonFilePerson(result);
-   		}
-   		function ajaxFindReturnError(result, status, xhr) {
-   		alert("Error");
-   		console.log("Ajax-find person: "+status);
-   		}
-   		 }
+   		var strSsn = $("#ssn").val();
+   		if (strSsn != "") {
+   			$.ajax({
+   				method: "GET",
+   				url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn,
+   				error: ajaxFindReturnError,
+   				success: ajaxFindReturnSuccess
+   			})
+   			function ajaxFindReturnSuccess(result, status, xhr) {
+   				ParseJsonFilePerson(result);
+   			}
+   			function ajaxFindReturnError(result, status, xhr) {
+   				alert("Error");
+   				console.log("Ajax-find person: "+status);
+   				}
+   			}
    		})	
    		
    		$("#DeleteBtn").click( function() { 
@@ -71,10 +71,60 @@ $(document).ready(function(){
    				})
    				function ajaxDelReturnSuccess(result, status, xhr) {
    					clearFields();
-   					$("#FeedbackPerson").attr("placeholder","Person deleted" );
+   					$("#FeedbackPerson").text("Person deleted");
    				}
    				function ajaxDelReturnError(result, status, xhr) {
    					alert("Error");
+   					console.log("Ajax-find person: "+status);
+   				}
+   			}
+   		})
+   		
+   		$("#AddBtn").click( function() { 
+   			var strSsn = $("#ssn").val();
+   			var strName = $("#name").val();
+   			var obj = { ssn: strSsn, name: strName};
+   			var jsonString = JSON.stringify(obj);
+   			if (strSsn != "") {
+   				$.ajax({
+   					method: "POST",
+   					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/",  
+   					data: jsonString,
+   					dataType:'json',
+   					error: ajaxAddReturnError, 
+   					success: ajaxAddReturnSuccess
+   				})
+   				function ajaxAddReturnSuccess(result, status, xhr) {
+   					clearFields();
+   					$("#FeedbackPerson").text("Person added" );
+   				}
+   				function ajaxAddReturnError(result, status, xhr) {
+   					alert("Error Add");
+   					console.log("Ajax-find person: "+status);
+   				}
+   			}
+   		})
+   		
+   		$("#UpdateBtn").click( function() { 
+   			var strSsn = $("#ssn").val();
+   			var strName = $("#name").val();
+   			var obj = { ssn: strSsn, name: strName};
+   			var jsonString = JSON.stringify(obj);
+   			if (strSsn != "") {
+   				$.ajax({
+   					method: "PUT",
+   					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn, 
+   					data: jsonString,
+   					dataType:'json',
+   					error: ajaxUpdateReturnError, 
+   					success: ajaxUpdateReturnSuccess
+   				})
+   				function ajaxUpdateReturnSuccess(result, status, xhr) {
+   					clearFields();
+   					$("#FeedbackPerson").text("Person updated" );
+   				}
+   				function ajaxUpdateReturnError(result, status, xhr) {
+   					alert("Error Update");
    					console.log("Ajax-find person: "+status);
    				}
    			}
