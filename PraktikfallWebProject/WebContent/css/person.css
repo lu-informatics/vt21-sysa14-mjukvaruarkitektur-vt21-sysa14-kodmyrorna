@@ -178,7 +178,7 @@ input[type=text]{
 }
 
 
-input[type="button"]{
+input[type="button"], input[type="submit"]{
   color: #fff;
   background-color: black;
   border-color: black;
@@ -189,7 +189,7 @@ input[type="button"]{
   font-weight: 300;
 }
 
-input[type="button"]:hover{
+input[type="button"]:hover, input[type="submit"]:hover{
   background-color: #ee4b08;
   border-color: #ee4b08;
   cursor: pointer;

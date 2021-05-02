@@ -6,7 +6,6 @@ let assignmentArray = new Array();
 
 /*DOCUMENT READY*/
 $(document).ready(function(){
-	getWeather();
 	loadAll(); 
 	toggleSelectVisibility("invisible");
 	
@@ -38,13 +37,15 @@ $(document).ready(function(){
 	//Highlight rows in project table
 	$(document).on("click", "#allProjects tr:not(thead tr)", function (){
 		clearFeedback();
-		$("#name").val(""); //clear name input field when new project is selected
 		let selected = $(this).hasClass("highlight"); //boolean, evaluates to true if the clicked row is already highlighted
 		$("#allProjects tr").removeClass("highlight"); //removes all highlights for entire table
 		if (!selected) { //If the clicked row is not already highlighted
 			$(this).addClass("highlight");
 			let code = $(this).find("td:eq(0)").text();
+			let name = $(this).find("td:eq(1)").text();
 			$("#projectCode").val(code);  //change the value of the project code text field to the clicked row
+			$("#name").val(name);
+			$("#selectedProject").val(code); //TODO explain this
 			updatePersons(null, code, $(this).find("td:eq(1)").text()); //displays the persons assigned to this project
 		} else { //If the clicked row is already highlighted, it will not be highlighted any longer
 			updatePersons("clear"); //clears the side table displaying the persons assigned to a project
@@ -56,120 +57,12 @@ $(document).ready(function(){
 		clearFeedback();
 		let selected = $(this).hasClass("highlight"); //boolean, evaluates to true if the clicked row is already highlighted
 		$("#projectPersons tr").removeClass("highlight"); //removes all highlights for entire table
-		if (!selected) //If the clicked row is not already highlighted-
+		if (!selected) {//If the clicked row is not already highlighted-
 			$(this).addClass("highlight"); //-it is now highlighted
+			let ssn = $(this).find("td:eq(0)").text()
+			$("#selectedPerson").val(ssn); //TODO explain this
+		}
 	})
-	
-	//Click Add Button
-	$("#AddBtn").click(function(){ 
-		clearFeedback();
-		let projectCodeStr = $("#projectCode").val();
-		let nameStr = $("#name").val();
-		let projectCodeArray = getProjectCodeArray(); //gets a list of the project codes of the already existing projects
-		let isEmpty = !nameStr.replace(/\s/g, '') || !projectCodeStr.replace(/\s/g, ''); //Evaluates to true if the project code or name consist of nothing or just spaces.
-		/*Below if-statement checks:
-		*name isn't empty or more than 20 characters 
-		*project code isn't empty or more than 10 characters
-		*there isn't already a project with this project code*/
-		if (!isEmpty && (!projectCodeArray.includes(projectCodeStr)) && projectCodeStr.length <= 10 && nameStr.length <= 20){
-			let obj = {projectCode: projectCodeStr, name: nameStr};
-			let jsonString = JSON.stringify(obj); //Creates JSON object to send to servlet
-			$.ajax({
-				method: "POST",
-				contentType: "application/json",
-				url: "http://localhost:8080/PraktikfallWebProject/Projects/",
-				data: jsonString,
-				dataType:'json',
-				error: ajaxAddProjectError,
-				success: ajaxAddProjectSuccess
-			})
-			function ajaxAddProjectSuccess(result, status, xhr){
-				$("#projectCode").val("");
-				$("#name").val(""); //empty my input fields
-				updateTable("add", projectCodeStr, nameStr); //add new project to the table
-			}
-			function ajaxAddProjectError(result, status, xhr){ 
-				console.log("ajaxAddProjectError xhr: " + xhr); //logs error in the console for debugging
-				$("#fieldsetFeedback").text("Error adding project"); //Gives user generic (:C) error
-			}
-		} else if (projectCodeArray.includes(projectCodeStr)){ 
-			$("#fieldsetFeedback").text("There already exists a project with this project code.");
-		} else if (isEmpty){
-			$("#fieldsetFeedback").text("Please enter a project code and name.");
-		} else if (projectCodeStr.length > 10){
-			$("#fieldsetFeedback").text("Project code can be a maximum of 10 characters.");
-		} else if (nameStr.length > 20) {
-			$("#fieldsetFeedback").text("Name can be a maximum of 20 characters.");
-		}
-	}) //END Click Add Button
-	
-	//Click Delete Button
-	$("#DeleteBtn").click(function(){
-		clearFeedback();
-		let projectCodeStr = $("#allProjects tr.highlight").find("td:eq(0)").text(); //Gets the chosen project from the first column of the highlighted row in the project table
-		let projectCodeArray = getProjectCodeArray(); //gets a list of the project codes of the already existing projects
-		if (projectCodeArray.includes(projectCodeStr)){ //projectCodeArray.includes(projectCodeStr) checks that this project is in the data and therefore updatable
-			let obj = {projectCode: projectCodeStr};
-			let jsonString = JSON.stringify(obj); //Creates JSON object to send to servlet
-			$.ajax({
-				method: "DELETE",
-				contentType: "application/json",
-				url: "http://localhost:8080/PraktikfallWebProject/Projects/",
-				data: jsonString,
-				error: ajaxDelProjectError,
-				success: ajaxDelProjectSuccess
-			})
-			function ajaxDelProjectSuccess(result, status, xhr){
-				$("#projectCode").val(""); //Empties project code field
-				updateTable("delete", projectCodeStr); //removes project from the table
-				updatePersons("clear"); //clears the projects persons from the side table
-			}
-			function ajaxDelProjectError(result, status, xhr){ 
-				console.log("ajaxDelProjectError xhr: " + xhr); //Gives user generic (:C) error
-				$("#deleteFeedback").text("Error deleting project"); //logs error in the console for debugging
-			}
-		} else if (!projectCodeArray.includes(projectCodeStr)){
-			$("#deleteFeedback").text("Please select a project from the list.");
-		}
-	}) //END Click Delete Button
-	
-	//Click Update Button
-	$("#UpdateBtn").click(function(){
-		clearFeedback();
-		let projectCodeStr = $("#projectCode").val();
-		let nameStr = $("#name").val();
-		let isEmpty = !nameStr.replace(/\s/g, ''); //boolean which evaluates to true if the name string is empty or only contains blanks
-		let projectCodeArray = getProjectCodeArray(); //gets a list of the project codes of the already existing projects
-		if (!isEmpty && projectCodeArray.includes(projectCodeStr) && nameStr.length <= 20){ //projectCodeArray.includes(projectCodeStr) checks that this project is in the data and therefore updatable
-			let obj = {projectCode: projectCodeStr, name: nameStr};
-			let jsonString = JSON.stringify(obj); //Creates JSON object to send to servlet
-			$.ajax({
-				method: "PUT",
-				contentType: "application/json",
-				url: "http://localhost:8080/PraktikfallWebProject/Projects/",
-				data: jsonString,
-				dataType: "json",
-				error: ajaxUpdateProjectError,
-				success: ajaxUpdateProjectSuccess
-			})
-			function ajaxUpdateProjectSuccess(result, status, xhr){
-				$("#name").val("");
-				$("#projectCode").val(""); //clears input fields
-				updateTable("update", projectCodeStr, nameStr); //Updates the project information in the table
-				$("#personLegend").text("Persons assigned to " + nameStr); //updates side table legend
-			}
-			function ajaxUpdateProjectError(result, status, xhr){ 
-				console.log("ajaxUpdateProjectError xhr: " + xhr); //logs error to console for debugging
-				$("#fieldsetFeedback").text("Error updating project"); //gives user generic (:C) error
-			}
-		} else if (!projectCodeArray.includes(projectCodeStr)){ //The project code is not recognized
-			$("#fieldsetFeedback").text("Please select a project to update. The project code cannot be changed.");
-		} else if (isEmpty){
-			$("#fieldsetFeedback").text("Please enter a name.");
-		} else if (nameStr.length > 20){
-			$("#fieldsetFeedback").text("Name can be a maximum of 20 characters");
-		}
-	}) //END Click Update Button
 	
 	//Click Remove person Button
 	$("#removePerson").click(function(){ 
@@ -481,53 +374,5 @@ async function loadAssignments(){
 		$.each(result, function(index, element){
 			assignmentArray.push([element.aSsn, element.aProjectCode]); //stores the assignments in the global assignment array
 		})
-	}
-}
-
-/************
- * Function 	getWeather
- * Description	loads IP-address, location, and weather-data from ipstack and openweathermap
- ************/
-function getWeather(){
-	$.ajax({
-		method: "GET",
-		url: "http://api.ipstack.com/check?access_key=c79834c89a7000a01355d5bfb1a1e504",
-		error: ajaxReturn_Error,
-		success: ajaxReturn_Success
-	})
-	function ajaxReturn_Success(result, status, xhr) {
-		ParseJsonFile(result);
-	}
-	function ajaxReturn_Error(result, status, xhr) {
-		console.log("Ajax-api-stack: "+status);
-	}
-	function ParseJsonFile(result) {
-		let lat = result.latitude;
-		let long = result.longitude;
-		let city = result.city;
-		let ipNbr = result.ip;
-		$("#city").text(city);
-		$("#ipNbr").text(ipNbr);
-		$.ajax({
-			method: "GET",
-			url: "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+long+"&units=metric"+ "&APPID=f632f8955e8a686bc42802e882ecad84",
-			error: ajaxWeatherReturn_Error,
-			success: ajaxWeatherReturn_Success
-		})
-		function ajaxWeatherReturn_Success(result, status, xhr) {
-			let sunrise = result.sys.sunrise;
-			let sunset = result.sys.sunset;
-			let sunriseDate = new Date(sunrise*1000);
-			let timeStrSunrise = sunriseDate.toLocaleTimeString();
-			let sunsetDate = new Date(sunset*1000);
-			let timeStrSunset = sunsetDate.toLocaleTimeString();
-			$("#sunrise").text("Sunrise: "+timeStrSunrise);
-			$("#sunset").text("Sunset: "+timeStrSunset);
-			$("#weather").text(result.weather[0].main);
-			$("#degree").text(result.main.temp+" \u2103");
-		}//ajaxWeatherReturn_Success
-		function ajaxWeatherReturn_Error(result, status, xhr) {
-			alert("Error i OpenWeatherMap Ajax");
-		}
 	}
 }

@@ -8,6 +8,7 @@
 	<link rel="stylesheet" type="text/css" href="../css/assignment.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<script src="../js/weather.js"></script>
 	<script src="../js/assignment.js"></script>
 	<title>Assignment</title>
 </head>
@@ -54,45 +55,48 @@
 		</div>
 		<section id="main">
 			<section id="content">
-				<div id="box">
-					<fieldset class="personalFS">
-						<legend>Assign</legend>
-						Person<br>
-						<select id="selectPerson">
-							<option disabled selected>Select person</option>
-						</select><br>
-						Project<br>
-						<select id="selectProject">
-							<option disabled selected>Select project</option>
-						</select><br>
-						<input type="button" name="submitBtn" value="Add" id="AddBtn">
-						
-					</fieldset>
-					<br><p id="addFeedback"></p>
-				</div>
-				<div id="WorksAt">
-					<input type="text" name="searchAssignment" id="searchAssignment" value="" placeholder="Search..."><br>
-					<div class="tabell">
-						<table id="allAssignments">
-							<thead>
-								<tr>
-									<th colspan="2">Person</th>
-									<th colspan="2">Project</th>
-								</tr>
-								<tr>
-									<th>Social Security Number</th>
-									<th>Name</th>
-									<th>Code</th>
-									<th>Name</th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table><br>
+				<form action="/PraktikfallWebProject/Assignments" method="POST" onsubmit="return validateAssignmentOp();">
+					<div id="box">
+						<fieldset class="personalFS">
+							<legend>Assign</legend>
+							Person<br>
+							<select id="selectPerson">
+								<option disabled selected>Select person</option>
+							</select><br>
+							Project<br>
+							<select id="selectProject">
+								<option disabled selected>Select project</option>
+							</select><br>
+							<input type="submit" name="submitBtn" value="Add" id="AddBtn">
+						</fieldset>
+						<br><p id="addFeedback"></p>
 					</div>
-					<input type="button" class="btn" name="submitBtn" value="Delete" id="DeleteBtn">
-					<br><p id="deleteFeedback"></p>
-				</div>
+					<div id="WorksAt">
+						<input type="text" name="searchAssignment" id="searchAssignment" value="" placeholder="Search..."><br>
+						<div class="tabell">
+							<table id="allAssignments">
+								<thead>
+									<tr>
+										<th colspan="2">Person</th>
+										<th colspan="2">Project</th>
+									</tr>
+									<tr>
+										<th>Social Security Number</th>
+										<th>Name</th>
+										<th>Code</th>
+										<th>Name</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table><br>
+						</div>
+						<input type="submit" class="btn" name="submitBtn" value="Delete" id="DeleteBtn">
+						<br><p id="deleteFeedback"></p>
+					</div>
+					<input type="hidden" name="selectedPerson" id="selectedPerson" value="">
+					<input type="hidden" name="selectedProject" id="selectedProject" value="">
+				</form>
 			</section>
 		</section>
 	</div>

@@ -6,10 +6,8 @@ let projectArray = new Array();
 
 /*DOCUMENT READY*/
 $(document).ready(function(){
-	getWeather();0
 	loadAll();
 	toggleSelectVisibility("invisible");
-	
 	//filter search
 	document.getElementById("searchPerson").addEventListener("keydown", function(e){
 		clearFeedback();
@@ -44,7 +42,10 @@ $(document).ready(function(){
 		if (!selected) { //If the clicked row is not already highlighted
 			$(this).addClass("highlight");
 			let ssn = $(this).find("td:eq(0)").text(); 
-			$("#ssn").val(ssn); //change the value of the ssn text field to the clicked row
+			let name = $(this).find("td:eq(1)").text();
+			$("#ssn").val(ssn); 
+			$("#name").val(name); //change the value of the ssn and name text field to the clicked row
+			$("#selectedPerson").val(ssn); //TODO explain this
 			updateProjects(null, ssn, $(this).find("td:eq(1)").text()); //displays the projects this person is assigned to
 		} else { //If the clicked row is already highlighted, it will not be highlighted any longer
 			updateProjects("clear"); //clears the side table displaying the projects a person is assigned to
@@ -56,126 +57,12 @@ $(document).ready(function(){
 		clearFeedback();
 		let selected = $(this).hasClass("highlight"); //boolean, evaluates to true if the clicked row is already highlighted
 		$("#personProjects tr").removeClass("highlight"); //removes all highlights for entire table
-		if (!selected)//If the clicked row is not already highlighted-
+		if (!selected) {//If the clicked row is not already highlighted-
 			$(this).addClass("highlight"); //-it is now highlighted
+			let code = $(this).find("td:eq(0)").text()
+			$("#selectedProject").val(code); //TODO explain this
+		}
 	})
-	
-	//Click Add Button
-	$("#AddBtn").click(function(){
-		clearFeedback();
-		let ssnStr = $("#ssn").val();
-		let nameStr = $("#name").val();
-		let ssnArray = getSsnArray(); //gets a list of the social security numbers of the already existing persons
-		let isEmpty = !nameStr.replace(/\s/g, ''); //boolean which evaluates to true if the name string is empty or only contains blanks
-		let onlyNumbersInSsn = /^\d+$/.test(ssnStr); //boolean which evalutes to true if the entered SSN contains only numbers (business rule)
-		/*Below if-statement checks:
-		*name isn't empty or more than 20 characters 
-		*social security number is only numbers and exactly 10 characters
-		*there isn't already a person with this social security number*/
-		if (!(ssnArray.includes(ssnStr)) && !isEmpty && ssnStr.length === 10 && onlyNumbersInSsn && nameStr.length <= 20){ 
-			let obj = {ssn: ssnStr, name: nameStr}; 
-			let jsonString = JSON.stringify(obj); //Creates JSON object to send to servlet
-			$.ajax({
-				method: "POST",
-				contentType: "application/json",
-				url: "http://localhost:8080/PraktikfallWebProject/Persons/",
-				data: jsonString,
-				dataType:'json',
-				error: ajaxAddPersonError,
-				success: ajaxAddPersonSuccess
-			})
-			function ajaxAddPersonSuccess(result, status, xhr){
-				$("#ssn").val("");
-				$("#ssn").attr("placeholder", "YYMMDDXXXX"); 
-				$("#name").val(""); //empty my input fields
-				updateTable("add", ssnStr, nameStr); //add new person to the table
-			}
-			function ajaxAddPersonError(result, status, xhr){
-				console.log("ajaxAddPersonError xhr: " + xhr); //logs error in the console for debugging
-				$("#fieldsetFeedback").text("Error adding person"); //Gives user generic (:C) error
-			}
-		} else if (ssnArray.includes(ssnStr)){  
-			$("#fieldsetFeedback").text("There already exists a person with this social security number.");
-		} else if (ssnStr.length != 10 || !onlyNumbersInSsn){ 
-			$("#fieldsetFeedback").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX");
-		} else if (isEmpty){
-			$("#fieldsetFeedback").text("Please enter a name.");
-		} else if (nameStr.length > 20){{
-			$("#fieldsetFeedback").text("Name can be a maximum of 20 characters.");
-		}
-			
-		}
-	}) //END Click Add Button
-	
-	//Click Delete Button
-	$("#DeleteBtn").click(function(){
-		clearFeedback();
-		let ssnStr = $("#allPersons tr.highlight").find("td:eq(0)").text(); //Gets the chosen person from the first column of the highlighted row in the person table
-		let ssnArray = getSsnArray(); //gets a list of the social security numbers of the already existing persons
-		if (ssnArray.includes(ssnStr)){ //ssnArray.includes(ssnStr) checks that this person is in the data and therefore updatable
-			let obj = {ssn: ssnStr}; 
-			let jsonString = JSON.stringify(obj); //Creates JSON object to send to servlet
-			$.ajax({
-				method: "DELETE",
-				contentType: "application/json",
-				url: "http://localhost:8080/PraktikfallWebProject/Persons/",
-				data: jsonString,
-				error: ajaxDelPersonError,
-				success: ajaxDelPersonSuccess
-			})
-			function ajaxDelPersonSuccess(result, status, xhr){
-				$("#ssn").val("");
-				$("#ssn").attr("placeholder", "YYMMDDXXXX"); //empties ssn field
-				updateTable("delete", ssnStr); //removes the person row from the table
-				updateProjects("clear"); //clears the persons projects from the side table
-			}
-			function ajaxDelPersonError(result, status, xhr){
-				console.log("ajaxDelPersonError xhr: " + xhr); //logs error in the console for debugging purposes
-				$("#deleteFeedback").text("Error deleting person."); //Gives user generic (:C) error
-			}
-		} else { 
-			$("#deleteFeedback").text("Please select a person to delete from the list.");
-		}
-	}) //END Click Delete Button
-	
-	//Click Update Button
-	$("#UpdateBtn").click(function(){ 
-		clearFeedback();
-		let ssnStr = $("#ssn").val();
-		let nameStr = $("#name").val();
-		let ssnArray = getSsnArray(); //gets a list of the social security numbers of the already existing persons
-		let isEmpty = !nameStr.replace(/\s/g, ''); //boolean which evaluates to true if the name string is empty or only contains blanks
-		if (!isEmpty && ssnArray.includes(ssnStr) && nameStr.length <= 20){ //ssnArray.includes(ssnStr) checks that this person is in the data and therefore updatable
-			let obj = {ssn: ssnStr, name: nameStr};
-			let jsonString = JSON.stringify(obj); //Creates JSON object to send to servlet
-			$.ajax({
-				method: "PUT",
-				contentType: "application/json",
-				url: "http://localhost:8080/PraktikfallWebProject/Persons/",
-				data: jsonString,
-				dataType: "json",
-				error: ajaxUpdatePersonError,
-				success: ajaxUpdatePersonSuccess
-			})
-			function ajaxUpdatePersonSuccess(result, status, xhr){
-				$("#name").val("");
-				$("#ssn").val("");
-				$("#ssn").attr("placeholder", "YYMMDDXXXX"); //clears input fields
-				updateTable("update", ssnStr, nameStr); //Updates the person information in the table
-				$("#projectLegend").text("Projects " + nameStr + " is assigned to"); //Updates side table legend
-			}
-			function ajaxUpdatePersonError(result, status, xhr){
-				console.log("ajaxUpdatePersonError xhr: " + xhr); //logs error to console for debugging
-				$("#fieldsetFeedback").text("Error updating person."); //gives user generic (:C) error
-			}
-		} else if (!ssnArray.includes(ssnStr)){ //The social security number is not recognized
-			$("#fieldsetFeedback").text("Please select a person from the list");
-		} else if (isEmpty){
-			$("#fieldsetFeedback").text("Please enter a name.");
-		} else if (nameStr.length > 20){
-			$("#fieldsetFeedback").text("Name can be a maximum of 20 characters.");
-		}
-	})//END Click Update Button
 	
 	//Click Remove from project Button
 	$("#removeFromProject").click(function(){ 
@@ -247,6 +134,30 @@ $(document).ready(function(){
 })
 
 /*FUNCTIONS*/
+
+function validatePersonOp(){
+	let ssn = $("#ssn").val();
+	let name = $("#name").val();
+	let isEmpty = !name.replace(/\s/g, ''); //boolean which evaluates to true if the name string is empty or only contains blanks
+	let onlyNumbersInSsn = /^\d+$/.test(ssn); //boolean which evalutes to true if the entered SSN contains only numbers (business rule)
+	if (ssn.length != 10 || !onlyNumbersInSsn){ 
+		$("#fieldsetFeedback").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX");
+		return false;
+	} else if (isEmpty){
+		$("#fieldsetFeedback").text("Please enter a name.");
+		return false;
+	} else if (name.length > 20){
+		$("#fieldsetFeedback").text("Name can be a maximum of 20 characters.");
+		return false;
+	} else {
+		return true;
+	}
+}
+
+function validateAssignmentOp(){
+	//TODO write this
+}
+
 /************
  * Function 	clearFeedback
  * Description	Clears the user feedback messages in all parts of the page
@@ -256,6 +167,7 @@ function clearFeedback(){
 	$("#deleteFeedback").text("");
 	$("#newProjectFeedback").text("");
 }
+
 
 /************
  * Function 	toggleSelectVisibility
@@ -486,53 +398,5 @@ async function loadAssignments(){
 		$.each(result, function(index, element){
 			assignmentArray.push([element.aSsn, element.aProjectCode]); //stores the assignments in the global assignment array
 		})
-	}
-}
-
-/************
- * Function 	getWeather
- * Description	loads IP-address, location, and weather-data from ipstack and openweathermap
- ************/
-function getWeather(){
-	$.ajax({
-		method: "GET",
-		url: "http://api.ipstack.com/check?access_key=c79834c89a7000a01355d5bfb1a1e504",
-		error: ajaxReturn_Error,
-		success: ajaxReturn_Success
-	})
-	function ajaxReturn_Success(result, status, xhr) {
-		ParseJsonFile(result);
-	}
-	function ajaxReturn_Error(result, status, xhr) {
-		console.log("Ajax-api-stack: "+status);
-	}
-	function ParseJsonFile(result) {
-		let lat = result.latitude;
-		let long = result.longitude;
-		let city = result.city;
-		let ipNbr = result.ip;
-		$("#city").text(city);
-		$("#ipNbr").text(ipNbr);
-		$.ajax({
-			method: "GET",
-			url: "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+long+"&units=metric"+ "&APPID=f632f8955e8a686bc42802e882ecad84",
-			error: ajaxWeatherReturn_Error,
-			success: ajaxWeatherReturn_Success
-		})
-		function ajaxWeatherReturn_Success(result, status, xhr) {
-			let sunrise = result.sys.sunrise;
-			let sunset = result.sys.sunset;
-			let sunriseDate = new Date(sunrise*1000);
-			let timeStrSunrise = sunriseDate.toLocaleTimeString();
-			let sunsetDate = new Date(sunset*1000);
-			let timeStrSunset = sunsetDate.toLocaleTimeString();
-			$("#sunrise").text("Sunrise: "+timeStrSunrise);
-			$("#sunset").text("Sunset: "+timeStrSunset);
-			$("#weather").text(result.weather[0].main);
-			$("#degree").text(result.main.temp+" \u2103");
-		}//ajaxWeatherReturn_Success
-		function ajaxWeatherReturn_Error(result, status, xhr) {
-			alert("Error i OpenWeatherMap Ajax");
-		}
 	}
 }

@@ -8,6 +8,7 @@
 	<link rel="stylesheet" type="text/css" href="../css/person.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<script src="../js/weather.js"></script>
 	<script src="../js/person.js"></script>
 	<title>Person</title>
 </head>
@@ -55,63 +56,69 @@
 		<section id="main">
 			<section id="content">
 				<div class="box">
-					<form>
+					<form action="/PraktikfallWebProject/Persons" method="POST" onsubmit="return validatePersonOp();">
 						<fieldset class="PersonalFS">
 							<legend>Person</legend>
 							Social Security Number:<br>
 							<input type="text" name="ssn" id="ssn" value="" placeholder="YYMMDDXXXX" maxlength="10"> <br>
 							Name:<br>
 							<input type="text" name="name" id="name" value="" maxlength="25"><br><br>
-							<input type="button" name="submitBtn" value="Add" id="AddBtn">
-							<input type="button" name="submitBtn" value="Update" id="UpdateBtn">
+							
+							<input type="submit" name="submitBtn" value="Add" id="addBtn">
+							<input type="submit" name="submitBtn" value="Update" id="updateBtn">
+							
 							<br><p id="fieldsetFeedback"></p>
 						</fieldset>
+						<input type="text" name="searchPerson" id="searchPerson" value="" placeholder="Search...">
+						<div class="tabell">
+							<table id="allPersons">
+							<thead class="fixed">
+								<tr>
+									<th colspan="1">Social Security Number</th>
+									<th colspan="1">Name</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+						</div>
+						<p id="deleteFeedback"></p>
+						<input type="submit" name="submitBtn" value="Delete" id="DeleteBtn">
 					</form>
-					<input type="text" name="searchPerson" id="searchPerson" value="" placeholder="Search...">
-					<div class="tabell">
-						<table id="allPersons">
-						<thead class="fixed">
-							<tr>
-								<th colspan="1">Social Security Number</th>
-								<th colspan="1">Name</th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
-					</table>
-					</div>
-					<p id="deleteFeedback"></p>
-					<input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
 				</div>
 				<div class="box">
-					<fieldset class="PersonalFS">
-						<legend id="projectLegend">Projects chosen person is assigned to</legend>
-						<div class="tabell">
-							<table id="personProjects">
-								<thead class="fixed">
-									<tr>
-										<th>Project Code</th>
-										<th>Project name</th>
-									</tr>
-								</thead>
-								<tbody></tbody>
-							</table>
+					<form action="/PraktikfallWebProject/Assignments" method="POST" onsubmit="return validateAssignmentOp();">
+						<fieldset class="PersonalFS">
+							<legend id="projectLegend">Projects chosen person is assigned to</legend>
+							<div class="tabell">
+								<table id="personProjects">
+									<thead class="fixed">
+										<tr>
+											<th>Project Code</th>
+											<th>Project name</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+							<br><input type="submit" name="submitBtn" id="removeFromProject" value="Remove from project"><br>
+							<br><input type="button" name="addNewProject" id="addNewProject" value="Add new project..."><br>
+							<input id="selectedPerson" name="selectedPerson" type="hidden" value="">
+							<input id="selectedProject" name="selectedProject" type="hidden" value="">
+							<br><p id="newProjectFeedback"></p>
+							<hr>
+							<div id="newProjectMenu" class="newProjectMenu">
+								<div id="newProjectFS" class="newProjectMenu">
+									<span id=label>Choose project to add to person</span>
+									<br><select id="selectNewProject" class="newProjectMenu">
+										<option disabled selected>Select project</option>
+									</select><br>
+									<input type="submit" name="submitBtn" id="addToProject" value="AddToProject" class="newProjectMenu"><br>
+							</div>
+							<p id="newProjectFeedback"></p>
 						</div>
-						<br><input type="button" name="removeFromProject" id="removeFromProject" value="Remove from project"><br>
-						<br><input type="button" name="addNewProject" id="addNewProject" value="Add new project..."><br>
-						<br><p id="newProjectFeedback"></p>
-						<hr>
-						<div id="newProjectMenu" class="newProjectMenu">
-							<div id="newProjectFS" class="newProjectMenu">
-								<span id=label>Choose project to add to person</span>
-								<br><select id="selectNewProject" class="newProjectMenu">
-									<option disabled selected>Select project</option>
-								</select><br>
-								<input type="button" name="addToProject" id="addToProject" value="Add" class="newProjectMenu"><br>
-						</div>
-						<p id="newProjectFeedback"></p>
-					</div>
-				</fieldset>
+					</fieldset>
+				</form>
 			</div>
 		</section>
 	</section>

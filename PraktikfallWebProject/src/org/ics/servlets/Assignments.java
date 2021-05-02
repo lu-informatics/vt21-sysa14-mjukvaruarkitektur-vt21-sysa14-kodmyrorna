@@ -13,6 +13,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.servlet.AsyncContext;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -56,43 +57,47 @@ public class Assignments extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
-		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
-			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
-			JsonObject jsonRoot = Json.createReader(reader).readObject(); //Reads object sent through request
-			String[] assignment = {jsonRoot.getString("aSsn"), jsonRoot.getString("aProjectCode")}; //Creates a string array for the assignment which can be passed to the method senAsJson()
-			Person person = facade.findPersonBySsn(assignment[0]);
-			Project project = facade.findProjectByProjectCode(assignment[1]); //Finds the correct person and project object to pass to the facade method addAssignment()
-			if (person != null && project != null) { //If the person and project were found in the database
-				facade.addAssignment(project, person);
-				sendAsJson(response, assignment);
-			} 
-		} else { //If user has input an ending to the path, which isn't supported
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		}
-	}
-
-	/**
-	 * @see HttpServlet#doDelete(HttpServletRequest, HttpServletResponse)
-	 */
-	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String pathInfo = request.getPathInfo();
-		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
-		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
-			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
-			JsonArray jsonArray = Json.createReader(reader).readArray(); //Reads the data from the request as an array of assignments as json objects
-			for (int i = 0; i < jsonArray.size(); i++) { //Iterates through the array and deletes each assignment from the database
-				JsonObject assignment = jsonArray.getJsonObject(i); 
-				Person person = facade.findPersonBySsn(assignment.getString("aSsn")); //Finds the correct person and proejct to pass to the facade method removeAssignment()
-				Project project = facade.findProjectByProjectCode(assignment.getString("aProjectCode"));
-				if (person != null && project != null) { //If the person and project were found in the database
+		request.setAttribute("object", "assignment");
+		System.out.println("doPost assignment"); //TODO remove this
+		if ((pathInfo == null || pathInfo.equals("/"))) {
+			String operation = request.getParameter("submitBtn");
+			if (operation.equals("Add")) {
+				System.out.println("operation is add"); //TODO remove this
+				String ssn = (String)request.getParameter("selectedPerson");
+				Person person = facade.findPersonBySsn(ssn);
+				String code = (String)request.getParameter("selectedProject");
+				Project project = facade.findProjectByProjectCode(code);
+				if(person != null && project != null) {
+					System.out.println(person.getName() + " add to  " + project.getName());
+					facade.addAssignment(project, person);
+					request.setAttribute("project", project);
+					request.setAttribute("person", person);
+					request.setAttribute("operation", "add");
+				}
+				else {
+					//failed?
+				}
+			} else if (operation.equals("Delete")) {
+				System.out.println("operation is delete"); //TODO remove this
+				String ssn = (String)request.getParameter("selectedPerson");
+				Person person = facade.findPersonBySsn(ssn);
+				String code = (String)request.getParameter("selectedProject");
+				Project project = facade.findProjectByProjectCode(code);
+				if(person != null && project != null) {
+					System.out.println(person.getName() + " remove from " + project.getName());
 					facade.removeAssignment(project, person);
+					request.setAttribute("project", project);
+					request.setAttribute("person", person);
+					request.setAttribute("operation", "delete");
 				}
 			}
 		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
+		RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/Confirmation.jsp");
+		dispatcher.forward(request, response);
 	}
+
 	
 	/*************
 	 * Function sendAsJson
