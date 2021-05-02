@@ -53,7 +53,7 @@
                   <fieldset id="PersonalFS">
                      <legend>Person:</legend>
                      Ssn:<br>
-                     <input type="text" name="ssn" id="ssn" value=""><br>
+                     <input type="text" name="ssn" id="ssn" value="" maxlength = 10><br>
                      Name:<br>
                      <input type="text" name="name" id="name" value="">
                      <br><br>
@@ -62,6 +62,7 @@
                      <input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
                      <input type="button" name="submitBtn" value="Update" id="UpdateBtn">
                   </fieldset>
+                  <p id="FeedbackPerson"></p>
                </article>
             </section>
          </section>

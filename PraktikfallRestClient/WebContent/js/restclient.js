@@ -42,11 +42,11 @@ $(document).ready(function(){
    	}
    	
    	$("#FindBtn").click( function() {
-   	 var strValue = $("#ssn").val();
-   	 if (strValue != "") {
+   	 var strSsn = $("#ssn").val();
+   	 if (strSsn != "") {
    	 $.ajax({
    	 method: "GET",
-   	url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strValue,
+   	 url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn,
    	 error: ajaxFindReturnError,
    	 success: ajaxFindReturnSuccess
    	})
@@ -58,7 +58,27 @@ $(document).ready(function(){
    		console.log("Ajax-find person: "+status);
    		}
    		 }
-   		})//btnclick	
+   		})	
+   		
+   		$("#DeleteBtn").click( function() { 
+   			var strSsn = $("#ssn").val();
+   			if (strSsn != "") {
+   				$.ajax({
+   					method: "DELETE",
+   					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn, 
+   					error: ajaxDelReturnError, 
+   					success: ajaxDelReturnSuccess
+   				})
+   				function ajaxDelReturnSuccess(result, status, xhr) {
+   					clearFields();
+   					$("#FeedbackPerson").attr("placeholder","Person deleted" );
+   				}
+   				function ajaxDelReturnError(result, status, xhr) {
+   					alert("Error");
+   					console.log("Ajax-find person: "+status);
+   				}
+   			}
+   		})
    }
    function ParseJsonFilePerson(result) {
   		if(result.length != 0){
