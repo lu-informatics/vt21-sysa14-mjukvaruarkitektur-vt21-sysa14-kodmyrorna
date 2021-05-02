@@ -77,13 +77,13 @@ html {
   position: relative;
 }
 
-.wrapper .main_content .header{
+.wrapper .main_content header{
   padding: 20px;
   font-size: 2em;
   text-align: center;
 }
 
-.wrapper .main_content .header span{
+.wrapper .main_content header span{
   border-bottom: thin solid black;
 }
 

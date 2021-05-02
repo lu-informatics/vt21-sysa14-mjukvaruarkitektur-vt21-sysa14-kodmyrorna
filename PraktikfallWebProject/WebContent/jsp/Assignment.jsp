@@ -12,7 +12,6 @@
 	<title>Assignment</title>
 </head>
 <body>
-	
 	<div class ="wrapper">
 		<div class="sidebar">
 			<h2><img src="../images/logo.png"></h2>
@@ -50,10 +49,10 @@
 			</aside>
 		</div>
 		<section id="main">
-		<div class="header">
+		<header>
 		<h1>Configure assignments</h1>
 		<p><span>Add or remove people from different projects</span></p>
-	</div>
+	</header>
 			<section id="content">
 				<div id="box">
 					<fieldset class="personalFS">

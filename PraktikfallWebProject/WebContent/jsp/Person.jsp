@@ -50,10 +50,10 @@
 			</aside>
 		</div>
 		<section id="main">
-		<div class="header">
+		<header>
 		<h1>Person</h1>
 		<p><span>Add or remove people</span></p>
-	</div>
+	</header>
 			<section id="content">
 				<div class="box">
 					<form>
