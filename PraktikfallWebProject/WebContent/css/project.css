@@ -18,16 +18,6 @@ html {
 	background-size: cover;
 }
 
-.header {
-  padding: 20px;
-  font-size: 2em;
-  text-align: center;
-}
-
-.header span{
-  border-bottom: thin solid black;
-}
-
 .wrapper{
   display: flex;
   position: relative;
@@ -75,6 +65,16 @@ html {
 	position: absolute;
 	bottom: 0;
 	left: 0;
+}
+
+section header{
+  padding: 20px;
+  font-size: 2em;
+  text-align: center;
+}
+
+section header span{
+  border-bottom: thin solid black;
 }
 
 section#main {

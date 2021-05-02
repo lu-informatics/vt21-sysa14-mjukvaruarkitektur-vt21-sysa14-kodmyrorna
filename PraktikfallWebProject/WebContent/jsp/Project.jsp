@@ -49,10 +49,10 @@
 			</aside>
 		</div>
 			<section id="main">
-			<div class="header">
+			<header>
 		<h1>Project</h1>
 		<p><span>Add or remove projects</span></p>
-	</div>
+	</header>
 				<section id="content">
 					<div class="box">
 						<form>

@@ -81,7 +81,7 @@ html {
    transform: translateX(-50%) translateY(-50%);
 }
 
-.wrapper .main_content .header{
+.wrapper .main_content header{
   font-size: 3em;
   margin: 0;
   padding: 0;
