@@ -13,10 +13,7 @@
 	<title>Person</title>
 </head>
 <body>
-	<div class="header">
-		<h1>Person</h1>
-		<p><span>Add or remove people</span></p>
-	</div>
+	
 	<div class ="wrapper">
 		<div class="sidebar">
 			<h2><img src="../images/logo.png"></h2>
@@ -54,6 +51,10 @@
 			</aside>
 		</div>
 		<section id="main">
+		<header>
+		<h1>Person</h1>
+		<p><span>Add or remove people</span></p>
+	</header>
 			<section id="content">
 				<div class="box">
 					<form action="/PraktikfallWebProject/Persons" method="POST" onsubmit="return validatePersonOp();">

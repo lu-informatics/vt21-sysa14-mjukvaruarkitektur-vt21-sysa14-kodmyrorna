@@ -13,10 +13,6 @@
 	<title>Assignment</title>
 </head>
 <body>
-	<div class="header">
-		<h1>Configure assignments</h1>
-		<p><span>Add or remove people from different projects</span></p>
-	</div>
 	<div class ="wrapper">
 		<div class="sidebar">
 			<h2><img src="../images/logo.png"></h2>
@@ -54,6 +50,10 @@
 			</aside>
 		</div>
 		<section id="main">
+		<header>
+		<h1>Configure assignments</h1>
+		<p><span>Add or remove people from different projects</span></p>
+	</header>
 			<section id="content">
 				<form action="/PraktikfallWebProject/Assignments" method="POST" onsubmit="return validateAssignmentOp();">
 					<div id="box">
