@@ -17,9 +17,9 @@
       <section id="row">
          <nav>
             <ul>
-               <li class="active"><a href="crud.jsp">Person</a></li>
-               <li><a>Project</a></li>
-               <li><a>Assignments</a></li>
+               <li><a href="crud.jsp">Person</a></li>
+               <li class="active"><a href="RestProject.jsp">Project</a></li>
+               <li><a href="RestAssignment.jsp">Assignments</a></li>
             </ul>
          </nav>
          <aside>
@@ -52,9 +52,9 @@
                <article>
                   <fieldset id="PersonalFS">
                      <legend>Person:</legend>
-                     Ssn:<br>
-                     <input type="text" name="ssn" id="ssn" value="" maxlength = 10><br>
-                     Name:<br>
+                     Project Code:<br>
+                     <input type="text" name="projectCode" id="projectCode" value="" maxlength = 10><br>
+                     Project Name:<br>
                      <input type="text" name="name" id="name" value="">
                      <br><br>
                      <input type="button" name="submitBtn" value="Find" id="FindBtn">
@@ -62,7 +62,7 @@
                      <input type="button" name="submitBtn" value="Delete" id="DeleteBtn">
                      <input type="button" name="submitBtn" value="Update" id="UpdateBtn">
                   </fieldset>
-                  <p id="FeedbackPerson"></p>
+                  <p id="FeedbackProject"></p>
                </article>
             </section>
          </section>

@@ -135,7 +135,7 @@ $(document).ready(function(){
   			$("#ssn").val(result[0].ssn);
   	  		$("#name").val(result[0].name);
   		} else {
-  			alert("fel");
+  			alert("No person found");
   		}
   		}
    
