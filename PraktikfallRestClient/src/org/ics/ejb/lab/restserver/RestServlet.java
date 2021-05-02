@@ -74,16 +74,17 @@ public class RestServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		String strContentType = request.getContentType(); // Check the datatype so reading the json data doesn't cause
-															// error if another client is sending requests to the
-															// servlets
-		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
-			BufferedReader reader = request.getReader(); // creates a reader for getting data from the request
-			Person person = parseJsonPerson(reader);
-			facade.createPerson(person);
-			sendAsJson(response, person);
-		} else { // If user has input an ending to the path, which isn't supported
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+		if (pathInfo == null || pathInfo.equals("/")) {
+			BufferedReader reader = request.getReader();
+
+			Person p = parseJsonPerson(reader);
+
+			try {
+				p = facade.createPerson(p);
+			} catch (Exception e) {
+				System.out.println("duplicate key");
+			}
+			sendAsJson(response, p);
 		}
 	}
 
@@ -93,17 +94,26 @@ public class RestServlet extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		String strContentType = request.getContentType(); // Check the datatype so reading the json data doesn't cause
-															// error if another client is sending requests to the
-															// servlets
-		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
-			BufferedReader reader = request.getReader(); // creates a reader for getting data from the request
-			Person person = parseJsonPerson(reader);
-			facade.updatePerson(person);
-			sendAsJson(response, person);
-		} else { // If user has input an ending to the path, which isn't supported
+		if (pathInfo == null || pathInfo.equals("/")) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return;
 		}
+		String[] splits = pathInfo.split("/");
+		if (splits.length != 2) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return;
+		}
+		String id = splits[1];
+		BufferedReader reader = request.getReader();
+
+		Person p = parseJsonPerson(reader);
+
+		try {
+			p = facade.updatePerson(p);
+		} catch (Exception e) {
+			System.out.println("facade Update Error");
+		}
+		sendAsJson(response, p);
 	}
 
 	/**
@@ -111,21 +121,6 @@ public class RestServlet extends HttpServlet {
 	 */
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		/*
-		 * String pathInfo = request.getPathInfo(); String strContentType =
-		 * request.getContentType(); //Check the datatype so reading the json data
-		 * doesn't cause error if another client is sending requests to the servlets
-		 * if((pathInfo == null || pathInfo.equals("/")) &&
-		 * strContentType.equals("application/json")) { JsonReader jsonReader =
-		 * Json.createReader(request.getReader()); //Create a reader for getting
-		 * Json-formatted data JsonObject jsonRoot = jsonReader.readObject(); //Assume
-		 * there is only one object sent to doDelete, not an array String ssn =
-		 * jsonRoot.getString("ssn"); //Collect social security number from the object
-		 * facade.deletePerson(ssn); } else { //If user has input an ending to the path,
-		 * which isn't supported response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		 * }
-		 */
-
 		String pathInfo = request.getPathInfo();
 		if (pathInfo == null || pathInfo.equals("/")) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
