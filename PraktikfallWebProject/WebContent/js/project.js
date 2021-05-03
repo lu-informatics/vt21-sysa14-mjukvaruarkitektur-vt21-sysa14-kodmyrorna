@@ -52,7 +52,7 @@ $(document).ready(function(){
 			updatePersons(code, name); //displays the persons assigned to this project
 			$("#selectedProject").val(code); //TODO explain this
 		} else { //If the clicked row is already highlighted, it will not be highlighted any longer
-			updatePersons(); //clears the side table displaying the persons assigned to a project
+			updatePersons("clear"); //clears the side table displaying the persons assigned to a project
 			$("#projectCode").val(""); //clears the project code text field
 			toggleDisabled("activate");
 			$("#selectedProject").val("");
@@ -105,6 +105,7 @@ function toggleDisabled(operation){
 			$("#hiddenProjectCode").val(""); //TODO explain
 			$("#AddBtn").removeAttr('disabled');
 			$("#X").css("display", "none");
+			updatePersons("clear");
 			break;
 	}
 }
@@ -190,7 +191,7 @@ function updateTable(){
  ************/
 function updatePersons(code, name){
 	$("#projectPersons td").parent().remove(); //Clears table
-	if (name === null || name === "")
+	if (code === "clear")
 		$("#personLegend").text("Choose project to see their assigned persons");
 	else
 		$("#personLegend").text("Persons assigned to " + name); //updates table legend
