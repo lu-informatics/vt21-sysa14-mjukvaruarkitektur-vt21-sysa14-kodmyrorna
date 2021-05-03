@@ -42,6 +42,7 @@ $(document).ready(function(){
    	}
    	
    	$("#FindBtn").click( function() {
+   		clearText();
    		var strSsn = $("#ssn").val();
    		if (strSsn != "") {
    			$.ajax({
@@ -51,8 +52,13 @@ $(document).ready(function(){
    				success: ajaxFindReturnSuccess
    			})
    			function ajaxFindReturnSuccess(result, status, xhr) {
-   				ParseJsonFilePerson(result);
-   			}
+   				if(isEmpty(result)){
+   						clearFields();
+   						$("#FeedbackPerson").text("Person doesnt exist" );
+					} else {
+						ParseJsonFilePerson(result);
+					}
+				}
    			function ajaxFindReturnError(result, status, xhr) {
    				alert("Error");
    				console.log("Ajax-find person: "+status);
@@ -61,6 +67,7 @@ $(document).ready(function(){
    		})	
    		
    		$("#DeleteBtn").click( function() { 
+   			clearText();
    			var strSsn = $("#ssn").val();
    			if (strSsn != "") {
    				$.ajax({
@@ -70,8 +77,12 @@ $(document).ready(function(){
    					success: ajaxDelReturnSuccess
    				})
    				function ajaxDelReturnSuccess(result, status, xhr) {
+   					if(result.length === 0){
+   						$("#FeedbackPerson").text("Person doesnt exist");
+   					} else {
    					clearFields();
    					$("#FeedbackPerson").text("Person deleted");
+   					}
    				}
    				function ajaxDelReturnError(result, status, xhr) {
    					alert("Error");
@@ -80,12 +91,13 @@ $(document).ready(function(){
    			}
    		})
    		
-   		$("#AddBtn").click( function() { 
+   		$("#AddBtn").click( function() {
+   			clearText();
    			var strSsn = $("#ssn").val();
    			var strName = $("#name").val();
    			var obj = { ssn: strSsn, name: strName};
    			var jsonString = JSON.stringify(obj);
-   			if (strSsn != "") {
+   			if (strSsn != "" && strName != "") {
    				$.ajax({
    					method: "POST",
    					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/",  
@@ -95,8 +107,12 @@ $(document).ready(function(){
    					success: ajaxAddReturnSuccess
    				})
    				function ajaxAddReturnSuccess(result, status, xhr) {
-   					clearFields();
-   					$("#FeedbackPerson").text("Person added" );
+   					if(strSsn.length < 10){
+   						$("#FeedbackPerson").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX" );
+   					} else {
+   						clearFields();
+   						$("#FeedbackPerson").text("Person added" );
+   					}
    				}
    				function ajaxAddReturnError(result, status, xhr) {
    					alert("Error Add");
@@ -105,12 +121,13 @@ $(document).ready(function(){
    			}
    		})
    		
-   		$("#UpdateBtn").click( function() { 
+   		$("#UpdateBtn").click( function() {
+   			clearText();
    			var strSsn = $("#ssn").val();
    			var strName = $("#name").val();
    			var obj = { ssn: strSsn, name: strName};
    			var jsonString = JSON.stringify(obj);
-   			if (strSsn != "") {
+   			if (strSsn != "" && strName != "") {
    				$.ajax({
    					method: "PUT",
    					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn, 
@@ -120,8 +137,12 @@ $(document).ready(function(){
    					success: ajaxUpdateReturnSuccess
    				})
    				function ajaxUpdateReturnSuccess(result, status, xhr) {
-   					clearFields();
-   					$("#FeedbackPerson").text("Person updated" );
+   					if(isEmpty(result)){
+   						$("#FeedbackPerson").text("Person doesnt exist" );
+   					} else {
+   						clearFields();
+   						$("#FeedbackPerson").text("Person updated" );
+   					}
    				}
    				function ajaxUpdateReturnError(result, status, xhr) {
    					alert("Error Update");
@@ -137,9 +158,19 @@ $(document).ready(function(){
   		} else {
   			alert("No person found");
   		}
-  		}
+  	}
    
    function clearFields() {
 	   $("#ssn").val("");
 	   $("#name").val("");
 	   }
+   
+   function clearText(){
+	   $("#FeedbackPerson").text("");
+   }
+   
+   function isEmpty(result) {
+	    return Object.keys(result).length === 0;
+	}
+ 
+   
