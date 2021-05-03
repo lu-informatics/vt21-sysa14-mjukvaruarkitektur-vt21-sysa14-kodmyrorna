@@ -21,12 +21,12 @@
 		<div class="sidebar">
 			<h2><img src="images/logo.png"></h2>
 			<ul>
-				<li><a href="../html/Home.html"><i class="fas fa-home"></i>Home</a></li>
-				<li><a href="../jsp/Person.jsp"><i class="fas fa-user-friends"></i>Person</a></li>
-				<li><a href="../jsp/Project.jsp"><i class="fas fa-project-diagram"></i>Project</a></li>
-				<li><a href="../jsp/Assignment.jsp"><i class="fas fa-network-wired"></i>Assignment</a></li>
-				<li><a href="../html/About.html"><i class="fas fa-address-card"></i>About</a></li>
-				<li><a href="../index.html"><i class="fas fa-file-alt"></i>Test</a></li>
+				<li><a href="html/Home.html"><i class="fas fa-home"></i>Home</a></li>
+				<li><a href="jsp/Person.jsp"><i class="fas fa-user-friends"></i>Person</a></li>
+				<li><a href="jsp/Project.jsp"><i class="fas fa-project-diagram"></i>Project</a></li>
+				<li><a href="jsp/Assignment.jsp"><i class="fas fa-network-wired"></i>Assignment</a></li>
+				<li><a href="html/About.html"><i class="fas fa-address-card"></i>About</a></li>
+				<li><a href="index.html"><i class="fas fa-file-alt"></i>Test</a></li>
 			</ul>
 			<aside class="weather_container">
 				<table class="weather">

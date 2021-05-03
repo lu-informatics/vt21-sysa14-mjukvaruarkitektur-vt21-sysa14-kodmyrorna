@@ -13,7 +13,6 @@
 	<title>Person</title>
 </head>
 <body>
-	
 	<div class ="wrapper">
 		<div class="sidebar">
 			<h2><img src="../images/logo.png"></h2>
