@@ -47,13 +47,16 @@ $(document).ready(function(){
 			$(this).addClass("highlight");
 			let ssn = $(this).find("td:eq(0)").text(); 
 			let name = $(this).find("td:eq(1)").text();
-			$("#ssn").val(ssn); 
+			$("#ssn").val(ssn);
 			$("#name").val(name); //change the value of the ssn and name text field to the clicked row
+			$("#hiddenSsn").val(ssn); //TODO also explain this
+			toggleDisabled("disable");
 			$("#selectedPerson").val(ssn); //TODO explain this
 			updateProjects(ssn, name); //displays the projects this person is assigned to
 		} else { //If the clicked row is already highlighted, it will not be highlighted any longer
 			updateProjects(); //clears the side table displaying the projects a person is assigned to
 			$("#ssn").val(""); //changes the value of the ssn text field to nothing
+			toggleDisabled("activate");
 			$("#name").val("");
 			$("#selectedPerson").val("");
 		}
@@ -81,26 +84,48 @@ $(document).ready(function(){
 		}
 		clearFeedback();
 	}) 
+	
+	$("#X").click(function(){
+		toggleDisabled("activate");
+		$("#allPersons tr.highlight").removeClass("highlight"); 
+		$("#ssn").val("");
+		$("#name").val("");
+		$("#selectedPerson").val("");
+	})
 })
 
 /*FUNCTIONS*/
-
+function toggleDisabled(operation){
+	switch(operation){
+		case("disable"):
+			$("#ssn").attr('disabled', 'disabled'); //TODO explain this
+			$("#AddBtn").attr('disabled', 'disabled');
+			$("#X").css("display", "inline");
+			break;
+		case("activate"):
+			$("#ssn").removeAttr('disabled'); //TODO FKG EXPLAIN
+			$("#AddBtn").removeAttr('disabled');
+			$("#hiddenSsn").val(""); //TODO explain
+			$("#X").css("display", "none");
+			break;
+	}
+}
 function validatePersonOp(){//TODO comment
 	let ssn = $("#ssn").val();
 	let name = $("#name").val();
 	let isEmpty = !name.replace(/\s/g, ''); //boolean which evaluates to true if the name string is empty or only contains blanks
-	let onlyNumbersInSsn = /^\d+$/.test(ssn); //boolean which evalutes to true if the entered SSN contains only numbers (business rule)
-	if (ssn.length != 10 || !onlyNumbersInSsn){ 
+	if (ssn.length < 10){ 
 		$("#fieldsetFeedback").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX");
 		return false;
 	} else if (submitButton !== 'delete' && isEmpty){
 		$("#fieldsetFeedback").text("Please enter a name.");
 		return false;
-	} else if (submitButton !== 'delete' && name.length > 20){
-		$("#fieldsetFeedback").text("Name can be a maximum of 20 characters.");
-		return false;
 	} else if (submitButton !== 'add' && !getSsnArray().includes(ssn)){
 		$("#fieldsetFeedback").text("This social security number is not registered.");
+		return false;
+	} else if (submitButton === 'add' && getSsnArray().includes(ssn)){
+		$("#fieldsetFeedback").text("This social security number is already registered.");
+		return false;
 	} else {
 		return true;
 	}
@@ -160,17 +185,18 @@ function updateTable(){
 
 /************
  * Function 	updateProjects
- * Parameters	string	name
+ * Parameters	string	ssn
+ * 				string name
  * Description	Updates the table of projects belonging to a specific person 
  ************/
 function updateProjects(ssn, name){
 	/*FIRST UPDATE TABLE*/
 	$("#personProjects td").parent().remove(); //Clears table
-	if(name === null)
-		$("#projectLegend").text("Projects chosen person is assigned to");
+	if(name === null || name === "")
+		$("#projectLegend").text("Choose person to see their projects");
 	else
 		$("#projectLegend").text("Projects " + name + " is assigned to"); //updates table legend
-	assignmentArray.sort(); //sorts the assignments
+	
 	let assignmentsWithNames = matchAssignmentNames(); //gets new array with both primary keys for person and project as well as their names
 	let personProjects = new Array(); //this persons projects
 	for (let i = 0; i < assignmentsWithNames.length; i++){

@@ -73,7 +73,12 @@ public class Persons extends HttpServlet {
 				}
 			}
 			else if (operation.equals("Update")) {
-				String ssn = (String)request.getParameter("ssn");
+				String ssn = "";
+				if (request.getParameter("ssn") != null) {
+					ssn = (String)request.getParameter("ssn");
+				} else {
+					ssn = (String)request.getParameter("hiddenSsn");
+				}
 				String name = (String)request.getParameter("name");
 				if (ssn != null && name != null) {
 					Person person = new Person(ssn, name);					
@@ -84,7 +89,12 @@ public class Persons extends HttpServlet {
 					}
 				}
 			} else if (operation.equals("Delete")) {
-				String ssn = (String)request.getParameter("ssn");
+				String ssn = "";
+				if (request.getParameter("ssn") != null) {
+					ssn = (String)request.getParameter("ssn");
+				} else {
+					ssn = (String)request.getParameter("hiddenSsn");
+				}
 				if (facade.findPersonBySsn(ssn) != null) {
 					facade.deletePerson(ssn);
 					request.setAttribute("operation", "delete");

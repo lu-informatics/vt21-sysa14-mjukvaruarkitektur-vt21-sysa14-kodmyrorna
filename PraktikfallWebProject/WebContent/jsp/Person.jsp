@@ -61,11 +61,13 @@
 						<fieldset class="PersonalFS">
 							<legend>Person</legend>
 							Social Security Number:<br>
-							<input type="text" name="ssn" id="ssn" value="" placeholder="YYMMDDXXXX" maxlength="10"> <br>
+							<input type="text" name="ssn" id="ssn" value="" placeholder="YYMMDDXXXX" maxlength="10"> 
+							<input type="button" name="X" id="X" value="&#10006"><br> 
+							<input type="hidden" name="hiddenSsn" id="hiddenSsn" value="">
 							Name:<br>
-							<input type="text" name="name" id="name" value="" maxlength="25"><br><br>
+							<input type="text" name="name" id="name" value="" maxlength="20"><br><br>
 							
-							<input type="submit" name="submitBtn" value="Add" id="addBtn" onclick="submitButton='add'">
+							<input type="submit" name="submitBtn" value="Add" id="AddBtn" onclick="submitButton='add'">
 							<input type="submit" name="submitBtn" value="Update" id="updateBtn" onclick="submitButton='update'">
 							
 							<br><p id="fieldsetFeedback"></p>
@@ -90,7 +92,7 @@
 				<div class="box">
 					<form action="/PraktikfallWebProject/Assignments/" method="POST" onsubmit="return validateAssignmentOp();">
 						<fieldset class="PersonalFS">
-							<legend id="projectLegend">Projects chosen person is assigned to</legend>
+							<legend id="projectLegend">Choose person to see their projects</legend>
 							<div class="tabell">
 								<table id="personProjects">
 									<thead class="fixed">

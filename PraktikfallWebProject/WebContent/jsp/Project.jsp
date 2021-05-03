@@ -60,7 +60,9 @@
 							<fieldset class="PersonalFS">
 								<legend>Project</legend>
 								Project Code:<br>
-								<input type="text" name="projectCode" id="projectCode" value="" maxlength="10"><br>
+								<input type="text" name="projectCode" id="projectCode" value="" maxlength="10">
+								<input type="button" name="X" id="X" value="&#10006"><br>
+								<input type="hidden" name="hiddenProjectCode" id="hiddenProjectCode" value="">
 								Name:<br>
 								<input type="text" name="name" id="name" value="" maxlength="25"><br><br>
 								<input type="submit" name="submitBtn" value="Add" id="AddBtn" onclick="submitButton='add'">
@@ -87,7 +89,7 @@
 					<div class="box">
 						<form action="/PraktikfallWebProject/Assignments/" method="POST" onsubmit="return validateAssignmentOp();">
 							<fieldset class="PersonalFS">
-								<legend id="personLegend">Persons assigned to chosen project</legend>
+								<legend id="personLegend">Choose project to see their assigned persons</legend>
 								<div class="tabell">
 									<table id="projectPersons">
 										<thead class="fixed">

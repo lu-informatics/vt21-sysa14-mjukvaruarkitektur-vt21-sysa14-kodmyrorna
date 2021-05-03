@@ -55,26 +55,28 @@
 		</div>
 		<section id="main">
 			<section id="content">
-				<% Project project = (Project)request.getAttribute("project");
-				Person person = (Person)request.getAttribute("person");
-				String operation = (String)request.getAttribute("operation");
-				String originJsp = (String)request.getAttribute("originJsp");
-				if(operation.equals("add")){ %>
-					<h4>Assignment added</h4>
-					<p>Person <%=person.getName() %> is now assigned to project <%=project.getName() %></p>
-				<%} else if (operation.equals("delete")){%>
-					<h4>Assignment deleted</h4>
-					<p>Person <%=person.getName() %> is no longer assigned to project <%=project.getName() %></p>
-				<%} else { %>
-					<h4>Unknown operation</h4>
-				<%} 
-				if(originJsp.equals("assignment")){%>
-					<a href="../jsp/Assignment.jsp">Go Back</a>
-				<%} else if(originJsp.equals("person")){%>
-					<a href="../jsp/Person.jsp">Go Back</a>
-				<%} else if(originJsp.equals("project")){%>
-					<a href="../jsp/Project.jsp">Go Back</a>
-				<%}%>
+				<div id="confirmation">
+					<% Project project = (Project)request.getAttribute("project");
+					Person person = (Person)request.getAttribute("person");
+					String operation = (String)request.getAttribute("operation");
+					String originJsp = (String)request.getAttribute("originJsp");
+					if(operation.equals("add")){ %>
+						<h4>Assignment added</h4><br>
+						<p>Person <%=person.getName() %> is now assigned to project <%=project.getName() %></p><br>
+					<%} else if (operation.equals("delete")){%>
+						<h4>Assignment deleted</h4><br>
+						<p>Person <%=person.getName() %> is no longer assigned to project <%=project.getName() %></p><br>
+					<%} else { %>
+						<h4>Unknown operation</h4><br>
+					<%} 
+					if(originJsp.equals("assignment")){%>
+						<a href="../jsp/Assignment.jsp">Go Back</a>
+					<%} else if(originJsp.equals("person")){%>
+						<a href="../jsp/Person.jsp">Go Back</a>
+					<%} else if(originJsp.equals("project")){%>
+						<a href="../jsp/Project.jsp">Go Back</a>
+					<%}%>
+				</div>
 			</section>
 		</section>
 	</div>

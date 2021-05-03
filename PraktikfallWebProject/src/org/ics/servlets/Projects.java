@@ -77,7 +77,12 @@ public class Projects extends HttpServlet {
 				}
 			}
 			else if (operation.equals("Update")) {
-				String code = (String)request.getParameter("projectCode");
+				String code = "";
+				if (request.getParameter("projectCode") != null) {
+					code = (String)request.getParameter("projectCode");
+				} else {
+					code = (String)request.getParameter("hiddenProjectCode");
+				}
 				String name = (String)request.getParameter("name");
 				if (code != null && name != null) {
 					Project project = new Project(code, name);
@@ -88,7 +93,12 @@ public class Projects extends HttpServlet {
 					}
 				}
 			} else if (operation.equals("Delete")) {
-				String code = (String)request.getParameter("projectCode");
+				String code = "";
+				if (request.getParameter("projectCode") != null) {
+					code = (String)request.getParameter("projectCode");
+				} else {
+					code = (String)request.getParameter("hiddenProjectCode");
+				}
 				if (facade.findProjectByProjectCode(code) != null) {
 					facade.deleteProject(code);
 					request.setAttribute("operation", "delete");

@@ -90,7 +90,7 @@ section#content {
   justify-content: space-around;
   align-items: normal;
   position: absolute;
-  transform: translateY(40%);
+  transform: translateY(20%);
   background: transparent;
   height: 500px;
   width: 100%;
@@ -161,7 +161,7 @@ input[type=text]{
 }
 
 
-input[type="button"]{
+input[type="submit"]{
   color: #fff;
   background-color: black;
   border-color: black;
@@ -172,7 +172,7 @@ input[type="button"]{
   font-weight: 300;
 }
 
-input[type="button"]:hover{
+input[type="submit"]:hover{
   background-color: #ee4b08;
   border-color: #ee4b08;
   cursor: pointer;
@@ -203,7 +203,7 @@ footer{
   background: #ffbb4a;
 }
 
-#selectPerson{
+#selectedPerson{
 	padding: 8px 12px;
 	margin: 10px 2px 20px 2px; 
 	color: black;
@@ -213,14 +213,14 @@ footer{
 	border-radius: 5px; 
 }
 
-#selectPerson:focus,
-#selectPerson:hover{
+#selectedPerson:focus,
+#selectedPerson:hover{
 	outline: none;
 	border: 1px solid #bbbbbb;
 	cursor: pointer;
 }
 
-#selectProject{
+#selectedProject{
 	padding: 8px 12px;
 	margin: 10px 2px 20px 2px; 
 	color: black;
@@ -230,8 +230,8 @@ footer{
 	border-radius: 5px; 
 }
 
-#selectProject:focus,
-#selectProject:hover{
+#selectedProject:focus,
+#selectedProject:hover{
 	outline: none;
 	border: 1px solid #bbbbbb;
 }

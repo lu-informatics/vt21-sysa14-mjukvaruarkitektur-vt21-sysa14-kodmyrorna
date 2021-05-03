@@ -47,12 +47,16 @@ $(document).ready(function(){
 			let name = $(this).find("td:eq(1)").text();
 			$("#projectCode").val(code);  //change the value of the project code text field to the clicked row
 			$("#name").val(name);
-			$("#selectedProject").val(code); //TODO explain this
+			$("#hiddenProjectCode").val(code); //TODO also explain this
+			toggleDisabled("disable");
 			updatePersons(code, name); //displays the persons assigned to this project
+			$("#selectedProject").val(code); //TODO explain this
 		} else { //If the clicked row is already highlighted, it will not be highlighted any longer
 			updatePersons(); //clears the side table displaying the persons assigned to a project
 			$("#projectCode").val(""); //clears the project code text field
+			toggleDisabled("activate");
 			$("#selectedProject").val("");
+			$("#name").val("");
 		}
 	})
 	//Highlight rows in person table
@@ -79,10 +83,31 @@ $(document).ready(function(){
 
 		$("#newPersonFeedback").text("");
 	}) 
-	
+	$("#X").click(function(){
+		toggleDisabled("activate");
+		$("#allProjects tr.highlight").removeClass("highlight"); 
+		$("#projectCode").val("");
+		$("#name").val("");
+		$("#selectedProject").val("");
+	})
 })
 
 /*FUNCTIONS*/
+function toggleDisabled(operation){
+	switch(operation){
+		case("disable"):
+			$("#projectCode").attr('disabled', 'disabled'); //TODO explain this
+			$("#AddBtn").attr('disabled', 'disabled');
+			$("#X").css("display", "inline");
+			break;
+		case("activate"):
+			$("#projectCode").removeAttr('disabled'); //TODO FKG EXPLAIN
+			$("#hiddenProjectCode").val(""); //TODO explain
+			$("#AddBtn").removeAttr('disabled');
+			$("#X").css("display", "none");
+			break;
+	}
+}
 
 function validateProjectOp(){
 	let projectCodeStr = $("#projectCode").val();
@@ -95,14 +120,11 @@ function validateProjectOp(){
 	} else if (submitButton !== 'delete' && projectCodeIsEmpty){
 		$("#fieldsetFeedback").text("Please enter a project code.");
 		return false;
-	} else if (submitButton === 'add' && projectCodeStr.length > 10){
-		$("#fieldsetFeedback").text("Project code can be a maximum of 10 characters.");
-		return false;
-	} else if (submitButton !== 'delete' && nameStr.length > 20) {
-		$("#fieldsetFeedback").text("Name can be a maximum of 20 characters.");
-		return false;
-	} else if (submitButton !== 'add' && !getProjectCodeArray.includes(projectCodeStr)){
+	}  else if (submitButton !== 'add' && !getProjectCodeArray().includes(projectCodeStr)){
 		$("#fieldsetFeedback").text("This project code is not registered.");
+		return false;
+	} else if (submitButton === 'add' && getProjectCodeArray().includes(projectCodeStr)){
+		$("#fieldsetFeedback").text("This project code is already registered.");
 		return false;
 	}
 	return true;
@@ -161,15 +183,15 @@ function updateTable(){
 
 /************
  * Function 	updatePersons
- * Parameters	name
+ * Parameters	string code
+ * 				string name
  * Description	Updates the table of persons belonging to a specific project and manipulates the global person or assignment array depending on the operation performed
  * 				Also updates the select element which contains persons that can be assigned to the project
  ************/
 function updatePersons(code, name){
-	/*FIRST UPDATE TABLE*/
 	$("#projectPersons td").parent().remove(); //Clears table
-	if (code === null)
-		$("#personLegend").text("Persons assigned to chosen project");
+	if (name === null || name === "")
+		$("#personLegend").text("Choose project to see their assigned persons");
 	else
 		$("#personLegend").text("Persons assigned to " + name); //updates table legend
 	

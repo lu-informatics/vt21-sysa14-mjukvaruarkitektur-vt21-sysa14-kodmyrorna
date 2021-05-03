@@ -62,11 +62,10 @@ function validateAssignmentOp(){
 	let selectedPerson = $("#selectedPerson option:selected").val();
 	let selectedProject = $("#selectedProject option:selected").val();
 	let assignmentExists = checkAssignmentExists(selectedPerson, selectedProject);
-	if(selectedPerson === "Select person" || selectedProject === "Select project"){
+	if(selectedPerson === "selectPerson" || selectedProject === "selectProject"){
 		$("#addFeedback").text("Please select a person and a project");
 		return false;
 	} else if (submitButton === 'add' && assignmentExists){ 
-		alert('not gonna add');
 		$("#addFeedback").text("Assignment already exists.");
 		return false;
 	} else if (submitButton === 'delete' && !assignmentExists){ 

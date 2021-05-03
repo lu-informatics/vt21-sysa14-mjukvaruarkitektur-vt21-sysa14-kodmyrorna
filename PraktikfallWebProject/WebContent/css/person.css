@@ -184,6 +184,10 @@ input[type="button"]:hover, input[type="submit"]:hover{
   cursor: pointer;
 }
 
+input[type="submit"]:disabled{
+	background-color: lightgray;
+	cursor: not-allowed;
+}
 
 footer{
   margin-left: 210px;
@@ -205,6 +209,18 @@ footer{
 }
 #ssn{
   margin-bottom: 15px;
+}
+
+#X{
+	display: none;
+	vertical-align: center; 
+	overflow: visible;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background-color: transparent;
+	color: black;
+	cursor: pointer;
 }
 
 .PersonalFS{
