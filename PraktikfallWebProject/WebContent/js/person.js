@@ -54,7 +54,7 @@ $(document).ready(function(){
 			$("#selectedPerson").val(ssn); //TODO explain this
 			updateProjects(ssn, name); //displays the projects this person is assigned to
 		} else { //If the clicked row is already highlighted, it will not be highlighted any longer
-			updateProjects(); //clears the side table displaying the projects a person is assigned to
+			updateProjects("clear"); //clears the side table displaying the projects a person is assigned to
 			$("#ssn").val(""); //changes the value of the ssn text field to nothing
 			toggleDisabled("activate");
 			$("#name").val("");
@@ -107,6 +107,7 @@ function toggleDisabled(operation){
 			$("#AddBtn").removeAttr('disabled');
 			$("#hiddenSsn").val(""); //TODO explain
 			$("#X").css("display", "none");
+			updateProjects("clear");
 			break;
 	}
 }
@@ -192,7 +193,7 @@ function updateTable(){
 function updateProjects(ssn, name){
 	/*FIRST UPDATE TABLE*/
 	$("#personProjects td").parent().remove(); //Clears table
-	if(name === null || name === "")
+	if(ssn === "clear")
 		$("#projectLegend").text("Choose person to see their projects");
 	else
 		$("#projectLegend").text("Projects " + name + " is assigned to"); //updates table legend
