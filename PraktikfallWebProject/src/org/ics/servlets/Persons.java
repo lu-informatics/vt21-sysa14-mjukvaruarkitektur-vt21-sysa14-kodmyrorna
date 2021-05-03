@@ -12,6 +12,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -55,46 +56,45 @@ public class Persons extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if ((pathInfo == null || pathInfo.equals("/")) ) {
-			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
-			Person person = parseJsonPerson(reader);
-			facade.createPerson(person);
-			sendAsJson(response, person);
+		String operation = request.getParameter("submitBtn");
+		request.setAttribute("object", "person");
+		if (pathInfo == null || pathInfo.equals("/")) {
+			if (operation.equals("Add")) {
+				String ssn = (String)request.getParameter("ssn");
+				String name = (String)request.getParameter("name");
+				if(ssn != null && name != null) {
+					Person person = new Person(ssn, name);
+					facade.createPerson(person);
+					request.setAttribute("person", person);
+					request.setAttribute("operation", "add");
+				}
+				else {
+					//failed?
+				}
+			}
+			else if (operation.equals("Update")) {
+				String ssn = (String)request.getParameter("ssn");
+				String name = (String)request.getParameter("name");
+				if (ssn != null && name != null) {
+					Person person = new Person(ssn, name);					
+					if(facade.findPersonBySsn(ssn) != null) {
+						facade.updatePerson(person);
+						request.setAttribute("person", person);
+						request.setAttribute("operation", "update");
+					}
+				}
+			} else if (operation.equals("Delete")) {
+				String ssn = (String)request.getParameter("ssn");
+				if (facade.findPersonBySsn(ssn) != null) {
+					facade.deletePerson(ssn);
+					request.setAttribute("operation", "delete");
+				}
+			}
 		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
-	}
-
-	/**
-	 * @see HttpServlet#doPut(HttpServletRequest, HttpServletResponse)
-	 */
-	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String pathInfo = request.getPathInfo();
-		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets 
-		if ((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
-			BufferedReader reader = request.getReader(); //creates a reader for getting data from the request
-			Person person = parseJsonPerson(reader);
-			facade.updatePerson(person);
-			sendAsJson(response, person);
-		} else { //If user has input an ending to the path, which isn't supported
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		}
-	}
-
-	/**
-	 * @see HttpServlet#doDelete(HttpServletRequest, HttpServletResponse)
-	 */
-	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String pathInfo = request.getPathInfo();
-		String strContentType = request.getContentType(); //Check the datatype so reading the json data doesn't cause error if another client is sending requests to the servlets
-		if((pathInfo == null || pathInfo.equals("/")) && strContentType.equals("application/json")) {
-			JsonReader jsonReader = Json.createReader(request.getReader()); //Create a reader for getting Json-formatted data
-			JsonObject jsonRoot = jsonReader.readObject(); //Assume there is only one object sent to doDelete, not an array
-			String ssn = jsonRoot.getString("ssn"); //Collect social security number from the object
-			facade.deletePerson(ssn);
-		} else { //If user has input an ending to the path, which isn't supported
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		}
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jsp/Confirmation.jsp");
+		dispatcher.forward(request, response);
 	}
 	
 	/*************
@@ -120,38 +120,5 @@ public class Persons extends HttpServlet {
 			out.print("[]");
 		}
 		out.flush(); //clears the out feed to avoid errors
-	}
-	
-	/*************
-	 * Function sendAsJson
-	 * Parameters: 	HttpServletResponse
-	 * 				Person
-	 * Description: parses the person to a json object and uses the HttpServletResponse to send it back with the response
-	 */
-	public void sendAsJson(HttpServletResponse response, Person person) throws IOException{
-		PrintWriter out = response.getWriter(); //Enables servlet to print outgoing data
-		response.setContentType("application/json"); //Specifies data type to send back
-		if (person != null) {
-			out.print("[{\"ssn\":\"" + person.getSsn() + "\","); //Creating a JSON object 'manually'
-			out.print("\"name\":\"" + person.getName() + "\"}]");
-		} else {
-			out.print("[]"); //If the person is null, an empty array of objects is sent back instead
-		}
-		out.flush(); //clears the out feed to avoid errors
-	}
-	
-	/*************
-	 * Function parseJsonReader
-	 * Parameter: BufferedReader
-	 * Returns: Person
-	 * Description: Parses a Json object to an instance of the Person entity bean
-	 */
-	private Person parseJsonPerson(BufferedReader reader) {
-		JsonReader jsonReader = Json.createReader(reader); //Create a reader for getting Json-formatted data
-		JsonObject jsonRoot = jsonReader.readObject();  //Assume there is only one object, not an array
-		Person person = new Person();
-		person.setSsn(jsonRoot.getString("ssn")); //Collect person data from the object
-		person.setName(jsonRoot.getString("name"));
-		return person;
 	}
 }

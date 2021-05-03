@@ -55,19 +55,19 @@
 		<p><span>Add or remove people from different projects</span></p>
 	</header>
 			<section id="content">
-				<form action="/PraktikfallWebProject/Assignments" method="POST" onsubmit="return validateAssignmentOp();">
+				<form action="/PraktikfallWebProject/Assignments/" method="POST" onsubmit="return validateAssignmentOp();">
 					<div id="box">
 						<fieldset class="personalFS">
 							<legend>Assign</legend>
 							Person<br>
-							<select id="choosePerson" name="choosePerson">
-								<option disabled selected>Select person</option>
+							<select id="selectedPerson" name="selectedPerson">
+								<option value="selectPerson" disabled selected>Select person</option>
 							</select><br>
 							Project<br>
-							<select id="chooseProject" name="chooseProject">
-								<option disabled selected>Select project</option>
+							<select id="selectedProject" name="selectedProject">
+								<option value="selectProject" disabled selected>Select project</option>
 							</select><br>
-							<input type="submit" name="submitBtn" value="Add" id="AddBtn">
+							<input type="submit" name="submitBtn" value="Add" id="AddBtn" onclick="submitButton = 'add'">
 						</fieldset>
 						<br><p id="addFeedback"></p>
 					</div>
@@ -91,11 +91,9 @@
 								</tbody>
 							</table><br>
 						</div>
-						<input type="submit" class="btn" name="submitBtn" value="Delete" id="DeleteBtn">
+						<input type="submit" class="btn" name="submitBtn" value="Delete" id="DeleteBtn" onclick="submitButton = 'delete'">
 						<br><p id="deleteFeedback"></p>
 					</div>
-					<input type="hidden" name="selectedPerson" id="selectedPerson" value="">
-					<input type="hidden" name="selectedProject" id="selectedProject" value="">
 				</form>
 			</section>
 		</section>

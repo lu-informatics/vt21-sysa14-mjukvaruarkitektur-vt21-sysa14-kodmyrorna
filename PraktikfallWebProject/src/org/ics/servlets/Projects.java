@@ -96,7 +96,7 @@ public class Projects extends HttpServlet {
 		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/Confirmation.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jsp/Confirmation.jsp");
 		dispatcher.forward(request, response);
 	}
 	

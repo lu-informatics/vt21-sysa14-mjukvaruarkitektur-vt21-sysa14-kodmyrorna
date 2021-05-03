@@ -3,12 +3,14 @@
 let projectArray = new Array();
 let personArray = new Array();
 let assignmentArray = new Array();
+let submitButton = "";
 
 /*DOCUMENT READY*/
 $(document).ready(function(){
 	loadAll(); 
 	toggleSelectVisibility("invisible");
-	
+	$("#selectedPerson").val("");
+	$("#selectedProject").val("");
 	//filter search
 	document.getElementById("searchProject").addEventListener("keydown", function(e){
 		clearFeedback();
@@ -46,10 +48,11 @@ $(document).ready(function(){
 			$("#projectCode").val(code);  //change the value of the project code text field to the clicked row
 			$("#name").val(name);
 			$("#selectedProject").val(code); //TODO explain this
-			updatePersons(null, code, $(this).find("td:eq(1)").text()); //displays the persons assigned to this project
+			updatePersons(code, name); //displays the persons assigned to this project
 		} else { //If the clicked row is already highlighted, it will not be highlighted any longer
-			updatePersons("clear"); //clears the side table displaying the persons assigned to a project
+			updatePersons(); //clears the side table displaying the persons assigned to a project
 			$("#projectCode").val(""); //clears the project code text field
+			$("#selectedProject").val("");
 		}
 	})
 	//Highlight rows in person table
@@ -61,80 +64,67 @@ $(document).ready(function(){
 			$(this).addClass("highlight"); //-it is now highlighted
 			let ssn = $(this).find("td:eq(0)").text()
 			$("#selectedPerson").val(ssn); //TODO explain this
+		} else {
+			$("#selectedPerson").val("");
 		}
 	})
-	
-	//Click Remove person Button
-	$("#removePerson").click(function(){ 
-		clearFeedback();
-		let code = $("#projectCode").val();
-		let ssn = $("#projectPersons tr.highlight").find("td:eq(0)").text(); //Gets the chosen person from the first column of the highlighted row in the person table
-		if (code != "" && ssn != "Social security number" && ssn != ""){ //checks that the user has selected a valid person
-			let jsonString = JSON.stringify([{aSsn: ssn, aProjectCode: code}]); //Creates json object to send to servlet
-			$.ajax({
-				method: "DELETE",
-				contentType: "application/json",
-				url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
-				data: jsonString,
-				error: ajaxDeleteAssignmentError,
-				success: ajaxDeleteAssignmentSuccess
-			})
-			function ajaxDeleteAssignmentError(result, status, xhr){
-				$("#newPersonFeedback").text("Error assigning person to project."); //gives user generic(:C) error
-				console.log("ajaxDeleteAssignmentError xhr: " + xhr); //logs error to console for debugging
-			}
-			function ajaxDeleteAssignmentSuccess(result, status, xhr){ 
-				let projectName = $("#allProjects tr.highlight").find("td:eq(1)").text(); //Gets the project name from the project table
-				let personName = $("#projectPersons tr.highlight").find("td:eq(1)").text(); //Gets the person name from the person table
-				updatePersons("remove", code, projectName, ssn, personName); //sends new information on assignment to update person table
-			}
-		} else {
-			$("#newPersonFeedback").text("Please select a person to remove from this project.");
-		}
-	})//END Click Remove person Button
-	
-	//Click Add New Person Button
+
 	//This button pretty much just toggles the visibility of the elements used to assign new persons to a project
 	$("#addNewPerson").click(function(){ 
 		clearFeedback();
-		if ($(".newPersonMenu").is(":hidden")){
+		if ($(".newPersonMenu").is(":hidden"))
 			toggleSelectVisibility("visible");
-		} else {
+		else 
 			toggleSelectVisibility("invisible");
-		}
+
 		$("#newPersonFeedback").text("");
-	}) //END Click Add New Person Button
+	}) 
 	
-	//Click Add Person Button
-	$("#addPerson").click(function(){ 
-		clearFeedback();
-		let code = $("#projectCode").val();
-		let ssn = $("#selectNewPerson").val();
-		if (code != "" && code != null && ssn != null && ssn != "Select person"){ //Checks that user selected a valid person
-			let jsonString = JSON.stringify({aSsn: ssn, aProjectCode: code}); //Creates a json object to send to servlet
-			$.ajax({
-				method: "POST",
-				contentType: "application/json",
-				url: "http://localhost:8080/PraktikfallWebProject/Assignments/",
-				data: jsonString,
-				error: ajaxAddAssignmentError,
-				success: ajaxAddAssignmentSuccess
-			})
-			function ajaxAddAssignmentError(result, status, xhr){ 
-				$("#newPersonFeedback").text("Error assigning person to project"); //gives user generic (:C) error message
-				console.log("ajaxAddAssignmentError xhr: " + xhr); //logs error to console for debugging
-			}
-			function ajaxAddAssignmentSuccess(result, status, xhr){
-				let projectName = $("#allProjects tr.highlight").find("td:eq(1)").text(); //gets the name of the project which the person is assigned to
-				updatePersons("add", code, projectName, ssn); //updates the person table
-			}
-		} else if (ssn === "Select person"){ //the user didn't make a selection
-			$("#newPersonFeedback").text("Please select a person to remove from this project.");
-		}
-	}) 	//END Click Add Person Button
 })
 
 /*FUNCTIONS*/
+
+function validateProjectOp(){
+	let projectCodeStr = $("#projectCode").val();
+	let nameStr = $("#name").val();
+	let nameIsEmpty = !nameStr.replace(/\s/g, ''); //Evaluates to true if the name consists of nothing or just spaces.
+	let projectCodeIsEmpty = !projectCodeStr.replace(/\s/g, ''); //Evaluates to true if the project code consists of nothing or just spaces.
+	if (submitButton !== 'delete' && nameIsEmpty){
+		$("#fieldsetFeedback").text("Please enter a project name.");
+		return false;
+	} else if (submitButton !== 'delete' && projectCodeIsEmpty){
+		$("#fieldsetFeedback").text("Please enter a project code.");
+		return false;
+	} else if (submitButton === 'add' && projectCodeStr.length > 10){
+		$("#fieldsetFeedback").text("Project code can be a maximum of 10 characters.");
+		return false;
+	} else if (submitButton !== 'delete' && nameStr.length > 20) {
+		$("#fieldsetFeedback").text("Name can be a maximum of 20 characters.");
+		return false;
+	} else if (submitButton !== 'add' && !getProjectCodeArray.includes(projectCodeStr)){
+		$("#fieldsetFeedback").text("This project code is not registered.");
+		return false;
+	}
+	return true;
+}
+
+function validateAssignmentOp(){
+	let code = $("#selectedProject").val();
+	let ssn = "";
+	if(submitButton === 'removePerson'){
+		ssn = $("#selectedPerson").val();
+	} else if(submitButton==='addPerson'){
+		ssn = $("#selectNewPerson option:selected").val();
+	}
+	
+	if(code === "")
+		$("#newPersonFeedback").text("Please select a project.");
+	else if (ssn === "" || ssn === "Select person")
+		$("#newPersonFeedback").text("Please select a person.");
+	
+	return !(code === "" || ssn === "" || ssn === "Select person");
+}
+
 /************
  * Function 	clearFeedback
  * Description	Clears the user feedback messages in all parts of the page
@@ -160,36 +150,10 @@ function toggleSelectVisibility(option){
 
 /************
  * Function 	updateTable
- * Parameters	string	operation
- * 				string	code
- * 				string 	name
- * Description	Updates the table of projects and manipulates the global project array depending on the operation performed
+ * Description	Updates the table of projects
  ************/
-function updateTable(operation, code, name){
+function updateTable(){
 	$("#allProjects td").parent().remove(); //Clears table
-	switch(operation){ //operation decides how to manipulate the global project array
-		case("delete"): //removes the project with the code paramater from the project array
-			for(let i = 0; i < projectArray.length; i++){
-				if(projectArray[i][0] === code){ //the first element of the inner array of the project array is always the project code
-					projectArray.splice(i, 1); //removes 1 element at index i
-				}
-			}
-			break;
-		case("add"): //adds the project with the code parameter to the project array
-			projectArray.push([code, name]);
-			break;
-		case("update"): //updates the project with the code parameter in the project array
-			let newRow = [code, name]; //updated row
-			for(let i = 0; i < projectArray.length; i++){
-				if(projectArray[i][0] === code){ //the first element of the inner array of the project array is always the project code
-					projectArray.splice(i, 1, newRow); //removes 1 element at index i and replaces it with the updated row
-				}
-			}
-			break;
-		default: //no changes to project array if no operation is specified.
-			break;
-	}
-	projectArray.sort(); //sorts the global project array
 	for(let i = 0; i < projectArray.length; i++){ //populates the project table
 		addRow("allProjects", projectArray[i][0], projectArray[i][1]);
 	}
@@ -197,35 +161,18 @@ function updateTable(operation, code, name){
 
 /************
  * Function 	updatePersons
- * Parameters	string	operation
- * 				string	code
- * 				string 	projectName
- * 				string 	ssn
- * 				string 	personName
+ * Parameters	name
  * Description	Updates the table of persons belonging to a specific project and manipulates the global person or assignment array depending on the operation performed
  * 				Also updates the select element which contains persons that can be assigned to the project
  ************/
-function updatePersons(operation, code, projectName, ssn, personName){
+function updatePersons(code, name){
 	/*FIRST UPDATE TABLE*/
 	$("#projectPersons td").parent().remove(); //Clears table
-	$("#personLegend").text("Persons assigned to " + projectName); //updates table legend
-	switch(operation){ //operation decides how to manipulate the global person or assignment array
-		case("remove"): //removes the assigned person from the project
-			for (let i = 0; i < assignmentArray.length; i++){
-				if (assignmentArray[i][0] === ssn && assignmentArray[i][1] === code){ //finds the assignment to remove
-					assignmentArray.splice(i, 1); //removes 1 element at index i
-				}
-			}
-			break;
-		case("add"): //assigns new person to project
-			assignmentArray.push([ssn, code]);
-			break;
-		case("clear"): //empties the person table
-			$("#personLegend").text("Persons assigned to chosen project");
-		default:
-			break;
-	}
-	assignmentArray.sort(); //sorts the assignments
+	if (code === null)
+		$("#personLegend").text("Persons assigned to chosen project");
+	else
+		$("#personLegend").text("Persons assigned to " + name); //updates table legend
+	
 	let assignmentsWithNames = matchAssignmentNames(); //gets new array with both primary keys for person and project as well as their names
 	let projectPersons = new Array(); //this project's persons
 	for (let i = 0; i < assignmentsWithNames.length; i++){
@@ -245,7 +192,7 @@ function updatePersons(operation, code, projectName, ssn, personName){
 			$('#selectNewPerson').append($('<option>').val(personArray[i][0]).text(personText)); //Adds the person to the select element
 		}
 	}
-	if(numPersonsToAssign == 0){ //If all possible persons are already assigned to this project
+	if(numPersonsToAssign === 0){ //If all possible persons are already assigned to this project
 		$('#selectNewPerson').children().remove().end().append('<option>All persons already assigned</option>'); //Changes text in select element
 	}
 }
@@ -302,7 +249,7 @@ function getProjectCodeArray(){
 
 /************
  * Function 	loadAll
- * Description	async function which loads the database data in the right order
+ * Description	async function which loads the database data. Called at document ready
  ************/
 async function loadAll() {
     await loadProjects();
