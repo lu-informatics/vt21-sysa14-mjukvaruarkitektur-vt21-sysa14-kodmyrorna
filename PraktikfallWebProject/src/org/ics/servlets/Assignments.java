@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 import javax.ejb.EJB;
@@ -57,7 +58,6 @@ public class Assignments extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		request.setAttribute("object", "assignment");
 		if (pathInfo == null || pathInfo.equals("/")) {
 			String operation = request.getParameter("submitBtn");
 			if (operation.equals("Add") || operation.equals("Add Project") || operation.equals("Add Person")) {
@@ -119,7 +119,7 @@ public class Assignments extends HttpServlet {
 		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jsp/Confirmation.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jsp/AssignmentConfirmation.jsp");
 		dispatcher.forward(request, response);
 	}
 
