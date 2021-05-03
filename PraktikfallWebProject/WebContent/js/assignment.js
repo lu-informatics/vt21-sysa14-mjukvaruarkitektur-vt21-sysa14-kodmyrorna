@@ -3,25 +3,28 @@
 let assignmentArray = new Array(); 
 let personArray = new Array();
 let projectArray = new Array();
+let submitButton = "";
 
 /*DOCUMENT READY*/
 $(document).ready(function(){
     loadAll();
-    
+    clearFeedback();
+    clearSelects();
     //Highlight rows in table when clicked
 	$(document).on("click", "#allAssignments tr:not(thead tr)", function (){ 
 		clearFeedback();
 		let selected = $(this).hasClass("highlight"); //evaluates to true if the class is already highlighted
+		$("#allAssignments tr").removeClass("highlight");
 		if (!selected){
 			$(this).addClass("highlight");	//If the class is not already highlighed, it becomes highlighted
 			//TODO new functionality will only work for selecting one assignment at a time when deleting. Fix that.
 			let ssn = $(this).find("td:eq(0)").text();
 			let code = $(this).find("td:eq(2)").text();
-			console.log("ssn: " + ssn + "\ncode: " + code);
 			$("#selectedPerson").val(ssn);
 			$("#selectedProject").val(code);
 		} else { 
 			$(this).removeClass("highlight"); //else, the highlight is removed.
+			clearSelects();
 		}
 	})
 	
@@ -56,7 +59,20 @@ $(document).ready(function(){
 /*FUNCTIONS*/
 
 function validateAssignmentOp(){
-	//TODO write this
+	let selectedPerson = $("#selectedPerson option:selected").val();
+	let selectedProject = $("#selectedProject option:selected").val();
+	let assignmentExists = checkAssignmentExists(selectedPerson, selectedProject);
+	if(selectedPerson === "selectPerson" || selectedProject === "selectProject"){
+		$("#addFeedback").text("Please select a person and a project");
+		return false;
+	} else if (submitButton === 'add' && assignmentExists){ 
+		$("#addFeedback").text("Assignment already exists.");
+		return false;
+	} else if (submitButton === 'delete' && !assignmentExists){ 
+		$("#deleteFeedback").text("Please choose an assignment from the table");
+		return false;
+	}
+	return true;
 }
 /************
  * Function 	clearFeedback
@@ -66,54 +82,18 @@ function clearFeedback(){
 	$("#addFeedback").text("");
 	$("#deleteFeedback").text("");
 }
-
-/************
- * Function 	getSelectedAssignments
- * Returns		array
- * Description	Since the user can select multiple rows of assignments for deletion, this function gets all assignments 
- * 				selected. It is called inside the delete button eventlistener.
- ************/
-function getSelectedAssignments(){
-	let selectedAssignments = new Array();
-	$("#allAssignments tr").each(function(index, element){ //Iterates through all the rows of the assignment table
-		if($(this).hasClass("highlight")){	//If a row is highlighted
-			let ssn = $(this).find("td:eq(0)").text();	
-			let code = $(this).find("td:eq(2)").text();
-			selectedAssignments.push([ssn, code]);	//add it to the selectedAssignments array
-		}
-	});
-	return selectedAssignments;
+function clearSelects(){ //TODO comment this
+	$("#selectedPerson").val("selectPerson");
+	$("#selectedProject").val("selectProject");
 }
 
 /************
  * Function 	updateTable
- * Parameters	string	operation
- * 				string	personSsn
- * 				string 	projectCode
- * 				array	assignmentsToRemove
- * Description	Updates the table of assignments and manipulates the global assignment array depending on the operation performed
+ * Description	Updates the table of assignments. called at document ready
  ************/
-function updateTable(operation, personSsn, projectCode, assignmentsToRemove){
+function updateTable(){
 	$("#allAssignments td").parent().remove(); //Clears table
-	switch(operation){
-		case("add"): //Add new assignment
-			assignmentArray.push([personSsn, projectCode]);
-			break;
-		case("delete"): //Delete any number of assignments from the assignmentsToRemove array
-			for (let i = 0; i < assignmentsToRemove.length; i++){ //Iterates through assignmentsToRemove
-				for (let j = 0; j < assignmentArray.length; j++){	//Iterates through assignments
-					//Below if statement evaluates to true if the assignment in the assignment array matches one of the assignments to remove
-					if (assignmentArray[j][0] === assignmentsToRemove[i][0] && assignmentArray[j][1] === assignmentsToRemove[i][1]){
-						assignmentArray.splice(j, 1);	//Removes 1 element at index j
-					}
-				}
-			}
-			break;
-		default:	//If the table is just gonna be updated with whatever values are in the global assignments array
-			break;
-	}
 	let assignmentsWithNames = matchAssignmentNames(); //array containing both primary keys of the person and project as well as their names
-	assignmentsWithNames.sort(); //sorts assignments
 	for (let i = 0; i < assignmentsWithNames.length; i++){ 
 		addRow(assignmentsWithNames[i]); //Adds all the assignments of the global assignments array to the table
 	}
@@ -126,11 +106,11 @@ function updateTable(operation, personSsn, projectCode, assignmentsToRemove){
 function fillSelects(){
 	for (let i = 0; i < personArray.length; i++){ //Iterates through global person array
 		let personText = personArray[i][0] + ", " + personArray[i][1]; //Text to be displayed in the select box
-		$('#choosePerson').append($('<option>').val(personArray[i][0]).text(personText)); //appends the select box
+		$('#selectedPerson').append($('<option>').val(personArray[i][0]).text(personText)); //appends the select box
 	}
 	for (let i = 0; i < projectArray.length; i++){ //Iterates through global project array
 		let projectText = projectArray[i][0] + ", " + projectArray[i][1]; //Text to be displayed in the select box
-		$('#chooseProject').append($('<option>').val(projectArray[i][0]).text(projectText)) //appends the select box
+		$('#selectedProject').append($('<option>').val(projectArray[i][0]).text(projectText)) //appends the select box
 	}
 }
 

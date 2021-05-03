@@ -3,6 +3,7 @@ package org.ics.servlets;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -76,7 +77,12 @@ public class Projects extends HttpServlet {
 				}
 			}
 			else if (operation.equals("Update")) {
-				String code = (String)request.getParameter("projectCode");
+				String code = "";
+				if (request.getParameter("projectCode") != null) {
+					code = (String)request.getParameter("projectCode");
+				} else {
+					code = (String)request.getParameter("hiddenProjectCode");
+				}
 				String name = (String)request.getParameter("name");
 				if (code != null && name != null) {
 					Project project = new Project(code, name);
@@ -87,7 +93,12 @@ public class Projects extends HttpServlet {
 					}
 				}
 			} else if (operation.equals("Delete")) {
-				String code = (String)request.getParameter("projectCode");
+				String code = "";
+				if (request.getParameter("projectCode") != null) {
+					code = (String)request.getParameter("projectCode");
+				} else {
+					code = (String)request.getParameter("hiddenProjectCode");
+				}
 				if (facade.findProjectByProjectCode(code) != null) {
 					facade.deleteProject(code);
 					request.setAttribute("operation", "delete");
@@ -96,7 +107,7 @@ public class Projects extends HttpServlet {
 		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/Confirmation.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jsp/Confirmation.jsp");
 		dispatcher.forward(request, response);
 	}
 	

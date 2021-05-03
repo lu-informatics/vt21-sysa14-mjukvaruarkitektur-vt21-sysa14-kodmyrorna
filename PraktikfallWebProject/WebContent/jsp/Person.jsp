@@ -61,12 +61,14 @@
 						<fieldset class="PersonalFS">
 							<legend>Person</legend>
 							Social Security Number:<br>
-							<input type="text" name="ssn" id="ssn" value="" placeholder="YYMMDDXXXX" maxlength="10"> <br>
+							<input type="text" name="ssn" id="ssn" value="" placeholder="YYMMDDXXXX" maxlength="10"> 
+							<input type="button" name="X" id="X" value="&#10006"><br> 
+							<input type="hidden" name="hiddenSsn" id="hiddenSsn" value="">
 							Name:<br>
-							<input type="text" name="name" id="name" value="" maxlength="25"><br><br>
+							<input type="text" name="name" id="name" value="" maxlength="20"><br><br>
 							
-							<input type="submit" name="submitBtn" value="Add" id="addBtn">
-							<input type="submit" name="submitBtn" value="Update" id="updateBtn">
+							<input type="submit" name="submitBtn" value="Add" id="AddBtn" onclick="submitButton='add'">
+							<input type="submit" name="submitBtn" value="Update" id="updateBtn" onclick="submitButton='update'">
 							
 							<br><p id="fieldsetFeedback"></p>
 						</fieldset>
@@ -84,13 +86,13 @@
 						</table>
 						</div>
 						<p id="deleteFeedback"></p>
-						<input type="submit" name="submitBtn" value="Delete" id="DeleteBtn">
+						<input type="submit" name="submitBtn" value="Delete" id="DeleteBtn" onclick="submitButton='delete'">
 					</form>
 				</div>
 				<div class="box">
-					<form action="/PraktikfallWebProject/Assignments" method="POST" onsubmit="return validateAssignmentOp();">
+					<form action="/PraktikfallWebProject/Assignments/" method="POST" onsubmit="return validateAssignmentOp();">
 						<fieldset class="PersonalFS">
-							<legend id="projectLegend">Projects chosen person is assigned to</legend>
+							<legend id="projectLegend">Choose person to see their projects</legend>
 							<div class="tabell">
 								<table id="personProjects">
 									<thead class="fixed">
@@ -102,23 +104,23 @@
 									<tbody></tbody>
 								</table>
 							</div>
-							<br><input type="submit" name="submitBtn" id="removeFromProject" value="Remove from project"><br>
+							<br><input type="submit" name="submitBtn" id="removeFromProject" value="Remove from project" onclick="submitButton='removeFromProject'"><br>
 							<br><input type="button" name="addNewProject" id="addNewProject" value="Add new project..."><br>
-							<input id="selectedPerson" name="selectedPerson" type="hidden" value="">
-							<input id="selectedProject" name="selectedProject" type="hidden" value="">
 							<br><p id="newProjectFeedback"></p>
 							<hr>
 							<div id="newProjectMenu" class="newProjectMenu">
 								<div id="newProjectFS" class="newProjectMenu">
 									<span id=label>Choose project to add to person</span>
-									<br><select id="selectNewProject" class="newProjectMenu">
+									<br><select name="selectNewProject" id="selectNewProject" class="newProjectMenu">
 										<option disabled selected>Select project</option>
 									</select><br>
-									<input type="submit" name="submitBtn" id="addToProject" value="AddToProject" class="newProjectMenu"><br>
+									<input type="submit" name="submitBtn" id="addProject" value="Add Project" class="newProjectMenu" onclick="submitButton='addProject'"><br>
 							</div>
 							<p id="newProjectFeedback"></p>
 						</div>
 					</fieldset>
+					<input id="selectedPerson" name="selectedPerson" type="hidden" value="">
+					<input id="selectedProject" name="selectedProject" type="hidden" value="">
 				</form>
 			</div>
 		</section>

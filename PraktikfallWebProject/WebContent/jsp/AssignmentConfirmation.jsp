@@ -7,10 +7,10 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta charset="ISO-8859-1">
-	<link rel="stylesheet" type="text/css" href="css/confirmation.css">
+	<link rel="stylesheet" type="text/css" href="../css/confirmation.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
-	<script src="js/weather.js"></script>
+	<script src="../js/weather.js"></script>
 	<title>Confirmation</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 	</div>
 	<div class ="wrapper">
 		<div class="sidebar">
-			<h2><img src="images/logo.png"></h2>
+			<h2><img src="../images/logo.png"></h2>
 			<ul>
 				<li><a href="../html/Home.html"><i class="fas fa-home"></i>Home</a></li>
 				<li><a href="../jsp/Person.jsp"><i class="fas fa-user-friends"></i>Person</a></li>
@@ -56,44 +56,26 @@
 		<section id="main">
 			<section id="content">
 				<div id="confirmation">
-					<% String object = (String)request.getAttribute("object");
-					if (object.equals("person")){
-						Person person = (Person)request.getAttribute("person"); 
-						String operation = (String)request.getAttribute("operation"); //what operation has been made on the object
-						if (operation.equals("add")){%>
-							<h4>Person added</h4><br>
-							<p>Social Security Number: <%=person.getSsn() %></p><br>
-							<p>Name: <%=person.getName() %></p><br>
-						<%} else if (operation.equals("update")){ %>
-							<h4>Person updated</h4><br>
-							<p>Social Security Number: <%=person.getSsn() %></p><br>
-							<p>Name: <%=person.getName() %></p><br>
-						<%} else if (operation.equals("delete")){ %>
-							<h4>Person removed</h4><br>
-						<%} else { %>
-							<h4>Unknown operation</h4><br>
-						<%} %>
-						<a href="jsp/Person.jsp">Go Back</a>
-					<%} else if (object.equals("project")){
-						Project project =(Project)request.getAttribute("project");
-						String operation = (String)request.getAttribute("operation");
-						if (operation.equals("add")){%>
-							<h4>Project added</h4><br>
-							<p>Project code: <%=project.getProjectCode() %></p><br>
-							<p>Name: <%=project.getName() %></p><br>
-						<%} else if (operation.equals("update")){%>
-							<h4>Project updated</h4><br>
-							<p>Project code: <%=project.getProjectCode() %></p><br>
-							<p>Name: <%=project.getName() %></p><br>
-						<%} else if (operation.equals("delete")){%>
-							<h4>Project removed</h4><br>
-						<% } else { %>
-							<h4>Unknown operation</h4><br>
-						<%} %>
-						<a href="jsp/Project.jsp">Go Back</a>
-					<% } else {%>
-						<h4>Unknown object</h4><br>
-					<% } %>
+					<% Project project = (Project)request.getAttribute("project");
+					Person person = (Person)request.getAttribute("person");
+					String operation = (String)request.getAttribute("operation");
+					String originJsp = (String)request.getAttribute("originJsp");
+					if(operation.equals("add")){ %>
+						<h4>Assignment added</h4><br>
+						<p>Person <%=person.getName() %> is now assigned to project <%=project.getName() %></p><br>
+					<%} else if (operation.equals("delete")){%>
+						<h4>Assignment deleted</h4><br>
+						<p>Person <%=person.getName() %> is no longer assigned to project <%=project.getName() %></p><br>
+					<%} else { %>
+						<h4>Unknown operation</h4><br>
+					<%} 
+					if(originJsp.equals("assignment")){%>
+						<a href="../jsp/Assignment.jsp">Go Back</a>
+					<%} else if(originJsp.equals("person")){%>
+						<a href="../jsp/Person.jsp">Go Back</a>
+					<%} else if(originJsp.equals("project")){%>
+						<a href="../jsp/Project.jsp">Go Back</a>
+					<%}%>
 				</div>
 			</section>
 		</section>

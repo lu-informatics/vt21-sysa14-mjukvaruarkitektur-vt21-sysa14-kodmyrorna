@@ -87,26 +87,15 @@ public class Facade implements FacadeLocal {
     	personEAO.addProject(project, person);
     }
     
-    public void removeAssignment(Project project, Person person) {
-    	//First get new set of persons, excluding this person
+    public void removeAssignment(String projectCode, String ssn) {
+    	Project project = this.findProjectByProjectCode(projectCode);
+    	Person person = this.findPersonBySsn(ssn);
+    	
     	Set<Person> persons = this.findPersonsByProject(project);
-    	//Below is a workaround as persons.remove(person) did not work.
-    	for(Person tmpPerson : persons){
-    		if (tmpPerson == person) {
-    			persons.remove(tmpPerson);
-    		}
-    	}
-    	
-    	//Then, get new set of projects, excluding this project
     	Set<Project> projects = this.findProjectsByPerson(person);
-    	//Below is a workaround as projects.remove(project) did not work.
-    	for(Project tmpProject : projects){
-    		if(tmpProject == project) {
-    			projects.remove(tmpProject);
-    		}
-    	}
-    	
-    	//Now give the person and project their new sets.
+    	persons.remove(person);
+    	projects.remove(project);
+    	//below methods update the sets of projects and persons that the person and project have
     	projectEAO.removePerson(project, persons);
     	personEAO.removeProject(projects, person);
     }

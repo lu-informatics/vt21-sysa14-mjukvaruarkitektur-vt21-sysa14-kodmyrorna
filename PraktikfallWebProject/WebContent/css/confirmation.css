@@ -97,8 +97,6 @@ section#main {
 }
 
 section#content {
-  display: flex;
-  flex-wrap: wrap;
   justify-content: space-around;
   align-items: normal;
   position: absolute;
@@ -108,9 +106,6 @@ section#content {
   width: 100%;
   color: #000000;
 }
-
-
-
 
 footer{
   position: absolute;
@@ -122,3 +117,25 @@ footer{
   transform: translateX(10%);
 }
 
+#confirmation{
+	margin-left: 20px;
+	margin-top: 16px;
+	margin-right: 40px;
+	border: 1px solid black;
+	padding: 20px;
+}
+
+#confirmation a {
+	background-color: black;
+	color: #fff;
+	padding: 5px 10px;
+	text-decoration: none;
+	margin-bottom: 10px;
+	border-radius: 2px;
+}
+
+#confirmation a:hover {
+	background-color: #ee4b08;
+	border-color: #ee4b08;
+	cursor: pointer;
+}

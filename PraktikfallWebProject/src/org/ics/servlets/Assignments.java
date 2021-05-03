@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 import javax.ejb.EJB;
@@ -26,7 +27,7 @@ import org.ics.facade.*;
 /**
  * Servlet implementation class Assignments
  */
-@WebServlet(urlPatterns= {"/Assignments/*"}, asyncSupported=true)
+@WebServlet("/Assignments/*")
 public class Assignments extends HttpServlet {
 	private static final long serialVersionUID = 1L;
       
@@ -57,44 +58,68 @@ public class Assignments extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		request.setAttribute("object", "assignment");
-		System.out.println("doPost assignment"); //TODO remove this
-		if ((pathInfo == null || pathInfo.equals("/"))) {
+		if (pathInfo == null || pathInfo.equals("/")) {
 			String operation = request.getParameter("submitBtn");
-			if (operation.equals("Add")) {
-				System.out.println("operation is add"); //TODO remove this
-				String ssn = (String)request.getParameter("choosePerson");
-				Person person = facade.findPersonBySsn(ssn);
-				String code = (String)request.getParameter("chooseProject");
-				Project project = facade.findProjectByProjectCode(code);
-				if(person != null && project != null) {
-					System.out.println(person.getName() + " add to " + project.getName());
-					facade.addAssignment(project, person);
-					request.setAttribute("project", project);
-					request.setAttribute("person", person);
-					request.setAttribute("operation", "add");
+			if (operation.equals("Add") || operation.equals("Add Project") || operation.equals("Add Person")) {
+				String ssn = "";
+				String code = "";
+				if(operation.equals("Add")) {
+					ssn = (String)request.getParameter("selectedPerson");
+					code = (String)request.getParameter("selectedProject");
+					request.setAttribute("originJsp", "assignment");
+				} else if (operation.equals("Add Project")){
+					ssn = (String)request.getParameter("selectedPerson");
+					code = (String)request.getParameter("selectNewProject");
+					request.setAttribute("originJsp", "person");
+				} else {
+					ssn = (String)request.getParameter("selectNewPerson");
+					code = (String)request.getParameter("selectedProject");
+					request.setAttribute("originJsp", "project");
 				}
-				else {
-					//failed?
+				if(!ssn.equals("") && !code.equals("") && ssn != null && code != null) {
+					Person person = facade.findPersonBySsn(ssn);
+					Project project = facade.findProjectByProjectCode(code);
+					if(person != null && project != null) {
+						facade.addAssignment(project, person);
+						request.setAttribute("project", project);
+						request.setAttribute("person", person);
+						request.setAttribute("operation", "add");
+					} else {
+						//TODO handle error
+					}
+				} else {
+					//TODO handle error
 				}
-			} else if (operation.equals("Delete")) {
-				System.out.println("operation is delete"); //TODO remove this
+			} else if (operation.equals("Delete") || operation.equals("Remove Person") || operation.equals("Remove from project")) {
+				if (operation.equals("Delete")) 
+					request.setAttribute("originJsp", "assignment");
+				else if (operation.equals("Remove Person")) 
+					request.setAttribute("originJsp", "project");
+				else 
+					request.setAttribute("originJsp", "person");
+				
 				String ssn = (String)request.getParameter("selectedPerson");
-				Person person = facade.findPersonBySsn(ssn);
 				String code = (String)request.getParameter("selectedProject");
-				Project project = facade.findProjectByProjectCode(code);
-				if(person != null && project != null) {
-					System.out.println(person.getName() + " remove from " + project.getName());
-					facade.removeAssignment(project, person);
-					request.setAttribute("project", project);
-					request.setAttribute("person", person);
-					request.setAttribute("operation", "delete");
+				if(!ssn.equals("") && !code.equals("")) {
+					Project project = facade.findProjectByProjectCode(code);
+					Person person = facade.findPersonBySsn(ssn);
+					if(person != null && project != null) {
+						facade.removeAssignment(code, ssn);
+						request.setAttribute("project", project);
+						request.setAttribute("person", person);
+						request.setAttribute("operation", "delete");
+					} else {
+						//TODO handle error
+					}
+				} else {
+					//TODO handle error
 				}
+				
 			}
 		} else { //If user has input an ending to the path, which isn't supported
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/Confirmation.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jsp/AssignmentConfirmation.jsp");
 		dispatcher.forward(request, response);
 	}
 
@@ -121,24 +146,6 @@ public class Assignments extends HttpServlet {
 		    out.print(array); //Send the array back with the response!
 		} else {
 			out.print("[]"); //If the list of persons is empty, an empty array is sent back with the response
-		}
-		out.flush(); //clears the out feed to avoid errors
-	}
-	
-	/*************
-	 * Function sendAsJson
-	 * Parameters: 	HttpServletResponse
-	 * 				String[]
-	 * Description: parses the string array representing an assignment to a json object and uses the HttpServletResponse to send it back with the response
-	 */
-	public void sendAsJson(HttpServletResponse response, String[] assignment) throws IOException{
-		PrintWriter out = response.getWriter(); //Enables servlet to print outgoing data
-		response.setContentType("application/json"); //Specifies data type to send back
-		if (assignment != null) {
-			out.print("[{\"aSsn\":\"" + assignment[0] + "\","); //Creating a JSON object 'manually'
-			out.print("\"aProjectCode\":\"" + assignment[1] + "\"}]");
-		} else {
-			out.print("[]"); //If the assignment is null, an empty array of objects is sent back instead
 		}
 		out.flush(); //clears the out feed to avoid errors
 	}

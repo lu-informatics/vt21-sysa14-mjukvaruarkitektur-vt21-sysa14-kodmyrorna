@@ -18,5 +18,34 @@
  <servlet-name>JUnitEETestServlet</servlet-name>
  <url-pattern>/TestServlet/*</url-pattern>
  </servlet-mapping>
+ 
+ <servlet>
+	 <servlet-name>Assignments</servlet-name>
+	 <servlet-class>org.ics.servlets.Assignments</servlet-class>
+ </servlet>
+ <servlet-mapping>
+	 <servlet-name>Assignments</servlet-name>
+	 <url-pattern>/Assignments/*</url-pattern>
+ </servlet-mapping>
+ 
+ <servlet>
+	 <servlet-name>Persons</servlet-name>
+	 <servlet-class>org.ics.servlets.Persons</servlet-class>
+ </servlet>
+ <servlet-mapping>
+	 <servlet-name>Persons</servlet-name>
+	 <url-pattern>/Persons/*</url-pattern>
+ </servlet-mapping>
+ 
+ 
+ <servlet>
+	 <servlet-name>Projects</servlet-name>
+	 <servlet-class>org.ics.servlets.Projects</servlet-class>
+ </servlet>
+ <servlet-mapping>
+	 <servlet-name>Projects</servlet-name>
+	 <url-pattern>/Projects/*</url-pattern>
+ </servlet-mapping>
+ 
   
 </web-app>
