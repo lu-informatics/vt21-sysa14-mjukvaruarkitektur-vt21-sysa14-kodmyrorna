@@ -12,7 +12,6 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -46,9 +45,22 @@ public class RestServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/PraktikfallWebProject/Persons");
-		dispatcher.include(request, response);
-		return;
+		String pathInfo = request.getPathInfo();
+		String url = request.getRequestURI();
+
+		if (pathInfo == null || pathInfo.equals("/")) {
+			List<Person> persons = facade.findAllPersons();
+			sendAsJson(response, persons);
+			return;
+		}
+		String[] splits = pathInfo.split("/");
+		if (splits.length != 2) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return;
+		}
+		String ssn = splits[1];
+		Person person = facade.findPersonBySsn(ssn);
+		sendAsJson(response, person);
 	}
 
 	/**
