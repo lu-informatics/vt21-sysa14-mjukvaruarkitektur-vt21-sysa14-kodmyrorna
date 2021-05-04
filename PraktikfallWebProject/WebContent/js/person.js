@@ -115,7 +115,8 @@ function validatePersonOp(){//TODO comment
 	let ssn = $("#ssn").val();
 	let name = $("#name").val();
 	let isEmpty = !name.replace(/\s/g, ''); //boolean which evaluates to true if the name string is empty or only contains blanks
-	if (ssn.length < 10){ 
+	let isNumber = /^\d+$/.test(ssn);
+	if (ssn.length < 10 || !isNumber){ 
 		$("#fieldsetFeedback").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX");
 		return false;
 	} else if (submitButton !== 'delete' && isEmpty){
