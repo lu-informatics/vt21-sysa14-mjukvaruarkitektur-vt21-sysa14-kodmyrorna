@@ -55,7 +55,7 @@
                      Ssn:<br>
                      <input type="text" name="ssn" id="ssn" value="" maxlength = 10><br>
                      Name:<br>
-                     <input type="text" name="name" id="name" value="" onclick="lettersOnlyCheck();">
+                     <input type="text" name="name" id="name" value="">
                      <br><br>
                      <input type="button" name="submitBtn" value="Find" id="FindBtn">
                      <input type="button" name="submitBtn" value="Add" id="AddBtn">
