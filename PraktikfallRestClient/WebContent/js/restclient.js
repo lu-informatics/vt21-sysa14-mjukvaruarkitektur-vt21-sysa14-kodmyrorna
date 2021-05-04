@@ -44,7 +44,8 @@ $(document).ready(function(){
    	$("#FindBtn").click( function() {
    		clearText();
    		var strSsn = $("#ssn").val();
-   		if (strSsn != "") {
+   		let isNumber = /^\d+$/.test(strSsn);
+   		if (strSsn != "" && isNumber) {
    			$.ajax({
    				method: "GET",
    				url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn,
@@ -52,7 +53,7 @@ $(document).ready(function(){
    				success: ajaxFindReturnSuccess
    			})
    			function ajaxFindReturnSuccess(result, status, xhr) {
-   				if(isEmpty(result)){
+   				if(checkResult(result)){
    						clearFields();
    						$("#FeedbackPerson").text("Person doesnt exist" );
 					} else {
@@ -64,6 +65,13 @@ $(document).ready(function(){
    				console.log("Ajax-find person: "+status);
    				}
    			}
+   		if(strSsn.length < 10){
+			$("#FeedbackPerson").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX" );
+		} else if (isEmpty) {
+			$("#FeedbackPerson").text("Please enter a social security number.");
+		} else if (!isNumber) {
+			$("#FeedbackPerson").text("Please enter only digits into social security number.");
+		}
    		})	
    		
    		$("#DeleteBtn").click( function() { 
@@ -89,17 +97,24 @@ $(document).ready(function(){
    					console.log("Ajax-find person: "+status);
    				}
    			}
+   			if(strSsn.length < 10){
+   				$("#FeedbackPerson").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX" );
+   			} else if (isEmpty) {
+   				$("#FeedbackPerson").text("Please enter a social security number.");
+   			} else if (!isNumber) {
+   				$("#FeedbackPerson").text("Please enter only digits into social security number.");
+   			}
    		})
    		
    		$("#AddBtn").click( function() {
    			clearText();
    			var strSsn = $("#ssn").val();
    			var strName = $("#name").val();
-   			let isEmpty = !strName.replace(/\s/g, '') || !strSsn.replace(/\s/g, '')
+   			let isEmpty = !strName.replace(/\s/g, '') || !strSsn.replace(/\s/g, '');
    			let isNumber = /^\d+$/.test(strSsn);
    			var obj = { ssn: strSsn, name: strName};
    			var jsonString = JSON.stringify(obj);
-   			if (!isEmpty && isNumber) {
+   			if (!isEmpty && isNumber && strSsn.length === 10) {
    				$.ajax({
    					method: "POST",
    					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/",  
@@ -109,19 +124,18 @@ $(document).ready(function(){
    					success: ajaxAddReturnSuccess
    				})
    				function ajaxAddReturnSuccess(result, status, xhr) {
-   					if(strSsn.length < 10){
-   						$("#FeedbackPerson").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX" );
-   					} else {
    						clearFields();
    						$("#FeedbackPerson").text("Person added" );
    					}
-   				}
+   				
    				function ajaxAddReturnError(result, status, xhr) {
    					alert("Error Add");
    					console.log("Ajax-find person: "+status);
    				}
    			}
-   			else if (isEmpty) {
+   			if(strSsn.length < 10){
+					$("#FeedbackPerson").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX" );
+				} else if (isEmpty) {
    				$("#FeedbackPerson").text("Please enter a name and a social security number.");
    			} else if (!isNumber) {
    				$("#FeedbackPerson").text("Please enter only digits into social security number.");
@@ -132,10 +146,11 @@ $(document).ready(function(){
    			clearText();
    			var strSsn = $("#ssn").val();
    			var strName = $("#name").val();
-   			let isEmpty = !strName.replace(/\s/g, '') || !strSsn.replace(/\s/g, '')
+   			let isEmpty = !strName.replace(/\s/g, '') || !strSsn.replace(/\s/g, '');
+   			let isNumber = /^\d+$/.test(strSsn);
    			var obj = { ssn: strSsn, name: strName};
    			var jsonString = JSON.stringify(obj);
-   			if (!isEmpty) {
+   			if (!isEmpty && isNumber && strSsn.length === 10) {
    				$.ajax({
    					method: "PUT",
    					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn, 
@@ -145,18 +160,22 @@ $(document).ready(function(){
    					success: ajaxUpdateReturnSuccess
    				})
    				function ajaxUpdateReturnSuccess(result, status, xhr) {
-   					if(isEmpty(result)){
-   						$("#FeedbackPerson").text("Person doesnt exist" );
-   					} else {
-   						clearFields();
-   						$("#FeedbackPerson").text("Person updated" );
-   					}
-   				}
+   					clearFields();
+						$("#FeedbackPerson").text("Person updated" );
+					}
+				
    				function ajaxUpdateReturnError(result, status, xhr) {
    					alert("Error Update");
    					console.log("Ajax-find person: "+status);
    				}
    			}
+   			if(strSsn.length < 10){
+				$("#FeedbackPerson").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX" );
+			} else if (isEmpty) {
+				$("#FeedbackPerson").text("Please enter a name and a social security number.");
+			} else if (!isNumber) {
+				$("#FeedbackPerson").text("Please enter only digits into social security number.");
+			}
    		})
    }
    function ParseJsonFilePerson(result) {
@@ -177,7 +196,7 @@ $(document).ready(function(){
 	   $("#FeedbackPerson").text("");
    }
    
-   function isEmpty(result) {
+   function checkResult(result) {
 	    return Object.keys(result).length === 0;
 	}
  
