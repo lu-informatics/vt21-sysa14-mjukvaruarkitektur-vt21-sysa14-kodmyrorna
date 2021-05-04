@@ -1,3 +1,6 @@
+//GLOBAL VARIABLES
+let personArray = new Array();
+
 $(document).ready(function(){
    	$.ajax({
    		method: "GET",
@@ -41,6 +44,8 @@ $(document).ready(function(){
    		alert("Error i OpenWeatherMap Ajax");
    	}
    	
+   	loadPersons();
+   	
    	$("#FindBtn").click( function() {
    		clearText();
    		var strSsn = $("#ssn").val();
@@ -77,7 +82,9 @@ $(document).ready(function(){
    		$("#DeleteBtn").click( function() { 
    			clearText();
    			var strSsn = $("#ssn").val();
-   			if (strSsn != "") {
+   			let isEmpty = !strSsn.replace(/\s/g, '');
+   			let isNumber = /^\d+$/.test(strSsn);
+   			if (getSsnArray().includes(strSsn) && !isEmpty && isNumber && strSsn.length === 10) {
    				$.ajax({
    					method: "DELETE",
    					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn, 
@@ -96,17 +103,16 @@ $(document).ready(function(){
    					alert("Error");
    					console.log("Ajax-find person: "+status);
    				}
-   			}
-   			if(strSsn.length < 10){
+   			} else if(strSsn.length !== 10 || isEmpty){
    				$("#FeedbackPerson").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX" );
-   			} else if (isEmpty) {
-   				$("#FeedbackPerson").text("Please enter a social security number.");
    			} else if (!isNumber) {
    				$("#FeedbackPerson").text("Please enter only digits into social security number.");
+   			} else if (!getSsnArray().includes(strSsn)){
+   				$("#FeedbackPerson").text("Person not found.");
    			}
    		})
    		
-   		$("#AddBtn").click( function() {
+   		$("#AddBtn").click(function(){
    			clearText();
    			var strSsn = $("#ssn").val();
    			var strName = $("#name").val();
@@ -114,7 +120,8 @@ $(document).ready(function(){
    			let isNumber = /^\d+$/.test(strSsn);
    			var obj = { ssn: strSsn, name: strName};
    			var jsonString = JSON.stringify(obj);
-   			if (!isEmpty && isNumber && strSsn.length === 10) {
+   			console.log(getSsnArray());
+   			if (!getSsnArray().includes(strSsn) && !isEmpty && isNumber && strSsn.length === 10) {
    				$.ajax({
    					method: "POST",
    					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/",  
@@ -124,21 +131,22 @@ $(document).ready(function(){
    					success: ajaxAddReturnSuccess
    				})
    				function ajaxAddReturnSuccess(result, status, xhr) {
-   						clearFields();
-   						$("#FeedbackPerson").text("Person added" );
-   					}
+					clearFields();
+					$("#FeedbackPerson").text("Person added" );
+				}
    				
    				function ajaxAddReturnError(result, status, xhr) {
    					alert("Error Add");
    					console.log("Ajax-find person: "+status);
    				}
-   			}
-   			if(strSsn.length < 10){
-					$("#FeedbackPerson").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX" );
-				} else if (isEmpty) {
+   			} else if (isEmpty){
    				$("#FeedbackPerson").text("Please enter a name and a social security number.");
-   			} else if (!isNumber) {
+   			} else if(strSsn.length < 10){
+				$("#FeedbackPerson").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX" );
+			} else if (!isNumber){
    				$("#FeedbackPerson").text("Please enter only digits into social security number.");
+   			} else if (getSsnArray().includes(strSsn)){
+   				$("#FeedbackPerson").text("Social security number already registered.");
    			}
    		})
    		
@@ -150,7 +158,7 @@ $(document).ready(function(){
    			let isNumber = /^\d+$/.test(strSsn);
    			var obj = { ssn: strSsn, name: strName};
    			var jsonString = JSON.stringify(obj);
-   			if (!isEmpty && isNumber && strSsn.length === 10) {
+   			if (getSsnArray().includes(strSsn) && !isEmpty && isNumber && strSsn.length === 10) {
    				$.ajax({
    					method: "PUT",
    					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn, 
@@ -168,13 +176,14 @@ $(document).ready(function(){
    					alert("Error Update");
    					console.log("Ajax-find person: "+status);
    				}
-   			}
-   			if(strSsn.length < 10){
+   			} else if(strSsn.length < 10){
 				$("#FeedbackPerson").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX" );
 			} else if (isEmpty) {
 				$("#FeedbackPerson").text("Please enter a name and a social security number.");
 			} else if (!isNumber) {
 				$("#FeedbackPerson").text("Please enter only digits into social security number.");
+			} else if (!getSsnArray().includes(strSsn)){
+				$("#FeedbackPerson").text("Person not found.");
 			}
    		})
    }
@@ -199,5 +208,27 @@ $(document).ready(function(){
    function checkResult(result) {
 	    return Object.keys(result).length === 0;
 	}
- 
-   
+   function loadPersons(){
+		$.ajax({
+			method: "GET",
+			url: "http://localhost:8080/PraktikfallWebProject/Persons/",
+			error: ajaxGetPersonsError,
+			success: ajaxGetPersonsSuccess
+		})
+		function ajaxGetPersonsError(result, status, xhr){
+			alert("Error retreiving data from database. Try again later or contact IT if the problem persists.");
+			console.log("ajaxGetPersonsError xhr: " + xhr);
+		}
+		function ajaxGetPersonsSuccess(result, status, xhr){
+			$.each(result, function(index, element){ //stores the loaded data in the global person array
+				personArray.push([element.ssn, element.name]);
+			})
+		}
+	}
+   function getSsnArray(){ 
+		let ssnArray = new Array();
+		for(let i = 0; i < personArray.length; i++){
+			ssnArray.push(personArray[i][0]);
+		}
+		return ssnArray;
+	}
