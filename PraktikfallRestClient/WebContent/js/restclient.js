@@ -49,8 +49,9 @@ $(document).ready(function(){
    	$("#FindBtn").click( function() {
    		clearText();
    		var strSsn = $("#ssn").val();
+   		let isEmpty = !strSsn.replace(/\s/g, '');
    		let isNumber = /^\d+$/.test(strSsn);
-   		if (strSsn != "" && isNumber) {
+   		if (strSsn != "" && isNumber && !isEmpty) {
    			$.ajax({
    				method: "GET",
    				url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn,
@@ -84,7 +85,7 @@ $(document).ready(function(){
    			var strSsn = $("#ssn").val();
    			let isEmpty = !strSsn.replace(/\s/g, '');
    			let isNumber = /^\d+$/.test(strSsn);
-   			if (getSsnArray().includes(strSsn) && !isEmpty && isNumber && strSsn.length === 10) {
+   			if (!isEmpty && isNumber && strSsn.length === 10) {
    				$.ajax({
    					method: "DELETE",
    					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn, 
@@ -95,8 +96,8 @@ $(document).ready(function(){
    					if(result.length === 0){
    						$("#FeedbackPerson").text("Person doesnt exist");
    					} else {
-   					clearFields();
-   					$("#FeedbackPerson").text("Person deleted");
+	   					clearFields();
+	   					$("#FeedbackPerson").text("Person deleted");
    					}
    				}
    				function ajaxDelReturnError(result, status, xhr) {
@@ -107,9 +108,7 @@ $(document).ready(function(){
    				$("#FeedbackPerson").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX" );
    			} else if (!isNumber) {
    				$("#FeedbackPerson").text("Please enter only digits into social security number.");
-   			} else if (!getSsnArray().includes(strSsn)){
-   				$("#FeedbackPerson").text("Person not found.");
-   			}
+   			} 
    		})
    		
    		$("#AddBtn").click(function(){
@@ -117,11 +116,11 @@ $(document).ready(function(){
    			var strSsn = $("#ssn").val();
    			var strName = $("#name").val();
    			let isEmpty = !strName.replace(/\s/g, '') || !strSsn.replace(/\s/g, '');
-   			let isNumber = /^\d+$/.test(strSsn);
+   			let ssnIsNumber = /^\d+$/.test(strSsn);
+   			let nameIsNumber = /^\d+$/.test(strName);
    			var obj = { ssn: strSsn, name: strName};
    			var jsonString = JSON.stringify(obj);
-   			console.log(getSsnArray());
-   			if (!getSsnArray().includes(strSsn) && !isEmpty && isNumber && strSsn.length === 10) {
+   			if (!nameIsNumber && !getSsnArray().includes(strSsn) && !isEmpty && ssnIsNumber && strSsn.length === 10) {
    				$.ajax({
    					method: "POST",
    					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/",  
@@ -143,10 +142,12 @@ $(document).ready(function(){
    				$("#FeedbackPerson").text("Please enter a name and a social security number.");
    			} else if(strSsn.length < 10){
 				$("#FeedbackPerson").text("Please enter a social security number with 10 digits in the format YYMMDDXXXX" );
-			} else if (!isNumber){
+			} else if (!ssnIsNumber){
    				$("#FeedbackPerson").text("Please enter only digits into social security number.");
    			} else if (getSsnArray().includes(strSsn)){
    				$("#FeedbackPerson").text("Social security number already registered.");
+   			} else if (nameIsNumber){
+   				$("#FeedbackPerson").text("Please enter only letters as name.");
    			}
    		})
    		
