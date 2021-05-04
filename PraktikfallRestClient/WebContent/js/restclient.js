@@ -95,9 +95,11 @@ $(document).ready(function(){
    			clearText();
    			var strSsn = $("#ssn").val();
    			var strName = $("#name").val();
+   			let isEmpty = !strName.replace(/\s/g, '') || !strSsn.replace(/\s/g, '')
+   			let isNumber = /^\d+$/.test(strSsn);
    			var obj = { ssn: strSsn, name: strName};
    			var jsonString = JSON.stringify(obj);
-   			if (strSsn != "" && strName != "") {
+   			if (!isEmpty && isNumber) {
    				$.ajax({
    					method: "POST",
    					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/",  
@@ -119,15 +121,21 @@ $(document).ready(function(){
    					console.log("Ajax-find person: "+status);
    				}
    			}
+   			else if (isEmpty) {
+   				$("#FeedbackPerson").text("Please enter a name and a social security number.");
+   			} else if (!isNumber) {
+   				$("#FeedbackPerson").text("Please enter only digits into social security number.");
+   			}
    		})
    		
    		$("#UpdateBtn").click( function() {
    			clearText();
    			var strSsn = $("#ssn").val();
    			var strName = $("#name").val();
+   			let isEmpty = !strName.replace(/\s/g, '') || !strSsn.replace(/\s/g, '')
    			var obj = { ssn: strSsn, name: strName};
    			var jsonString = JSON.stringify(obj);
-   			if (strSsn != "" && strName != "") {
+   			if (!isEmpty) {
    				$.ajax({
    					method: "PUT",
    					url: "http://localhost:8080/PraktikfallRestClient/RestServlet/"+strSsn, 
