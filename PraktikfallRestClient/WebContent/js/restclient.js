@@ -95,9 +95,15 @@ $(document).ready(function(){
    				function ajaxDelReturnSuccess(result, status, xhr) {
    					if(result.length === 0){
    						$("#FeedbackPerson").text("Person doesnt exist");
+   						clearFields();
    					} else {
 	   					clearFields();
 	   					$("#FeedbackPerson").text("Person deleted");
+	   					for(let i = 0; i < personArray.length; i++){
+	   						if (personArray[i][0] === strSsn){
+	   							personArray.splice(i, 1);
+	   						}
+	   					}
    					}
    				}
    				function ajaxDelReturnError(result, status, xhr) {
@@ -132,6 +138,7 @@ $(document).ready(function(){
    				function ajaxAddReturnSuccess(result, status, xhr) {
 					clearFields();
 					$("#FeedbackPerson").text("Person added" );
+					personArray.push([strSsn, strName]);
 				}
    				
    				function ajaxAddReturnError(result, status, xhr) {
@@ -171,6 +178,11 @@ $(document).ready(function(){
    				function ajaxUpdateReturnSuccess(result, status, xhr) {
    					clearFields();
 						$("#FeedbackPerson").text("Person updated" );
+					}
+   					for(let i = 0; i < personArray.length; i++){
+						if (personArray[i][0] === strSsn){
+							personArray.splice(i, 1, [strSsn, strName]);
+						}
 					}
 				
    				function ajaxUpdateReturnError(result, status, xhr) {
